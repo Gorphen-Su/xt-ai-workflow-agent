@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cc-connect daemon *)",
+      "Bash(cc-connect *)",
+      "Bash(tasklist)",
+      "mcp__web-reader__webReader",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs"
+    ]
+  }
+}
