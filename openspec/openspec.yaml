@@ -1,0 +1,56 @@
+# OpenSpec 项目配置
+# 本文件定义了规格驱动开发工作流的目录结构和规则
+
+project:
+  name: xt-ai-workflow-agent
+  description: AI 工作流管理代理
+  language: zh-CN
+
+# 目录结构配置
+paths:
+  changes: openspec/changes/          # 变更管理目录
+  designs: docs/designs/              # 设计文档目录
+  plans: docs/plans/                  # 实现计划目录
+  specs: specs/                       # 规格定义目录（相对于 change 目录）
+
+# 变更产物要求
+change:
+  # 每个变更必须包含的产物（按依赖顺序）
+  required_artifacts:
+    - proposal.md                     # 变更提案：为什么改、改什么
+    - design.md                       # 技术方案和权衡
+    - specs/                          # 规范性需求和行为场景
+    - tasks.md                        # 可执行的实现检查清单
+
+  # 可选产物
+  optional_artifacts:
+    - children.yaml                   # 子需求索引（仅主需求）
+    - parent-ref.md                   # 父需求引用（仅子需求）
+
+  # 状态流转
+  states:
+    - pending                         # 待开始
+    - in_progress                     # 进行中
+    - completed                       # 已完成
+    - archived                        # 已归档
+
+# 命名规则
+naming:
+  change_name: kebab-case             # 变更名称格式
+  child_change: "{parent}--{child}"   # 子需求命名：双横线分隔
+  design_file: "YYYY-MM-DD-{topic}-design.md"
+  plan_file: "YYYY-MM-DD-{topic}.md"
+
+# 工作流规则
+workflow:
+  tdd_enforced: true                  # 强制 TDD
+  git_worktree: false                 # 禁用 git worktree
+  language: zh-CN                     # 中文沟通
+  auto_commit: true                   # 归档后自动提交
+
+# 门禁规则
+gates:
+  explore_no_code: true               # 探索阶段不写生产代码
+  specs_before_code: true             # 规格完成前不编码
+  no_verification_no_done: true       # 无验证输出不声称完成
+  alignment_before_archive: true      # 对齐确认后才归档
