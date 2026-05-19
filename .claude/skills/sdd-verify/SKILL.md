@@ -28,7 +28,21 @@ SDD 规格驱动开发的第四阶段：双重验证确保实现既正确又合�
 2. 读取 `openspec/sdd-project-profile.yaml`（如果存在），获取 test_command
 3. 读取项目代码和测试文件
 
-### 步骤 3：代码质量验证（测试套件运行）
+### 步骤 3：代码质量验证
+
+#### 3a. 调用 `superpowers:verification-before-completion`（需要 Superpowers）
+
+如果 sdd-state.yaml 的 `superpowers_available` 为 true：
+
+1. 使用 Skill 工具调用 `superpowers:verification-before-completion`
+2. 传入 test_command（来自 sdd-project-profile.yaml）
+3. 如果 test_command 为 null，自动跳过测试运行
+4. 收集验证结果：通过数、失败数、跳过数、覆盖率（如有）
+5. 如果有失败用例 → 在验证报告中标记
+
+**降级路径**：如果 Superpowers 不可用或调用失败，使用 3b 的内联验证逻辑。
+
+#### 3b. 内联验证（降级模式）
 
 1. 优先使用 `sdd-project-profile.yaml` 的 test_command 运行测试
 2. 如果 sdd-project-profile.yaml 不存在或 test_command 为 null，临时推导测试命令（检查 package.json、Makefile、pytest.ini 等）
@@ -65,6 +79,26 @@ SDD 规格驱动开发的第四阶段：双重验证确保实现既正确又合�
 2. 违反标记为 CRITICAL
 
 更新 sdd-state.yaml checkpoint: compliance-done
+
+### 步骤 4.5：代码审查（需要 Superpowers）
+
+如果 sdd-state.yaml 的 `superpowers_available` 为 true，调用 Superpowers 的代码审查 skill：
+
+1. 使用 Skill 工具调用 `superpowers:requesting-code-review`
+2. 审查结果按严重程度分类：
+   - **Critical**：必须修复
+   - **Important**：建议修复
+   - **Suggestion**：可选优化
+3. 如果发现 Critical 或 Important 问题：
+   - 逐个修复
+   - 修复后重新验证（回到步骤 3）
+   - 修复后重新审查（回到步骤 4.5）
+4. 审查循环不超过 5 轮（与 review_counters.global_review_rounds 一致）
+5. 超过 5 轮仍有 Critical → 建议回退到 sdd-plan
+
+更新 sdd-state.yaml checkpoint: code-reviewed
+
+**降级路径**：如果 Superpowers 不可用，跳过代码审查步骤，直接进入步骤 5。
 
 ### 步骤 5：问题分类
 
@@ -124,7 +158,8 @@ SDD 规格驱动开发的第四阶段：双重验证确保实现既正确又合�
 |-----------|---------|
 | `entered` | 从步骤 3（代码质量验证）开始 |
 | `code-quality-done` | 从步骤 4（规范合规检查）继续 |
-| `compliance-done` | 从步骤 7（阶段完成确认）继续 |
+| `compliance-done` | 从步骤 4.5（代码审查）继续 |
+| `code-reviewed` | 从步骤 7（阶段完成确认）继续 |
 | `done` | 已完成，可直接进入 archive |
 
 ## 判断规则

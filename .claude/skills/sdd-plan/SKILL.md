@@ -120,6 +120,52 @@ SDD 规格驱动开发的第二阶段：基于 proposal 生成完整的规范产
 
 更新 sdd-state.yaml checkpoint: bridge-converted
 
+### 步骤 4.5：调用 writing-plans 生成实现计划（需要 Superpowers）
+
+如果 sdd-state.yaml 的 `superpowers_available` 为 true，调用 Superpowers 的 writing-plans 生成实现计划：
+
+1. **准备上下文**：
+   - 拼接所有 openspec artifacts：proposal.md + design.md + specs/*.md + tasks.md
+   - 读取 `openspec/sdd-project-profile.yaml`，提取项目 profile 上下文
+
+2. **准备 API 验证上下文**：
+   - 扫描项目中与本次变更同层的已有代码（如同模块的 Controller、Service、Handler 等）
+   - 提取关键框架 API 的实际签名（import 路径、方法重载、泛型参数等）
+   - 整理为"框架 API 注意事项"列表
+
+3. **调用 `superpowers:writing-plans`**：
+   - 使用 Skill 工具调用 `superpowers:writing-plans`
+   - args 传入上下文，包含：
+     - 变更名
+     - 项目技术栈：{languages} + {frameworks}
+     - 构建工具：{build_tool}
+     - 测试框架：{test_command}
+     - 项目结构：{structure}
+     - 编译命令：{compile_command}
+     - 编译约束：{compile_constraints}
+     - checkbox 唯一性约束：每个 Step 的 checkbox 描述必须全局唯一
+     - 框架 API 注意事项：{API 验证结果}
+     - openspec artifacts：{拼接的所有产物内容}
+   - **指定 tasks.md 为权威任务分解**，writing-plans 应基于此展开
+
+4. **跳过执行移交**：writing-plans 完成后会 offer 执行选择（Subagent-Driven / Inline），在 SDD 上下文中跳过此 offer
+
+5. **确认计划文件**：
+   - 检查 `superpowers/plans/YYYY-MM-DD-<变更名>.md` 是否存在且包含至少 1 个 checkbox
+   - 如果没有 checkbox，重新调用并更明确指定"按 tasks.md 中的每个 Task 展开为 TDD 微步骤"
+
+6. **计划质量审查（必须完成）**：
+   - 编译约束遵守：接口+实现是否在同一 Task 中（如 writing-plans 仍拆分，手动合并）
+   - import 正确性：检查计划中 import 路径是否与项目实际结构一致
+   - 死代码检查：计划中引用的类/方法是否存在于项目中
+   - 类型一致性：方法签名是否与实际 API 匹配
+
+7. **添加绑定注释**：在计划文件顶部添加 `<!-- sdd change: <变更名> -->`
+
+更新 sdd-state.yaml checkpoint: plan-generated
+
+**降级路径**：如果 `superpowers_available` 为 false 或 writing-plans 调用失败，跳过此步骤，使用 Bridge 转换产出的 tasks.md 作为实现指导（无 checkbox 微步骤）。
+
 ### 步骤 5：更新 sdd-state.yaml 任务状态
 
 从 tasks.md 中提取所有任务，更新 sdd-state.yaml 的 tasks 列表：
@@ -161,7 +207,8 @@ tasks:
 | `design-generated` | 有 design.md 但 specs/ 不完整 | 步骤 3b（生成 specs） |
 | `specs-generated` | specs/ 完整但无 tasks.md | 步骤 3c（生成 tasks.md） |
 | `tasks-generated` | 有 tasks.md 但未做 Bridge 转换 | 步骤 4（Bridge 转换） |
-| `bridge-converted` | Bridge 转换完成但未更新 state | 步骤 5（更新 sdd-state.yaml） |
+| `bridge-converted` | Bridge 转换完成但未生成实现计划 | 步骤 4.5（调用 writing-plans） |
+| `plan-generated` | 实现计划已生成但未更新 state | 步骤 5（更新 sdd-state.yaml） |
 | `quality-reviewed` | state 已更新 | 步骤 6（阶段完成确认） |
 | `done` | 所有产物完整 | 出口到 implement 阶段 |
 

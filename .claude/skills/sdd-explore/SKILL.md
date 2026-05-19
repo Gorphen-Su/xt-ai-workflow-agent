@@ -1,6 +1,6 @@
 ---
 name: sdd-explore
-description: SDD 探索阶段 — 项目分析器 + 需求澄清与方案讨论，产出 proposal.md 和 sdd-state.yaml，前置 Git 状态检查，强制用户确认。当用户说"探索需求"、"需求澄清"、使用 /sdd:explore 时触发。
+description: SDD 探索阶段 — 项目分析器 + 需求澄清与方案讨论，产出 proposal.md 和 sdd-state.yaml，前置 Git 状态检查和 Superpowers 依赖检查，强制用户确认。当用户说"探索需求"、"需求澄清"、使用 /sdd:explore 时触发。
 ---
 
 # SDD 探索阶段
@@ -14,6 +14,16 @@ SDD 规格驱动开发的第一阶段：项目分析、探索需求、澄清歧�
 3. **必须先检查 Git 状态，不能跳过**
 
 ## 执行步骤
+
+### 步骤 0：前置条件检查
+
+1. 检查 Superpowers skill 是否可用（尝试调用 `superpowers:writing-plans` 或检查 brainstorming 等 skill）
+2. **如果 Superpowers 可用**：标记为 `superpowers_available: true`，后续阶段可调用 Superpowers skill
+3. **如果 Superpowers 不可用**：
+   - 使用 AskUserQuestion 提示用户："Superpowers skill 未安装，部分功能（writing-plans、subagent 执行、代码审查）将降级为自包含模式。是否安装？"
+   - 用户选择安装 → 提示：`/plugin install superpowers@claude-plugins-official`
+   - 用户选择跳过 → 标记为 `superpowers_available: false`，继续以降级模式运行
+4. 将 superpowers_available 状态写入 sdd-state.yaml（在步骤 4 创建时）
 
 ### 步骤 1：Git 状态前置检查
 
@@ -130,6 +140,8 @@ phase_checkpoints:
   implement: null
   verify: null
   archive: null
+
+superpowers_available: <true 或 false>
 
 tasks: []
 

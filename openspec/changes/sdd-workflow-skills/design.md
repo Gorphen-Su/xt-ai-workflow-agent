@@ -39,15 +39,17 @@
 - 纯 command：逻辑写在 command 里，缺乏 skill 的自动触发能力
 - 纯 skill：无法提供 `/sdd:*` 斜杠命令入口
 
-### 决策 2：调用 opsx:* 命令作为底层执行
+### 决策 2：调用 opsx:* 命令 + Superpowers skill 作为底层执行
 
-**选择**：SDD skill 直接调用 `openspec` CLI 命令（`openspec new change`、`openspec status`、`openspec instructions` 等），复用 OpenSpec 已有的能力
+**选择**：SDD skill 直接调用 `openspec` CLI 命令（`openspec new change`、`openspec status`、`openspec instructions` 等）复用 OpenSpec 已有的能力，同时通过 Skill 工具显式调用 Superpowers skill（`superpowers:writing-plans`、`superpowers:subagent-driven-development`、`superpowers:verification-before-completion`、`superpowers:requesting-code-review`）复用 Superpowers 的代码执行能力
 
-**理由**：OpenSpec CLI 已提供完整的规格管理能力（创建变更、生成产物、验证、归档、同步），重新实现成本高且容易与 CLI 版本不同步
+**理由**：OpenSpec CLI 已提供完整的规格管理能力，Superpowers skill 已提供完整的代码执行能力（TDD 循环、子代理开发、验证、代码审查），重新实现成本高且容易与上游不同步。现在 Claude Code 已支持在 skill 内部通过 Skill 工具显式调用其他 skill，之前的限制已解除。
+
+**降级策略**：所有 Superpowers 调用点都有降级路径——当 Superpowers 不可用时，SDD 使用内联的自包含逻辑替代。
 
 **备选**：
-- 完全重新实现所有逻辑：工作量大，且 OpenSpec CLI 更新后需要同步维护
-- 调用 opsx:* skill：skill 是被 Claude Code 自动匹配的，不适合在 skill 内部显式调用另一个 skill
+- 完全重新实现所有逻辑：工作量大，且上游更新后需要同步维护
+- ~~调用 opsx:* skill：skill 是被 Claude Code 自动匹配的，不适合在 skill 内部显式调用另一个 skill~~（此限制已解除）
 
 ### 决策 3：Bridge 转换内置到 sdd-plan
 
@@ -122,7 +124,7 @@ explore:✓ plan:✓ implement:▶ verify:☐ archive:☐
 
 **[OpenSpec CLI 版本兼容]** → SDD skill 依赖 `openspec` CLI 的 JSON 输出格式，CLI 大版本升级可能导致字段变化。缓解：skill 内部做优雅降级，JSON 解析失败时回退到文本模式
 
-**[Superpowers skill 调用方式]** → Superpowers 的 skill 是通过 Claude Code 自动匹配触发的，不能在 skill 内部显式调用。缓解：SDD skill 内联 Superpowers 的核心逻辑（TDD 循环、验证步骤），而非调用 Superpowers skill
+**[Superpowers skill 调用方式]** → ~~Superpowers 的 skill 是通过 Claude Code 自动匹配触发的，不能在 skill 内部显式调用。缓解：SDD skill 内联 Superpowers 的核心逻辑（TDD 循环、验证步骤），而非调用 Superpowers skill~~ 此限制已解除，SDD 现在通过 Skill 工具显式调用 Superpowers skill，同时保留降级路径。
 
 **[单次会话上下文窗口]** → 长需求的实现阶段可能跨越多个会话，上下文可能丢失。缓解：`task-status.md` 记录完整进度，每次恢复时重新读取变更目录下的所有产物
 

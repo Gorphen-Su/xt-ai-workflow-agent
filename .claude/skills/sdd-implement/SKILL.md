@@ -1,11 +1,11 @@
 ---
 name: sdd-implement
-description: SDD 实现阶段 — 逐任务执行 TDD 循环，基于 sdd-state.yaml checkpoint 精确断点恢复，审查循环限制 5 次，级联回退触发（执行归 sdd-plan），编译检查，每个任务完成后要求用户确认。当用户说"开始实现"、"执行任务"、使用 /sdd:implement 时触发。
+description: SDD 实现阶段 — 支持完整模式（subagent 驱动）和轻量模式（内联 TDD），基于 sdd-state.yaml checkpoint 精确断点恢复，审查循环限制 5 次，级联回退触发（执行归 sdd-plan），编译检查，每个任务完成后要求用户确认。当用户说"开始实现"、"执行任务"、使用 /sdd:implement 时触发。
 ---
 
 # SDD 实现阶段
 
-SDD 规格驱动开发的第三阶段：基于规范产物逐任务执行 TDD 循环。
+SDD 规格驱动开发的第三阶段：基于规范产物执行实现，支持完整模式（Superpowers subagent）和轻量模式（内联 TDD 循环）。
 
 ## 铁律
 
@@ -16,12 +16,17 @@ SDD 规格驱动开发的第三阶段：基于规范产物逐任务执行 TDD �
 
 ## 执行步骤
 
-### 步骤 1：确定当前变更
+### 步骤 1：确定当前变更 + Superpowers 前置检查
 
 1. 扫描 `openspec/changes/` 目录，查找进行中的变更（有 sdd-state.yaml 且 phase 为 implement 或 plan 已完成）
 2. 如果只有一个 → 自动选择
 3. 如果有多个 → 使用 AskUserQuestion 让用户选择
 4. 如果没有 → 提示用户先运行 `/sdd:explore` 和 `/sdd:plan`
+
+**Superpowers 前置检查**：
+5. 读取 sdd-state.yaml 的 `superpowers_available` 字段
+6. 如果为 true → 确认 Superpowers skill 仍可用（检查 `superpowers:subagent-driven-development`）
+7. 如果 Superpowers 不可用（状态标记为 false 或运行时检测失败）→ 强制使用轻量模式
 
 ### 步骤 2：进度恢复
 
@@ -46,6 +51,41 @@ SDD 规格驱动开发的第三阶段：基于规范产物逐任务执行 TDD �
 
 5. 如果所有任务 status 为 completed → 提示用户运行 `/sdd:verify`
 
+### 步骤 2.5：智能执行模式选择（需要 Superpowers）
+
+如果 Superpowers 可用，根据任务特征选择执行模式：
+
+#### 决策因素
+
+| 因素 | 权重 | 检测方式 |
+|------|------|---------|
+| 任务数 | 高 | 读取 tasks.md 中任务数量 |
+| 任务独立性 | 高 | 分析 tasks.md 中任务依赖关系 |
+| 跨模块范围 | 中 | 计划文件 File Structure 中的模块数 |
+| 项目结构 | 中 | sdd-project-profile.yaml 的 structure 字段 |
+| 变更复杂度 | 低 | 预估修改文件数 |
+
+#### 完整模式（`superpowers:subagent-driven-development`）
+
+满足以下**任一**条件时触发：
+- 任务数 >= 6
+- 修改跨 >= 3 个不同模块/目录
+- monorepo 且任务数 >= 3
+- 任务高度独立（无依赖）且任务数 >= 4
+
+#### 轻量模式（内联 TDD 循环）
+
+满足以下**任一**条件时触发：
+- 任务数 <= 5 且集中在 1-2 个模块
+- 单模块小功能
+- 任务有强编译时依赖（如接口+实现必须同 Task）
+- **独立性否决**：即使任务数 >= 6 或跨 >= 3 模块，如果任务有强编译依赖，仍用轻量模式
+- Superpowers 不可用时强制使用轻量模式
+
+使用 AskUserQuestion 向用户展示推荐模式和理由，让用户确认或选择另一种模式。
+
+将选择的模式记录到 sdd-state.yaml（新增字段 `execution_mode: full | lightweight`）。
+
 ### 步骤 3：加载规范上下文
 
 在开始实现之前，MUST 读取变更目录下的所有规范文件：
@@ -55,7 +95,23 @@ SDD 规格驱动开发的第三阶段：基于规范产物逐任务执行 TDD �
 4. `tasks.md`：了解任务清单
 5. `sdd-state.yaml`：了解当前进度和审查计数
 
-### 步骤 4：逐任务执行 TDD 循环
+### 步骤 4：执行实现
+
+根据步骤 2.5 选择的模式执行：
+
+#### 4a. 完整模式（`superpowers:subagent-driven-development`）
+
+1. 读取 `superpowers/plans/` 下的计划文件
+2. 使用 Skill 工具调用 `superpowers:subagent-driven-development`
+3. 每个子代理完成任务后：
+   - 运行 compile_command（如非 null）验证编译
+   - 更新计划文件 checkbox：`- [ ]` → `- [x]`
+   - 更新 sdd-state.yaml：对应任务 status → completed，checkpoint → complete
+   - 运行测试验证
+4. 如果子代理实现与规范偏离 → 暂停，执行步骤 6（规范偏离处理）
+5. 全部任务完成后 → 进入步骤 7
+
+#### 4b. 轻量模式（内联 TDD 循环）
 
 对每个未完成的任务，执行以下 TDD 循环：
 
