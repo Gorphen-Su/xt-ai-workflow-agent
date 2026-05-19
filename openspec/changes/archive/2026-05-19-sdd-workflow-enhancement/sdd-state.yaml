@@ -1,0 +1,234 @@
+version: 1
+change: sdd-workflow-enhancement
+
+phase: archive
+checkpoint: done
+
+phase_checkpoints:
+  explore: done
+  plan: done
+  implement: done
+  verify: done
+  archive: done
+
+tasks:
+  - id: 1
+    description: 在 sdd-explore 中增加项目分析器步骤
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 2
+    description: 实现构建命令映射表
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 3
+    description: 实现 compile_command 运行时验证逻辑
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 4
+    description: 实现空白项目特殊处理
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 5
+    description: 创建 sdd-project-profile.yaml 输出模板和写入逻辑
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 6
+    description: 实现 compile_constraints 自动提取逻辑
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 7
+    description: 设计并文档化 sdd-state.yaml 完整结构
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 8
+    description: sdd-explore 切换到 sdd-state.yaml
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 9
+    description: sdd-plan 切换到 sdd-state.yaml
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 10
+    description: sdd-implement 切换到 sdd-state.yaml
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 11
+    description: sdd-verify 切换到 sdd-state.yaml
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 12
+    description: sdd-archive 切换到 sdd-state.yaml
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 13
+    description: 移除所有 skill 中对 task-status.md 的创建和更新逻辑
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 14
+    description: 实现 sdd-explore 断点恢复
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 15
+    description: 实现 sdd-plan 断点恢复
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 16
+    description: 实现 sdd-implement 断点恢复（任务级 checkpoint）
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 17
+    description: 实现 sdd-verify 断点恢复
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 18
+    description: 实现 sdd-archive 断点恢复
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 19
+    description: 实现状态文件与实际文件一致性验证
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 20
+    description: 设计级联规则矩阵
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 21
+    description: sdd-implement 规范偏离级联回退
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 22
+    description: sdd-verify 规范偏离级联回退
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 23
+    description: 实现全量重置逻辑
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 24
+    description: 实现选择性保留逻辑
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 25
+    description: 实现 cascade 字段写入和清除逻辑
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 26
+    description: sdd-implement 单任务修改次数计数器
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 27
+    description: sdd-implement 超限处理（5 次）
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 28
+    description: sdd-verify 全局审查轮次计数器
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 29
+    description: sdd-verify 超限处理（5 轮）
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 30
+    description: 级联回退时计数器重置
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 31
+    description: sdd-plan 读取 profile 注入 compile_constraints
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 32
+    description: sdd-implement 使用 compile_command 编译检查
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 33
+    description: sdd-verify 使用 test_command 替代临时推导
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 34
+    description: 旧格式检测与迁移提示
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+  - id: 35
+    description: 从 task-status.md 自动迁移到 sdd-state.yaml
+    status: completed
+    updated: "2026-05-19T14:00"
+    test_result: "-"
+    checkpoint: complete
+
+review_counters:
+  global_review_rounds: 0
+  task_retries: {}
+
+cascade:
+  last_affected_phase: null
+  invalidated_from: null
+  reason: null
+  preserved_tasks: []
