@@ -2,7 +2,7 @@ version: 1
 change: xt-sdd-plan-multi-file
 
 phase: apply
-checkpoint: task-7-complete
+checkpoint: task-14-complete
 
 phase_checkpoints:
   propose: done
@@ -60,46 +60,46 @@ tasks:
     checkpoint: complete
   - id: 8
     description: 3.1 修改 xt-sdd-plan — writing-plans 按分组多次调用
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:25:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 9
     description: 3.2 新增分组信息提取逻辑
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:25:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 10
     description: 3.3 修改 writing-plans 上下文准备
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:25:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 11
     description: 3.4 修改计划保存路径为 plans/NN-<分组名>.md
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:25:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 12
     description: 3.5 新增 plan.md 索引文件生成步骤
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:25:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 13
     description: 3.6 修改质量审查为逐文件审查
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:25:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 14
     description: 3.7 修改降级路径为按分组拆分到 plans/
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:25:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 15
     description: 4.1 修改 xt-sdd-apply — 计划读取改为扫描 plans/
     status: pending

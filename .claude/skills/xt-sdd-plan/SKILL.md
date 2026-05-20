@@ -117,21 +117,41 @@ xt-sdd 规格驱动开发的第二阶段：基于 proposal 生成完整的规范
 
 ### 步骤 4.5：调用 writing-plans 生成实现计划（需要 Superpowers）
 
-如果 sdd-state.yaml 的 `superpowers_available` 为 true，调用 Superpowers 的 writing-plans 生成实现计划：
+如果 sdd-state.yaml 的 `superpowers_available` 为 true，调用 Superpowers 的 writing-plans 生成实现计划。输出为 `plans/` 目录下的多文件结构 + `plan.md` 索引文件。
 
-1. **准备上下文**：
-   - 拼接所有 openspec artifacts：proposal.md + design.md + specs/*.md + tasks.md
-   - 读取 `openspec/sdd-project-profile.yaml`，提取项目 profile 上下文
+#### 4.5.1 从 tasks.md 提取分组信息
 
-2. **准备 API 验证上下文**：
-   - 扫描项目中与本次变更同层的已有代码（如同模块的 Controller、Service、Handler 等）
-   - 提取关键框架 API 的实际签名（import 路径、方法重载、泛型参数等）
-   - 整理为"框架 API 注意事项"列表
+1. 读取 tasks.md，提取所有 `## N. 分组名` 二级标题
+2. 生成分组列表，每项包含：
+   - `number`：分组编号（如 1, 2, 3）
+   - `name`：原始分组名（如 "基础设施"）
+   - `slug`：kebab-case 英文名（如 "infrastructure"）
+   - `filename`：`NN-<slug>.md`（如 "01-infrastructure.md"）
+   - `tasks`：该分组下的任务列表（从 `- [ ] X.Y` 提取）
+3. 分组名到 slug 的转换规则：
+   - 中文分组名：根据上下文翻译为英文再 kebab-case（如 "基础设施" → "infrastructure"、"propose 阶段 skill" → "propose-stage"）
+   - 英文分组名：直接 kebab-case（如 "Setup Tasks" → "setup-tasks"）
+4. 创建 `plans/` 目录（如不存在）
 
-3. **调用 `superpowers:writing-plans`**：
+#### 4.5.2 准备 API 验证上下文
+
+1. 扫描项目中与本次变更同层的已有代码（如同模块的 Controller、Service、Handler 等）
+2. 提取关键框架 API 的实际签名（import 路径、方法重载、泛型参数等）
+3. 整理为"框架 API 注意事项"列表
+
+#### 4.5.3 按分组调用 writing-plans
+
+对每个分组，分别调用 `superpowers:writing-plans`：
+
+1. **准备分组上下文**：
+   - 全局上下文（每次都传入）：proposal.md、design.md、sdd-project-profile.yaml
+   - 分组上下文（仅传入当前分组的）：对应的 specs 文件 + 该分组在 tasks.md 中的任务
+2. **调用 `superpowers:writing-plans`**：
    - 使用 Skill 工具调用 `superpowers:writing-plans`
    - args 传入上下文，包含：
      - 变更名
+     - 当前分组编号和名称
+     - 当前分组任务列表
      - 项目技术栈：{languages} + {frameworks}
      - 构建工具：{build_tool}
      - 测试框架：{test_command}
@@ -140,28 +160,48 @@ xt-sdd 规格驱动开发的第二阶段：基于 proposal 生成完整的规范
      - 编译约束：{compile_constraints}
      - checkbox 唯一性约束：每个 Step 的 checkbox 描述必须全局唯一
      - 框架 API 注意事项：{API 验证结果}
-     - openspec artifacts：{拼接的所有产物内容}
-     - 计划保存路径：`openspec/changes/<变更名>/plan.md`（**合并到变更目录内**）
-   - **指定 tasks.md 为权威任务分解**，writing-plans 应基于此展开
+     - 全局 openspec artifacts：proposal.md + design.md
+     - 分组 openspec artifacts：对应 specs + 对应 tasks
+     - 计划保存路径：`openspec/changes/<变更名>/plans/<filename>`
+   - **指定该分组的任务为权威任务分解**，writing-plans 应基于此展开
+3. **跳过执行移交**：writing-plans 完成后会 offer 执行选择，在 xt-sdd 上下文中跳过
+4. **确认子计划文件**：
+   - 检查 `openspec/changes/<变更名>/plans/<filename>` 是否存在且包含至少 1 个 checkbox
+   - 如果没有 checkbox，重新调用并更明确指定"按该分组中的每个 Task 展开为 TDD 微步骤"
+5. **添加绑定注释**：在子计划文件顶部添加 `<!-- sdd change: <变更名> -->`
 
-4. **跳过执行移交**：writing-plans 完成后会 offer 执行选择，在 xt-sdd 上下文中跳过
+#### 4.5.4 计划质量审查
 
-5. **确认计划文件**：
-   - 检查 `openspec/changes/<变更名>/plan.md` 是否存在且包含至少 1 个 checkbox
-   - 如果没有 checkbox，重新调用并更明确指定"按 tasks.md 中的每个 Task 展开为 TDD 微步骤"
+所有子计划文件生成完成后，逐文件审查：
 
-6. **计划质量审查（必须完成）**：
-   - 编译约束遵守：接口+实现是否在同一 Task 中（如仍拆分，手动合并）
-   - import 正确性：检查计划中 import 路径是否与项目实际结构一致
-   - 无效代码检查：计划中引用的类/方法是否存在于项目中
-   - 类型一致性：方法签名是否与实际 API 匹配
-   - 如发现问题，直接在计划文件中修复
+1. 编译约束遵守：接口+实现是否在同一 Task 中（如仍拆分，手动合并）
+2. import 正确性：检查计划中 import 路径是否与项目实际结构一致
+3. 无效代码检查：计划中引用的类/方法是否存在于项目中
+4. 类型一致性：方法签名是否与实际 API 匹配
+5. 如发现问题，直接在对应子计划文件中修复
 
-7. **添加绑定注释**：在计划文件顶部添加 `<!-- sdd change: <变更名> -->`
+#### 4.5.5 生成 plan.md 索引文件
+
+1. 遍历所有生成的子计划文件
+2. 生成 `plan.md` 索引文件，内容包含：
+   - 绑定注释 `<!-- sdd change: <变更名> -->`
+   - 变更名标题
+   - 执行顺序说明
+   - 子计划列表表格：编号 | 名称 | 文件链接 | 简要描述
+3. plan.md MUST NOT 包含任何具体实现步骤或 checkbox 微步骤
 
 更新 sdd-state.yaml checkpoint: plan-generated
 
-**降级路径**：如果 `superpowers_available` 为 false 或 writing-plans 调用失败，跳过此步骤，使用 Bridge 转换产出的 tasks.md 作为实现指导（无 checkbox 微步骤）。
+**降级路径**：如果 `superpowers_available` 为 false 或 writing-plans 调用失败，跳过 writing-plans 调用，但仍按分组拆分到 `plans/` 目录：每个分组文件只包含 tasks.md 中对应分组的任务列表（无 TDD 微步骤），并生成 plan.md 索引文件。降级时分组文件格式：
+
+```markdown
+<!-- sdd change: <变更名> -->
+
+# N. <分组名>
+
+- [ ] X.Y 任务描述
+- [ ] X.Z 任务描述
+```
 
 ### 步骤 5：更新 sdd-state.yaml 任务状态
 
