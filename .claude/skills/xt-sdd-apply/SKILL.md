@@ -92,8 +92,13 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 2. `design.md`：了解技术方案和架构决策
 3. `specs/` 下的所有 spec.md：了解行为场景
 4. `tasks.md`：了解任务清单
-5. `plan.md`（如果存在）：了解实现计划的 checkbox 和微步骤
-6. `sdd-state.yaml`：了解当前进度和审查计数
+5. `plan.md`（如果存在）：了解实现计划索引和子计划列表
+6. `plans/` 目录下的所有子计划文件（如果存在）：了解每个分组的实现步骤和 checkbox 微步骤
+7. `sdd-state.yaml`：了解当前进度和审查计数
+
+**计划文件兼容读取**：
+- 如果 `plans/` 目录存在 → 从 `plan.md` 读取索引获取全局视图，从 `plans/NN-*.md` 按编号排序读取子计划
+- 如果 `plans/` 目录不存在 → 从单一 `plan.md` 读取所有实现步骤（兼容旧变更目录）
 
 ### 步骤 3.5：并发变更冲突检测
 
@@ -110,11 +115,11 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 
 #### 4a. 完整模式（`superpowers:subagent-driven-development`）
 
-1. 读取变更目录下的 `plan.md`
+1. 读取计划文件：优先扫描 `plans/` 目录，按编号排序读取所有子计划；如无 `plans/` 则回退到单一 `plan.md`
 2. 使用 Skill 工具调用 `superpowers:subagent-driven-development`
 3. 每个子代理完成任务后：
    - 运行 compile_command（如非 null）验证编译
-   - 更新 plan.md checkbox：`- [ ]` → `- [x]`
+   - 更新对应子计划文件中的 checkbox：`- [ ]` → `- [x]`（如有 `plans/` 目录）；否则更新 `plan.md` 中的 checkbox
    - 更新 sdd-state.yaml：对应任务 status → completed，checkpoint → complete
    - 运行测试验证
 4. 如果子代理实现与规范偏离 → 暂停，执行步骤 6（规范偏离处理）
@@ -157,9 +162,12 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 无论哪种执行模式，每个 task 完成后必须执行以下流程：
 
 1. **编译检查**：运行 `compile_command`，编译必须通过（如果 compile_command 为 null 则跳过）
-2. **更新 checkbox**：用 Edit 工具将 plan.md 中**该 Task 下的所有** `- [ ]` 改为 `- [x]`（包括 Verify、Commit 等非实现步骤，不能遗漏）
+2. **更新 checkbox**：根据计划文件结构更新 checkbox：
+   - 如果 `plans/` 目录存在 → 在对应的子计划文件 `plans/NN-<分组名>.md` 中更新 checkbox（`- [ ]` → `- [x]`）
+   - 如果无 `plans/` 目录 → 在 `plan.md` 中更新 checkbox
+   - 包括 Verify、Commit 等非实现步骤的 checkbox，不能遗漏
 3. **更新状态文件**：更新 sdd-state.yaml 的对应任务 status → completed，checkpoint: task-N-complete
-4. **自动 commit**：将代码改动 + plan.md 变更 + sdd-state.yaml 变更一起提交到本地仓库
+4. **自动 commit**：将代码改动 + 子计划文件变更（或 plan.md 变更）+ sdd-state.yaml 变更一起提交到本地仓库
    - commit message 格式：`<类型>(<范围>): <task描述>`
    - 一个 task 对应一个 commit
    - **全程不做 push 操作**
