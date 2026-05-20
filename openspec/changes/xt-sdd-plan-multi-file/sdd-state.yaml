@@ -2,7 +2,7 @@ version: 1
 change: xt-sdd-plan-multi-file
 
 phase: apply
-checkpoint: task-3-complete
+checkpoint: task-7-complete
 
 phase_checkpoints:
   propose: done
@@ -36,28 +36,28 @@ tasks:
     checkpoint: complete
   - id: 4
     description: 2.1 更新 apply-stage spec — 新增 plans/ 目录读取场景
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:20:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 5
     description: 2.2 更新 apply-stage spec — 新增按分组定位场景
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:20:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 6
     description: 2.3 更新 apply-stage spec — 新增索引读取场景
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:20:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 7
     description: 2.4 更新 apply-stage spec — 新增兼容旧目录场景
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:20:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 8
     description: 3.1 修改 xt-sdd-plan — writing-plans 按分组多次调用
     status: pending
