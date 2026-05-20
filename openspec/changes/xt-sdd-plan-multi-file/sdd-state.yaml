@@ -2,7 +2,7 @@ version: 1
 change: xt-sdd-plan-multi-file
 
 phase: apply
-checkpoint: task-18-complete
+checkpoint: all-tasks-complete
 
 phase_checkpoints:
   propose: done
@@ -126,16 +126,16 @@ tasks:
     checkpoint: complete
   - id: 19
     description: 5.1 更新 CLAUDE.md 目录结构描述
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:35:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
   - id: 20
     description: 5.2 新增 plans/ 子目录描述
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-05-20T10:35:00+08:00"
+    test_result: "通过"
+    checkpoint: complete
 
 review_counters:
   global_review_rounds: 0

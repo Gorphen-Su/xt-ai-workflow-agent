@@ -48,7 +48,9 @@
   - `design.md` — 技术方案
   - `specs/` — 行为规格
   - `tasks.md` — 实现检查清单
-  - `plan.md` — 实现计划（带 checkbox 微步骤）
+  - `plan.md` — 实现计划索引（列出子计划列表和执行顺序）
+  - `plans/` — 子计划文件目录
+    - `NN-<分组名>.md` — 对应 tasks.md 二级分组的实现计划（带 checkbox 微步骤）
   - `sdd-state.yaml` — 任务状态跟踪（动态更新）
   - `archive.md` — 归档记录
 - `docs/designs/` — 设计文档
