@@ -1,15 +1,15 @@
 version: 1
 change: xt-sdd-plan-multi-file
 
-phase: apply
-checkpoint: all-tasks-complete
+phase: archive
+checkpoint: archived
 
 phase_checkpoints:
   propose: done
   plan: done
-  apply: entered
-  verify: null
-  archive: null
+  apply: done
+  verify: done
+  archive: archived
 
 superpowers_available: true
 

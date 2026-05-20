@@ -1,0 +1,12 @@
+version: 1
+profiled_at: 2026-05-20T10:00:00+08:00
+
+languages: [markdown, yaml]
+frameworks: []
+build_tool: unknown
+compile_command: null
+test_command: null
+structure: single-module
+has_ci: false
+
+compile_constraints: []

@@ -9,7 +9,8 @@
       "mcp__context7__query-docs",
       "Bash(chmod +x *)",
       "Bash(grep -E \"\\\\.\\(md|txt\\)$\")",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(npx @fission-ai/openspec *)"
     ]
   }
 }
