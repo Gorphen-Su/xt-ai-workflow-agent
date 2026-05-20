@@ -21,7 +21,7 @@
 | 阶段 | 命令 | 说明 | 产出 |
 |------|------|------|------|
 | 需求探索 | `/xt-sdd:propose` | 项目分析、需求澄清、规格生成 | proposal.md |
-| 方案设计 | `/xt-sdd:plan` | 规范产物 + Bridge 转换 + 实现计划 | design.md、specs/、tasks.md、plan.md |
+| 方案设计 | `/xt-sdd:plan` | 规范产物 + Bridge 转换 + 实现计划 | design.md、specs/、tasks.md、plans/、plan.md |
 | TDD 实现 | `/xt-sdd:apply` | subagent/inline 双模式 TDD | 代码 + 测试 |
 | 验证审查 | `/xt-sdd:verify` | 文档同步 + 合规验证 + 代码审查 | 验证报告 |
 | 归档收尾 | `/xt-sdd:archive` | 双源合并归档 + Git 提交 | archive.md |
