@@ -1,15 +1,15 @@
 version: 1
 change: skill-xt-init-understand
 
-phase: apply
-checkpoint: done
+phase: archive
+checkpoint: archived
 
 phase_checkpoints:
   propose: done
   plan: done
   apply: done
-  verify: null
-  archive: null
+  verify: done
+  archive: archived
 
 superpowers_available: true
 execution_mode: lightweight
