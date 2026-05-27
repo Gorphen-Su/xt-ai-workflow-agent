@@ -1,3 +1,8 @@
+---
+name: xt-init-understand
+description: 帮助开发者快速理解和探索项目代码。自动调用 Understand-Anything 插件分析项目结构，生成结构化理解文档并集成到 CLAUDE.md。当用户说"理解项目"、"分析代码"、"项目探索"、使用 /xt-init-understand 时触发。
+---
+
 # xt-init-understand
 
 帮助开发者快速理解和探索项目代码。自动调用 Understand-Anything 插件分析项目结构，生成结构化的理解文档，并集成到 CLAUDE.md 供后续对话引用。
@@ -216,3 +221,5 @@ Base directory for this skill: 项目根目录
 2. 注明哪些文档生成失败（如有）
 3. 提示"分析完成。文档保存在 `docs/understand/` 目录下，已集成到 CLAUDE.md。"
 4. 提示增量更新命令：`/xt-init-understand --update`
+
+ARGUMENTS: 可选。无参数=全量分析，传入目录路径=指定目录分析，`--update`=增量更新模式
