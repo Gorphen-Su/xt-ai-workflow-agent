@@ -6,7 +6,7 @@ Base directory for this skill: 项目根目录
 
 ## 触发条件
 
-当用户输入 `/xt-init:understand`、`/xt-init:understand [path]` 或 `/xt-init:understand --update` 时触发。
+当用户输入 `/xt-init-understand`、`/xt-init-understand [path]` 或 `/xt-init-understand --update` 时触发。
 
 ## 参数
 
@@ -191,7 +191,7 @@ Base directory for this skill: 项目根目录
      ```markdown
 
      ## 项目理解文档
-     以下文档由 `/xt-init:understand` 自动生成，描述项目结构和领域知识。
+     以下文档由 `/xt-init-understand` 自动生成，描述项目结构和领域知识。
 
      - `docs/understand/overview.md` — 项目概览
      - `docs/understand/modules.md` — 模块结构
@@ -215,4 +215,4 @@ Base directory for this skill: 项目根目录
 1. 列出生成的文档文件及其路径
 2. 注明哪些文档生成失败（如有）
 3. 提示"分析完成。文档保存在 `docs/understand/` 目录下，已集成到 CLAUDE.md。"
-4. 提示增量更新命令：`/xt-init:understand --update`
+4. 提示增量更新命令：`/xt-init-understand --update`
