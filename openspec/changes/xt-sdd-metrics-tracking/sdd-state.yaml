@@ -1,0 +1,123 @@
+version: 1
+change: xt-sdd-metrics-tracking
+
+phase: apply
+checkpoint: entered
+execution_mode: lightweight
+
+phase_checkpoints:
+  propose: done
+  plan: done
+  apply: entered
+  verify: null
+  archive: null
+
+superpowers_available: true
+
+tasks:
+  - id: 1
+    description: 在 xt-sdd-propose SKILL.md 的步骤 5 中，更新 sdd-state.yaml 模板，增加完整的 metrics 段结构
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 2
+    description: 在 xt-sdd-propose SKILL.md 的步骤 5 中，增加记录 git rev-parse HEAD 到 metrics.git_baseline.start_sha 的指令
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 3
+    description: 在 xt-sdd-propose SKILL.md 中，步骤 0 之后增加 ccusage 环境检测与自动安装逻辑
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 4
+    description: 在 xt-sdd-propose 中增加 propose 阶段 Token 快照记录指令
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 5
+    description: 在 xt-sdd-plan 中增加 plan 阶段 Token 快照记录指令
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 6
+    description: 在 xt-sdd-apply 中增加 apply 阶段 Token 快照记录指令
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 7
+    description: 在 xt-sdd-verify 中增加 verify 阶段 Token 快照记录指令
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 8
+    description: 在 xt-sdd-archive 中增加 archive 阶段 Token 快照记录指令
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 9
+    description: 在 xt-sdd-fix 中增加 fix 阶段 Token 快照记录指令
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 10
+    description: 在所有阶段增加统一的降级处理说明并验证
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 11
+    description: 在 xt-sdd-archive 步骤 2 之后增加 Git Diff 文件与行数统计步骤 2.5
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 12
+    description: 在 xt-sdd-archive 步骤 2.5 之后增加 Token 数据汇总步骤 2.6
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 13
+    description: 在 xt-sdd-archive 步骤 2.6 之后增加 Metrics Report 生成步骤 2.7
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 14
+    description: 验证 propose 阶段 metrics 段初始化正确性
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 15
+    description: 验证 ccusage 可用性检测正常工作
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 16
+    description: 模拟完整 xt-sdd 流程验证 metrics-report.md 正确生成
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+
+review_counters:
+  global_review_rounds: 0
+  task_retries: {}
+
+cascade:
+  last_affected_phase: null
+  invalidated_from: null
+  reason: null
+  preserved_tasks: []

@@ -153,6 +153,31 @@ cascade:
   invalidated_from: null
   reason: null
   preserved_tasks: []
+
+metrics:
+  git_baseline:
+    start_sha: null
+    start_time: null
+    end_sha: null
+    end_time: null
+    dirty: false
+  file_stats:
+    files_added: 0
+    files_modified: 0
+    files_deleted: 0
+    total_files_changed: 0
+  line_stats:
+    lines_added: 0
+    lines_deleted: 0
+  token_usage:
+    total_input_tokens: 0
+    total_output_tokens: 0
+    total_tokens: 0
+    estimated_cost_usd: 0.0
+    ccusage_available: null
+    auto_installed: null
+    install_error: null
+    snapshots: []
 ```
 
 ### 步骤 6：探索与需求澄清
