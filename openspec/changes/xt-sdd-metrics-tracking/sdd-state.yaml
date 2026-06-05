@@ -2,13 +2,13 @@ version: 1
 change: xt-sdd-metrics-tracking
 
 phase: apply
-checkpoint: entered
+checkpoint: all-tasks-complete
 execution_mode: lightweight
 
 phase_checkpoints:
   propose: done
   plan: done
-  apply: entered
+  apply: all-tasks-complete
   verify: null
   archive: null
 
@@ -95,22 +95,22 @@ tasks:
     checkpoint: complete
   - id: 14
     description: 验证 propose 阶段 metrics 段初始化正确性
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:06:00+08:00"
+    test_result: "metrics 段结构完整，17 处关键字段引用"
+    checkpoint: complete
   - id: 15
     description: 验证 ccusage 可用性检测正常工作
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:06:00+08:00"
+    test_result: "ccusage 检测+自动安装+降级处理逻辑完整"
+    checkpoint: complete
   - id: 16
     description: 模拟完整 xt-sdd 流程验证 metrics-report.md 正确生成
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:06:00+08:00"
+    test_result: "archive 步骤链 1→2→2.5→2.6→2.7→3 完整，12 文件 1137 行新增"
+    checkpoint: complete
 
 review_counters:
   global_review_rounds: 0
