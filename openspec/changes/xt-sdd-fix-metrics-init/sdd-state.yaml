@@ -1,0 +1,104 @@
+version: 1
+change: xt-sdd-fix-metrics-init
+
+phase: apply
+checkpoint: entered
+execution_mode: lightweight
+
+phase_checkpoints:
+  propose: done
+  plan: done
+  apply: entered
+  verify: null
+  archive: null
+
+superpowers_available: true
+
+tasks:
+  - id: 1
+    description: 在 xt-sdd-fix SKILL.md 步骤 2 中增加 ccusage 可用性检测指令
+    status: completed
+    updated: "2026-06-05T20:10:00+08:00"
+    test_result: "ccusage 检测+安装+降级逻辑与 propose 一致"
+    checkpoint: complete
+  - id: 2
+    description: 在 xt-sdd-fix SKILL.md 步骤 2 中修改 sdd-state.yaml 模板为包含完整 metrics 段
+    status: completed
+    updated: "2026-06-05T20:10:00+08:00"
+    test_result: "模板包含完整 metrics 段，所有字段与 propose 一致"
+    checkpoint: complete
+  - id: 3
+    description: 在 xt-sdd-fix SKILL.md 步骤 2 中增加 Metrics 初始化操作和 fix-init Token 快照
+    status: completed
+    updated: "2026-06-05T20:10:00+08:00"
+    test_result: "初始化操作含 git baseline + fix-init Token 快照三种降级"
+    checkpoint: complete
+  - id: 4
+    description: 验证 fix 步骤 2 的 ccusage 检测逻辑与 propose 一致
+    status: completed
+    updated: "2026-06-05T20:10:00+08:00"
+    test_result: "ccusage 检测逻辑完全一致（命令/安装/降级/字段）"
+    checkpoint: complete
+  - id: 5
+    description: 验证 fix 步骤 2 的 sdd-state.yaml 模板包含完整 metrics 段
+    status: completed
+    updated: "2026-06-05T20:10:00+08:00"
+    test_result: "所有 metrics 子段字段完整（git_baseline/file_stats/line_stats/token_usage）"
+    checkpoint: complete
+  - id: 6
+    description: 验证 fix-init Token 快照的三种情况覆盖完整
+    status: completed
+    updated: "2026-06-05T20:10:00+08:00"
+    test_result: "三种情况覆盖完整（可用/不可用/执行失败），phase=fix-init"
+    checkpoint: complete
+
+review_counters:
+  global_review_rounds: 0
+  task_retries: {}
+
+cascade:
+  last_affected_phase: null
+  invalidated_from: null
+  reason: null
+  preserved_tasks: []
+
+metrics:
+  git_baseline:
+    start_sha: "fba6475b2053219b7e379e4212f552af5be28a6b"
+    start_time: "2026-06-05T19:30:00+08:00"
+    end_sha: null
+    end_time: null
+    dirty: false
+  file_stats:
+    files_added: 0
+    files_modified: 0
+    files_deleted: 0
+    total_files_changed: 0
+  line_stats:
+    lines_added: 0
+    lines_deleted: 0
+  token_usage:
+    total_input_tokens: 0
+    total_output_tokens: 0
+    total_tokens: 0
+    estimated_cost_usd: 0.0
+    ccusage_available: null
+    auto_installed: null
+    install_error: null
+    # token_data_unavailable 在 archive 阶段降级时动态设置，初始不需要
+    snapshots:
+      - phase: propose
+        timestamp: "2026-06-05T19:30:00+08:00"
+        input_tokens: null
+        output_tokens: null
+        unavailable: true
+      - phase: plan
+        timestamp: "2026-06-05T19:45:00+08:00"
+        input_tokens: null
+        output_tokens: null
+        unavailable: true
+      - phase: apply
+        timestamp: "2026-06-05T20:00:00+08:00"
+        input_tokens: null
+        output_tokens: null
+        unavailable: true

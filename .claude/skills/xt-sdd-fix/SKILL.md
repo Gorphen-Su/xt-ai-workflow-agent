@@ -67,7 +67,114 @@ Bug 修复专用入口，内置分诊逻辑，根据信息清晰度自动路由�
 
 1. 使用 `fix-<简述>` 格式命名（如 `fix-null-pointer-login`）
 2. 运行 `openspec new change "fix-<简述>"` 创建变更目录
-3. 初始化 sdd-state.yaml（与 propose 阶段相同结构，phase 设为路由目标阶段）
+
+**Metrics 前置检测**：创建 sdd-state.yaml 之前，先执行 ccusage 可用性检测：
+- 执行 `npx ccusage --version` 检测 ccusage 是否可用
+- 可用 → 标记 `ccusage_available: true`，跳过安装
+- 不可用 → 自动执行 `npm install -g ccusage` 全局安装
+  - 安装成功 → 重新验证 `npx ccusage --version`，标记 `ccusage_available: true`、`auto_installed: true`
+  - 安装失败 → 标记 `ccusage_available: false`、`auto_installed: false`、`install_error: "<错误信息>"`，提示用户手动安装 `npm install -g ccusage`，**不阻塞流程**
+- 将检测结果暂存，用于后续写入 sdd-state.yaml
+
+3. 初始化 sdd-state.yaml，包含完整的 metrics 段结构，phase 设为路由目标阶段：
+
+```yaml
+version: 1
+change: <fix-简述>
+
+phase: <路由目标阶段>
+checkpoint: entered
+
+phase_checkpoints:
+  propose: null
+  plan: null
+  apply: null
+  verify: null
+  archive: null
+
+superpowers_available: <true 或 false>
+
+tasks: []
+
+review_counters:
+  global_review_rounds: 0
+  task_retries: {}
+
+cascade:
+  last_affected_phase: null
+  invalidated_from: null
+  reason: null
+  preserved_tasks: []
+
+metrics:
+  git_baseline:
+    start_sha: null
+    start_time: null
+    end_sha: null
+    end_time: null
+    dirty: false
+  file_stats:
+    files_added: 0
+    files_modified: 0
+    files_deleted: 0
+    total_files_changed: 0
+  line_stats:
+    lines_added: 0
+    lines_deleted: 0
+  token_usage:
+    total_input_tokens: 0
+    total_output_tokens: 0
+    total_tokens: 0
+    estimated_cost_usd: 0.0
+    ccusage_available: null
+    auto_installed: null
+    install_error: null
+    # token_data_unavailable 在 archive 阶段降级时动态设置，初始不需要
+    snapshots: []
+```
+
+**Metrics 初始化操作：**
+
+1. 执行 `git rev-parse HEAD` 获取当前 commit SHA
+2. 执行 `git status --porcelain` 检查工作区是否干净
+3. 将获取的数据填入 sdd-state.yaml 的 metrics 段：
+   - `metrics.git_baseline.start_sha` ← `git rev-parse HEAD` 的输出
+   - `metrics.git_baseline.start_time` ← 当前 ISO 8601 时间戳
+   - `metrics.git_baseline.dirty` ← 工作区干净则为 `false`，有未提交更改则为 `true`
+   - `metrics.token_usage.ccusage_available` ← 步骤 2 前置检测的结果
+   - `metrics.token_usage.auto_installed` ← 是否自动安装了 ccusage
+   - `metrics.token_usage.install_error` ← 安装错误信息（如无错误则为 null）
+4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段
+5. 执行 Token 快照记录（fix-init 阶段）：
+   - 如果 `metrics.token_usage.ccusage_available` 为 true：
+     - 执行 `npx ccusage session --json` 获取当前会话 Token 数据
+     - 解析 JSON 输出，提取 input_tokens 和 output_tokens
+     - 追加一条快照到 `metrics.token_usage.snapshots`：
+       ```yaml
+       - phase: fix-init
+         timestamp: <当前 ISO 8601 时间戳>
+         input_tokens: <从 ccusage 获取>
+         output_tokens: <从 ccusage 获取>
+       ```
+   - 如果 `metrics.token_usage.ccusage_available` 为 false：
+     - 追加一条标记不可用的快照：
+       ```yaml
+       - phase: fix-init
+         timestamp: <当前 ISO 8601 时间戳>
+         input_tokens: null
+         output_tokens: null
+         unavailable: true
+       ```
+   - 如果 ccusage 命令执行失败（超时、格式错误等）：
+     - 追加一条标记错误的快照：
+       ```yaml
+       - phase: fix-init
+         timestamp: <当前 ISO 8601 时间戳>
+         input_tokens: null
+         output_tokens: null
+         error: "<错误信息>"
+       ```
+   - **不阻塞流程**：无论快照记录成功与否，继续执行步骤 3
 
 ### 步骤 3：按路由执行
 
