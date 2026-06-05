@@ -8,8 +8,8 @@ execution_mode: lightweight
 phase_checkpoints:
   propose: done
   plan: done
-  apply: entered
-  verify: null
+  apply: done
+  verify: code-reviewed
   archive: null
 
 superpowers_available: true
@@ -53,7 +53,7 @@ tasks:
     checkpoint: complete
 
 review_counters:
-  global_review_rounds: 0
+  global_review_rounds: 1
   task_retries: {}
 
 cascade:
@@ -99,6 +99,11 @@ metrics:
         unavailable: true
       - phase: apply
         timestamp: "2026-06-05T20:00:00+08:00"
+        input_tokens: null
+        output_tokens: null
+        unavailable: true
+      - phase: verify
+        timestamp: "2026-06-05T20:20:00+08:00"
         input_tokens: null
         output_tokens: null
         unavailable: true
