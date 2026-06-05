@@ -67,16 +67,14 @@ Bug 修复专用入口，内置分诊逻辑，根据信息清晰度自动路由�
 
 1. 使用 `fix-<简述>` 格式命名（如 `fix-null-pointer-login`）
 2. 运行 `openspec new change "fix-<简述>"` 创建变更目录
-
-**Metrics 前置检测**：创建 sdd-state.yaml 之前，先执行 ccusage 可用性检测：
-- 执行 `npx ccusage --version` 检测 ccusage 是否可用
-- 可用 → 标记 `ccusage_available: true`，跳过安装
-- 不可用 → 自动执行 `npm install -g ccusage` 全局安装
-  - 安装成功 → 重新验证 `npx ccusage --version`，标记 `ccusage_available: true`、`auto_installed: true`
-  - 安装失败 → 标记 `ccusage_available: false`、`auto_installed: false`、`install_error: "<错误信息>"`，提示用户手动安装 `npm install -g ccusage`，**不阻塞流程**
-- 将检测结果暂存，用于后续写入 sdd-state.yaml
-
-3. 初始化 sdd-state.yaml，包含完整的 metrics 段结构，phase 设为路由目标阶段：
+3. 检测 ccusage 可用性（Metrics 前置依赖）：
+   - 执行 `npx ccusage --version` 检测 ccusage 是否可用
+   - 可用 → 标记 `ccusage_available: true`，跳过安装
+   - 不可用 → 自动执行 `npm install -g ccusage` 全局安装
+     - 安装成功 → 重新验证 `npx ccusage --version`，标记 `ccusage_available: true`、`auto_installed: true`
+     - 安装失败 → 标记 `ccusage_available: false`、`auto_installed: false`、`install_error: "<错误信息>"`，提示用户手动安装 `npm install -g ccusage`，**不阻塞流程**
+   - 将检测结果暂存，用于后续写入 sdd-state.yaml
+4. 初始化 sdd-state.yaml，包含完整的 metrics 段结构，phase 设为路由目标阶段：
 
 ```yaml
 version: 1
@@ -141,7 +139,7 @@ metrics:
    - `metrics.git_baseline.start_sha` ← `git rev-parse HEAD` 的输出
    - `metrics.git_baseline.start_time` ← 当前 ISO 8601 时间戳
    - `metrics.git_baseline.dirty` ← 工作区干净则为 `false`，有未提交更改则为 `true`
-   - `metrics.token_usage.ccusage_available` ← 步骤 2 前置检测的结果
+   - `metrics.token_usage.ccusage_available` ← 步骤 2 第 3 条的检测结果
    - `metrics.token_usage.auto_installed` ← 是否自动安装了 ccusage
    - `metrics.token_usage.install_error` ← 安装错误信息（如无错误则为 null）
 4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段
