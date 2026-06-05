@@ -1,7 +1,7 @@
 version: 1
 change: xt-sdd-fix-metrics-init
 
-phase: apply
+phase: archive
 checkpoint: entered
 execution_mode: lightweight
 
@@ -9,8 +9,8 @@ phase_checkpoints:
   propose: done
   plan: done
   apply: done
-  verify: code-reviewed
-  archive: null
+  verify: done
+  archive: entered
 
 superpowers_available: true
 
@@ -104,6 +104,11 @@ metrics:
         unavailable: true
       - phase: verify
         timestamp: "2026-06-05T20:20:00+08:00"
+        input_tokens: null
+        output_tokens: null
+        unavailable: true
+      - phase: archive
+        timestamp: "2026-06-05T20:40:00+08:00"
         input_tokens: null
         output_tokens: null
         unavailable: true
