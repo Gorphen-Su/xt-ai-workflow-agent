@@ -29,10 +29,10 @@ tasks:
     checkpoint: complete
   - id: 3
     description: 在 xt-sdd-propose SKILL.md 中，步骤 0 之后增加 ccusage 环境检测与自动安装逻辑
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:02:00+08:00"
+    test_result: "ccusage 检测+自动安装逻辑已写入步骤 0 第 4 条"
+    checkpoint: complete
   - id: 4
     description: 在 xt-sdd-propose 中增加 propose 阶段 Token 快照记录指令
     status: pending

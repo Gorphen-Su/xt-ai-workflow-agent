@@ -24,6 +24,13 @@ xt-sdd 规格驱动开发的第一阶段：项目分析、需求澄清、方案�
    - 不可用 → 提示用户："Superpowers skill 未安装，部分功能将降级为自包含模式。是否安装？`/plugin install superpowers@claude-plugins-official`"
    - 用户选择跳过 → 标记 `superpowers_available: false`
 3. 将 superpowers_available 状态写入 sdd-state.yaml（步骤 5 创建时）
+4. 检查 ccusage 可用性并自动安装（Metrics Tracking 前置依赖）：
+   - 执行 `npx ccusage --version` 检测 ccusage 是否可用
+   - 可用 → 标记 `ccusage_available: true`，跳过安装
+   - 不可用 → 自动执行 `npm install -g ccusage` 全局安装
+     - 安装成功 → 重新验证 `npx ccusage --version`，标记 `ccusage_available: true`、`auto_installed: true`
+     - 安装失败 → 标记 `ccusage_available: false`、`auto_installed: false`、`install_error: "<错误信息>"`，提示用户手动安装 `npm install -g ccusage`，**不阻塞流程**
+   - 将检测结果写入 sdd-state.yaml（步骤 5 创建时填充 `metrics.token_usage.ccusage_available`、`metrics.token_usage.auto_installed`、`metrics.token_usage.install_error`）
 
 ### 步骤 1：Git 状态前置检查
 
