@@ -2,13 +2,13 @@ version: 1
 change: xt-sdd-metrics-tracking
 
 phase: apply
-checkpoint: all-tasks-complete
+checkpoint: done
 execution_mode: lightweight
 
 phase_checkpoints:
   propose: done
   plan: done
-  apply: all-tasks-complete
+  apply: done
   verify: null
   archive: null
 
