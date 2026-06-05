@@ -163,6 +163,12 @@ fix 流程的 verify 使用**聚焦验证**，非全量回归：
 
 fix 流程使用简化归档：
 
+**Metrics 汇总**：如果 sdd-state.yaml 中包含 `metrics.git_baseline.start_sha` 且非 null，在归档前应执行 metrics 汇总步骤（参照 xt-sdd-archive 的步骤 2.5/2.6/2.7）：
+1. 执行 Git Diff 统计（`git diff --name-status` + `git diff --numstat`）
+2. 执行 Token 数据汇总（从 snapshots 提取最后一个有效快照）
+3. 生成 `metrics-report.md`
+如果 metrics 段不存在或 start_sha 为 null，跳过此步骤。
+
 ```markdown
 # 归档记录 - fix-<简述>
 

@@ -1,16 +1,16 @@
 version: 1
 change: xt-sdd-metrics-tracking
 
-phase: apply
-checkpoint: done
+phase: archive
+checkpoint: entered
 execution_mode: lightweight
 
 phase_checkpoints:
   propose: done
   plan: done
   apply: done
-  verify: null
-  archive: null
+  verify: done
+  archive: entered
 
 superpowers_available: true
 
@@ -113,7 +113,7 @@ tasks:
     checkpoint: complete
 
 review_counters:
-  global_review_rounds: 0
+  global_review_rounds: 2
   task_retries: {}
 
 cascade:
@@ -121,3 +121,14 @@ cascade:
   invalidated_from: null
   reason: null
   preserved_tasks: []
+
+metrics:
+  token_usage:
+    ccusage_available: false
+    snapshots:
+      - phase: verify
+        timestamp: "2026-06-05T18:30:00+08:00"
+        error: "ccusage session --json 执行超时"
+      - phase: archive
+        timestamp: "2026-06-05T19:00:00+08:00"
+        unavailable: true

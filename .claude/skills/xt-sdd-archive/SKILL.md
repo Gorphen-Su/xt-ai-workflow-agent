@@ -55,16 +55,16 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
    - 所有统计字段（files_added、files_modified、files_deleted、total_files_changed）设为 null
    - 在 `metrics.line_stats` 中设置 `baseline_missing: true`
    - 所有行数字段（lines_added、lines_deleted）设为 null
-   - 跳过后续统计步骤，直接进入步骤 2.6
+   - 跳过后续统计步骤（2.5 的 4-9 均依赖 Git 基线），直接进入步骤 2.6（Token 汇总不依赖 Git 基线，仍可执行）
 3. **Git 脏状态检查**：执行 `git status --porcelain`
    - 如果有未提交更改 → 提醒用户："当前有未提交更改，建议先提交或 stash 以确保 diff 统计准确。是否继续？"
    - 用户选择提交 → 协助提交后继续统计
    - 用户选择继续 → 标记 `metrics.git_baseline.dirty: true`，继续统计
-4. **文件变更统计**：执行 `git diff --stat <start_sha> HEAD`
-   - 解析输出，提取每个文件的变更状态
-   - 新增文件（diff 中标记 `create mode` 或路径前缀为 `A`）→ `metrics.file_stats.files_added`
-   - 编辑文件 → `metrics.file_stats.files_modified`
-   - 删除文件（diff 中标记 `delete mode` 或路径前缀为 `D`）→ `metrics.file_stats.files_deleted`
+4. **文件变更统计**：执行 `git diff --name-status <start_sha> HEAD`（获取精确的 A/M/D 文件状态）和 `git diff --stat <start_sha> HEAD`（获取变更概览）
+   - 解析 `--name-status` 输出（格式：`<status>\t<filepath>`），按状态前缀统计：
+     - `A`（Added）→ `metrics.file_stats.files_added`
+     - `M`（Modified）→ `metrics.file_stats.files_modified`
+     - `D`（Deleted）→ `metrics.file_stats.files_deleted`
    - 总变更文件数 → `metrics.file_stats.total_files_changed`
 5. **代码行数统计**：执行 `git diff --numstat <start_sha> HEAD`
    - 逐行解析输出（格式：`<added>\t<deleted>\t<filepath>`）
@@ -87,6 +87,7 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
    - 设置 `metrics.token_usage.token_data_unavailable: true`
    - 跳过后续步骤
 3. **提取有效数据**：从 snapshots 数组中找到最后一个不包含 `unavailable` 且不包含 `error` 的快照
+   - **注意**：ccusage session 默认返回累计值（整个会话的 Token 总量），因此取最后一个有效快照即可代表总量。如果 ccusage 行为变更（改为增量值），则应累加所有有效快照。可在首次使用时验证 ccusage 输出格式
 4. 从该快照中提取 `input_tokens` 和 `output_tokens`
 5. 填充汇总字段：
    - `metrics.token_usage.total_input_tokens` ← 快照的 `input_tokens`

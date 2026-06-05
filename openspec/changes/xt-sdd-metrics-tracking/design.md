@@ -71,7 +71,6 @@ metrics:
   line_stats:
     lines_added: 0
     lines_deleted: 0
-    lines_modified: 0
   token_usage:
     total_input_tokens: 0
     total_output_tokens: 0

@@ -19,7 +19,7 @@
 - **AND** 在 `metrics.token_usage` 中记录 `auto_installed: false`、`install_error: "<错误信息>"`
 
 ### Requirement: 阶段切换时记录 Token 快照
-系统 SHALL 在 xt-sdd 每个阶段（propose/plan/apply/verify/archive）开始时，调用 ccusage 获取当前会话的 Token 用量，并将快照追加到 `metrics.token_usage.snapshots` 数组。
+系统 SHALL 在 xt-sdd 每个阶段（propose/plan/apply/verify/archive/fix）开始时，调用 ccusage 获取当前会话的 Token 用量，并将快照追加到 `metrics.token_usage.snapshots` 数组。
 
 #### Scenario: 正常记录 Token 快照
 - **WHEN** 任一 xt-sdd 阶段开始执行且 ccusage 可用

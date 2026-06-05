@@ -24,7 +24,7 @@ xt-sdd 规格驱动开发的第一阶段：项目分析、需求澄清、方案�
    - 不可用 → 提示用户："Superpowers skill 未安装，部分功能将降级为自包含模式。是否安装？`/plugin install superpowers@claude-plugins-official`"
    - 用户选择跳过 → 标记 `superpowers_available: false`
 3. 将 superpowers_available 状态写入 sdd-state.yaml（步骤 5 创建时）
-4. 检查 ccusage 可用性并自动安装（Metrics Tracking 前置依赖）：
+4. 检查 ccusage 可用性并自动安装（Metrics Tracking 前置依赖，作为步骤 0 的第 4 条子项，与 OpenSpec CLI/Superpowers 检测同级）：
    - 执行 `npx ccusage --version` 检测 ccusage 是否可用
    - 可用 → 标记 `ccusage_available: true`，跳过安装
    - 不可用 → 自动执行 `npm install -g ccusage` 全局安装
@@ -184,6 +184,7 @@ metrics:
     ccusage_available: null
     auto_installed: null
     install_error: null
+    # token_data_unavailable 在 archive 阶段降级时动态设置，初始不需要
     snapshots: []
 ```
 
