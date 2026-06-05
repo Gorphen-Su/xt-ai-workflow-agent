@@ -10,7 +10,7 @@ phase_checkpoints:
   plan: done
   apply: done
   verify: done
-  archive: entered
+  archive: archived
 
 superpowers_available: true
 
@@ -123,8 +123,28 @@ cascade:
   preserved_tasks: []
 
 metrics:
+  git_baseline:
+    start_sha: "c3c3a456721db047332c87fa59bc732331c3b600"
+    start_time: "2026-06-05T12:00:00+08:00"
+    end_sha: "acf51845e4a808a861df237e91ce5995f8f64837"
+    end_time: "2026-06-05T19:10:00+08:00"
+    dirty: false
+    baseline_source: "已知基线（自举场景，propose 阶段未记录 start_sha）"
+  file_stats:
+    files_added: 15
+    files_modified: 6
+    files_deleted: 0
+    total_files_changed: 21
+  line_stats:
+    lines_added: 1647
+    lines_deleted: 0
   token_usage:
+    total_input_tokens: null
+    total_output_tokens: null
+    total_tokens: null
+    estimated_cost_usd: null
     ccusage_available: false
+    token_data_unavailable: true
     snapshots:
       - phase: verify
         timestamp: "2026-06-05T18:30:00+08:00"
