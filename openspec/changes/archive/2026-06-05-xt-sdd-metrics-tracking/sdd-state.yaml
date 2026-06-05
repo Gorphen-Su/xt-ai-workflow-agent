@@ -2,7 +2,7 @@ version: 1
 change: xt-sdd-metrics-tracking
 
 phase: archive
-checkpoint: entered
+checkpoint: done
 execution_mode: lightweight
 
 phase_checkpoints:
@@ -10,7 +10,7 @@ phase_checkpoints:
   plan: done
   apply: done
   verify: done
-  archive: archived
+  archive: done
 
 superpowers_available: true
 
