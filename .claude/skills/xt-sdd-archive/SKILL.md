@@ -23,6 +23,19 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
 2. 如果 sdd-state.yaml 不存在，扫描 `openspec/changes/` 目录查找进行中的变更
 3. 如果有多个 → 使用 AskUserQuestion 让用户选择
 
+**Metrics Token 快照：** 步骤 1 完成后，记录 archive 阶段 Token 快照：
+1. 读取当前变更的 sdd-state.yaml，检查 `metrics.token_usage.ccusage_available`
+2. 如果为 true，执行 `npx ccusage session --json`，解析并追加快照到 `metrics.token_usage.snapshots`：
+   ```yaml
+   - phase: archive
+     timestamp: <当前 ISO 8601 时间戳>
+     input_tokens: <从 ccusage 获取>
+     output_tokens: <从 ccusage 获取>
+   ```
+3. 如果为 false，追加 `unavailable: true` 快照
+4. 如果 ccusage 执行失败，追加 `error: "<错误信息>"` 快照
+5. 使用 Edit 工具更新 sdd-state.yaml，**不阻塞流程**
+
 ### 步骤 2：归档前验证
 
 1. 读取 sdd-state.yaml，检查所有任务状态

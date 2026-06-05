@@ -53,7 +53,7 @@
 **Files:**
 - Modify: `.claude/skills/xt-sdd-propose/SKILL.md:158-166`（步骤 6 区域）
 
-- [ ] **Step 4: 在步骤 5 的 Metrics 初始化操作块末尾追加 Token 快照记录指令**
+- [x] **Step 4: 在步骤 5 的 Metrics 初始化操作块末尾追加 Token 快照记录指令**
 
   在步骤 5 的 `4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段` 行之后追加：
 
@@ -90,7 +90,7 @@
      - **不阻塞流程**：无论快照记录成功与否，继续执行步骤 6
   ```
 
-- [ ] **Step 5: 验证 propose 中包含完整 Token 快照逻辑**
+- [x] **Step 5: 验证 propose 中包含完整 Token 快照逻辑**
 
   Run: `grep -c "Token 快照记录" .claude/skills/xt-sdd-propose/SKILL.md`
 
@@ -111,7 +111,7 @@
 **Files:**
 - Modify: `.claude/skills/xt-sdd-plan/SKILL.md:18-23`（步骤 1 区域）
 
-- [ ] **Step 7: 在 xt-sdd-plan 的步骤 1（确定当前变更）末尾追加 Token 快照记录子步骤**
+- [x] **Step 7: 在 xt-sdd-plan 的步骤 1（确定当前变更）末尾追加 Token 快照记录子步骤**
 
   在 `xt-sdd-plan/SKILL.md` 的步骤 1 最后一个子步骤之后追加：
 
@@ -146,7 +146,7 @@
 **Files:**
 - Modify: `.claude/skills/xt-sdd-apply/SKILL.md:20-31`（步骤 1 区域）
 
-- [ ] **Step 9: 在 xt-sdd-apply 的步骤 1 末尾追加 Token 快照记录**
+- [x] **Step 9: 在 xt-sdd-apply 的步骤 1 末尾追加 Token 快照记录**
 
   在 `xt-sdd-apply/SKILL.md` 的步骤 1 最后一个子步骤之后追加（与 Task 3 格式一致，仅 `phase: apply`）：
 
@@ -175,7 +175,7 @@
 **Files:**
 - Modify: `.claude/skills/xt-sdd-verify/SKILL.md:20-25`（步骤 1 区域）
 
-- [ ] **Step 11: 在 xt-sdd-verify 的步骤 1 末尾追加 Token 快照记录**
+- [x] **Step 11: 在 xt-sdd-verify 的步骤 1 末尾追加 Token 快照记录**
 
   在 `xt-sdd-verify/SKILL.md` 的步骤 1 最后一个子步骤之后追加（格式一致，`phase: verify`）：
 
@@ -204,7 +204,7 @@
 **Files:**
 - Modify: `.claude/skills/xt-sdd-archive/SKILL.md:20-25`（步骤 1 区域）
 
-- [ ] **Step 13: 在 xt-sdd-archive 的步骤 1 末尾追加 Token 快照记录**
+- [x] **Step 13: 在 xt-sdd-archive 的步骤 1 末尾追加 Token 快照记录**
 
   在 `xt-sdd-archive/SKILL.md` 的步骤 1 最后一个子步骤之后追加（格式一致，`phase: archive`）：
 
@@ -233,7 +233,7 @@
 **Files:**
 - Modify: `.claude/skills/xt-sdd-fix/SKILL.md:19-52`（步骤 1 区域）
 
-- [ ] **Step 15: 在 xt-sdd-fix 的步骤 1 末尾追加 Token 快照记录**
+- [x] **Step 15: 在 xt-sdd-fix 的步骤 1 末尾追加 Token 快照记录**
 
   在 `xt-sdd-fix/SKILL.md` 的步骤 1 最后一个子步骤之后追加（格式一致，`phase: fix`）：
 
@@ -262,7 +262,7 @@
 **Files:**
 - Modify: 所有 6 个 xt-sdd-*.md 文件（已在 Task 2-7 中各自添加，本 Task 做最终验证）
 
-- [ ] **Step 17: 验证所有阶段 SKILL.md 均包含 Token 快照记录指令和降级处理**
+- [x] **Step 17: 验证所有阶段 SKILL.md 均包含 Token 快照记录指令和降级处理**
 
   Run:
   ```bash
@@ -276,7 +276,7 @@
 
   Expected: 每个文件中 `Token 快照` 至少为 1，`unavailable: true` 至少为 1，`error:` 至少为 1
 
-- [ ] **Step 18: 最终提交验证结果**
+- [x] **Step 18: 最终提交验证结果**
 
   Run:
   ```bash

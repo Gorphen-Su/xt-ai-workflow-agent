@@ -35,46 +35,46 @@ tasks:
     checkpoint: complete
   - id: 4
     description: 在 xt-sdd-propose 中增加 propose 阶段 Token 快照记录指令
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:03:00+08:00"
+    test_result: "propose Token 快照记录已写入步骤 5"
+    checkpoint: complete
   - id: 5
     description: 在 xt-sdd-plan 中增加 plan 阶段 Token 快照记录指令
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:03:00+08:00"
+    test_result: "plan Token 快照记录已写入步骤 1"
+    checkpoint: complete
   - id: 6
     description: 在 xt-sdd-apply 中增加 apply 阶段 Token 快照记录指令
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:03:00+08:00"
+    test_result: "apply Token 快照记录已写入步骤 1"
+    checkpoint: complete
   - id: 7
     description: 在 xt-sdd-verify 中增加 verify 阶段 Token 快照记录指令
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:03:00+08:00"
+    test_result: "verify Token 快照记录已写入步骤 1"
+    checkpoint: complete
   - id: 8
     description: 在 xt-sdd-archive 中增加 archive 阶段 Token 快照记录指令
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:03:00+08:00"
+    test_result: "archive Token 快照记录已写入步骤 1"
+    checkpoint: complete
   - id: 9
     description: 在 xt-sdd-fix 中增加 fix 阶段 Token 快照记录指令
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:03:00+08:00"
+    test_result: "fix Token 快照记录已写入步骤 1"
+    checkpoint: complete
   - id: 10
     description: 在所有阶段增加统一的降级处理说明并验证
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:03:00+08:00"
+    test_result: "6 个阶段均包含 unavailable 和 error 降级处理"
+    checkpoint: complete
   - id: 11
     description: 在 xt-sdd-archive 步骤 2 之后增加 Git Diff 文件与行数统计步骤 2.5
     status: pending

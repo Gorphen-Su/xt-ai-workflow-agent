@@ -18,6 +18,19 @@ Bug 修复专用入口，内置分诊逻辑，根据信息清晰度自动路由�
 
 ### 步骤 1：分诊判断
 
+**Metrics Token 快照：** 步骤 1 执行前，记录 fix 阶段 Token 快照：
+1. 读取当前变更的 sdd-state.yaml，检查 `metrics.token_usage.ccusage_available`
+2. 如果为 true，执行 `npx ccusage session --json`，解析并追加快照到 `metrics.token_usage.snapshots`：
+   ```yaml
+   - phase: fix
+     timestamp: <当前 ISO 8601 时间戳>
+     input_tokens: <从 ccusage 获取>
+     output_tokens: <从 ccusage 获取>
+   ```
+3. 如果为 false，追加 `unavailable: true` 快照
+4. 如果 ccusage 执行失败，追加 `error: "<错误信息>"` 快照
+5. 使用 Edit 工具更新 sdd-state.yaml，**不阻塞流程**
+
 分析用户描述 + 扫描相关代码，在两个维度上评估：
 
 ```

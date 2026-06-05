@@ -196,6 +196,36 @@ metrics:
    - `metrics.git_baseline.start_time` ← 当前 ISO 8601 时间戳
    - `metrics.git_baseline.dirty` ← 工作区干净则为 `false`，有未提交更改则为 `true`
 4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段
+5. 执行 Token 快照记录（propose 阶段）：
+   - 如果 `metrics.token_usage.ccusage_available` 为 true：
+     - 执行 `npx ccusage session --json` 获取当前会话 Token 数据
+     - 解析 JSON 输出，提取 input_tokens 和 output_tokens
+     - 追加一条快照到 `metrics.token_usage.snapshots`：
+       ```yaml
+       - phase: propose
+         timestamp: <当前 ISO 8601 时间戳>
+         input_tokens: <从 ccusage 获取>
+         output_tokens: <从 ccusage 获取>
+       ```
+   - 如果 `metrics.token_usage.ccusage_available` 为 false：
+     - 追加一条标记不可用的快照：
+       ```yaml
+       - phase: propose
+         timestamp: <当前 ISO 8601 时间戳>
+         input_tokens: null
+         output_tokens: null
+         unavailable: true
+       ```
+   - 如果 ccusage 命令执行失败（超时、格式错误等）：
+     - 追加一条标记错误的快照：
+       ```yaml
+       - phase: propose
+         timestamp: <当前 ISO 8601 时间戳>
+         input_tokens: null
+         output_tokens: null
+         error: "<错误信息>"
+       ```
+   - **不阻塞流程**：无论快照记录成功与否，继续执行步骤 6
 
 ### 步骤 6：探索与需求澄清
 

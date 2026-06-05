@@ -29,6 +29,19 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 6. 如果为 true → 确认 Superpowers skill 仍可用（检查 `superpowers:subagent-driven-development`）
 7. 如果 Superpowers 不可用（状态标记为 false 或运行时检测失败）→ 强制使用轻量模式
 
+**Metrics Token 快照：** 步骤 1 完成后，记录 apply 阶段 Token 快照：
+1. 读取当前变更的 sdd-state.yaml，检查 `metrics.token_usage.ccusage_available`
+2. 如果为 true，执行 `npx ccusage session --json`，解析并追加快照到 `metrics.token_usage.snapshots`：
+   ```yaml
+   - phase: apply
+     timestamp: <当前 ISO 8601 时间戳>
+     input_tokens: <从 ccusage 获取>
+     output_tokens: <从 ccusage 获取>
+   ```
+3. 如果为 false，追加 `unavailable: true` 快照
+4. 如果 ccusage 执行失败，追加 `error: "<错误信息>"` 快照
+5. 使用 Edit 工具更新 sdd-state.yaml，**不阻塞流程**
+
 ### 步骤 2：进度恢复
 
 1. 读取变更目录下的 `sdd-state.yaml`
