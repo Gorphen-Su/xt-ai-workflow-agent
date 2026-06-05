@@ -180,6 +180,16 @@ metrics:
     snapshots: []
 ```
 
+**Metrics 初始化操作：**
+
+1. 执行 `git rev-parse HEAD` 获取当前 commit SHA
+2. 执行 `git status --porcelain` 检查工作区是否干净
+3. 将获取的数据填入 sdd-state.yaml 的 metrics 段：
+   - `metrics.git_baseline.start_sha` ← `git rev-parse HEAD` 的输出
+   - `metrics.git_baseline.start_time` ← 当前 ISO 8601 时间戳
+   - `metrics.git_baseline.dirty` ← 工作区干净则为 `false`，有未提交更改则为 `true`
+4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段
+
 ### 步骤 6：探索与需求澄清
 
 1. 与用户讨论需求，每次只问一个关键问题

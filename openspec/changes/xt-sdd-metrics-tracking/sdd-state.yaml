@@ -17,16 +17,16 @@ superpowers_available: true
 tasks:
   - id: 1
     description: 在 xt-sdd-propose SKILL.md 的步骤 5 中，更新 sdd-state.yaml 模板，增加完整的 metrics 段结构
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:00:00+08:00"
+    test_result: "metrics 段关键字段验证通过"
+    checkpoint: complete
   - id: 2
     description: 在 xt-sdd-propose SKILL.md 的步骤 5 中，增加记录 git rev-parse HEAD 到 metrics.git_baseline.start_sha 的指令
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-05T12:01:00+08:00"
+    test_result: "步骤 5 结构完整，Metrics 初始化操作块位置正确"
+    checkpoint: complete
   - id: 3
     description: 在 xt-sdd-propose SKILL.md 中，步骤 0 之后增加 ccusage 环境检测与自动安装逻辑
     status: pending

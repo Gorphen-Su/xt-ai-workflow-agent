@@ -70,7 +70,7 @@
 **Files:**
 - Modify: `.claude/skills/xt-sdd-propose/SKILL.md:156-157`（步骤 5 模板之后的操作指令区域）
 
-- [ ] **Step 4: 在步骤 5 的 YAML 模板之后、步骤 6 之前，插入 Git 基线记录操作指令**
+- [x] **Step 4: 在步骤 5 的 YAML 模板之后、步骤 6 之前，插入 Git 基线记录操作指令**
 
   在 ` ``` ` （模板结束标记）之后、`### 步骤 6` 之前，插入以下操作指令块：
 
@@ -87,7 +87,7 @@
   4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段
   ```
 
-- [ ] **Step 5: 验证步骤 5 结构完整**
+- [x] **Step 5: 验证步骤 5 结构完整**
 
   Run: `grep -n "### 步骤 5\|### 步骤 6\|Metrics 初始化操作\|git_baseline.start_sha" .claude/skills/xt-sdd-propose/SKILL.md`
 
