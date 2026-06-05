@@ -273,6 +273,39 @@ cascade:
   invalidated_from: null
   reason: null
   preserved_tasks: []
+
+# 指标追踪（metrics tracking）
+metrics:
+  git_baseline:
+    start_sha: <propose 阶段的 commit SHA>
+    start_time: <ISO 8601 时间戳>
+    end_sha: <archive 阶段的 commit SHA>
+    end_time: <ISO 8601 时间戳>
+    dirty: <true 或 false，propose 时工作区是否干净>
+  file_stats:
+    files_added: 0
+    files_modified: 0
+    files_deleted: 0
+    total_files_changed: 0
+  line_stats:
+    lines_added: 0
+    lines_deleted: 0
+  token_usage:
+    total_input_tokens: 0
+    total_output_tokens: 0
+    total_tokens: 0
+    estimated_cost_usd: 0.0
+    ccusage_available: <true 或 false 或 null>
+    auto_installed: <true 或 false 或 null>
+    install_error: <错误信息字符串或 null>
+    token_data_unavailable: <true 或 null>
+    snapshots:
+      - phase: <阶段名>
+        timestamp: <ISO 8601>
+        input_tokens: <数值或 null>
+        output_tokens: <数值或 null>
+        unavailable: <true 或 omit>
+        error: <错误信息或 omit>
 ```
 
 ### 各阶段 checkpoint 定义

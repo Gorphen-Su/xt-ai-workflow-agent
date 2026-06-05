@@ -112,7 +112,7 @@
 **Files:**
 - Modify: `.claude/skills/xt-sdd-propose/SKILL.md:198-241`（sdd-state.yaml 结构规范段落）
 
-- [ ] **Step 7: 在 sdd-state.yaml 结构规范段落中，在 cascade 段之后追加 metrics 段的字段说明**
+- [x] **Step 7: 在 sdd-state.yaml 结构规范段落中，在 cascade 段之后追加 metrics 段的字段说明**
 
   在 `preserved_tasks: []` 之后、` ``` ` 结束标记之前，追加：
 
@@ -152,7 +152,7 @@
           error: <错误信息或 omit>
   ```
 
-- [ ] **Step 8: 验证结构规范文档与模板一致**
+- [x] **Step 8: 验证结构规范文档与模板一致**
 
   Run: `grep -c "metrics:" .claude/skills/xt-sdd-propose/SKILL.md`
 
