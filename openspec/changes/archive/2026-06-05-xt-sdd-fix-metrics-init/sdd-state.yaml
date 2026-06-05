@@ -10,7 +10,7 @@ phase_checkpoints:
   plan: done
   apply: done
   verify: done
-  archive: entered
+  archive: done
 
 superpowers_available: true
 
@@ -66,25 +66,26 @@ metrics:
   git_baseline:
     start_sha: "fba6475b2053219b7e379e4212f552af5be28a6b"
     start_time: "2026-06-05T19:30:00+08:00"
-    end_sha: null
-    end_time: null
+    end_sha: "b308f4facc7d63fb851b72d435d0481a07e7a76f"
+    end_time: "2026-06-05T20:45:00+08:00"
     dirty: false
   file_stats:
-    files_added: 0
-    files_modified: 0
+    files_added: 8
+    files_modified: 1
     files_deleted: 0
-    total_files_changed: 0
+    total_files_changed: 9
   line_stats:
-    lines_added: 0
-    lines_deleted: 0
+    lines_added: 420
+    lines_deleted: 1
   token_usage:
-    total_input_tokens: 0
-    total_output_tokens: 0
-    total_tokens: 0
-    estimated_cost_usd: 0.0
+    total_input_tokens: null
+    total_output_tokens: null
+    total_tokens: null
+    estimated_cost_usd: null
     ccusage_available: null
     auto_installed: null
     install_error: null
+    token_data_unavailable: true
     # token_data_unavailable 在 archive 阶段降级时动态设置，初始不需要
     snapshots:
       - phase: propose
