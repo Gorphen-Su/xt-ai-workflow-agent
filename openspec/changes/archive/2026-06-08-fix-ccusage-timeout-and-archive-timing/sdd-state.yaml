@@ -2,14 +2,14 @@ version: 1
 change: fix-ccusage-timeout-and-archive-timing
 
 phase: archive
-checkpoint: entered
+checkpoint: complete
 
 phase_checkpoints:
   propose: null
   plan: null
   apply: done
   verify: done
-  archive: null
+  archive: done
 
 superpowers_available: true
 
@@ -29,22 +29,22 @@ metrics:
   git_baseline:
     start_sha: "0133143970290e485b66034fc32c7974a36335ba"
     start_time: "2026-06-08T14:42:00+08:00"
-    end_sha: null
-    end_time: null
+    end_sha: "8d67c34f61de7fab0132b789c64ac8d33907cf50"
+    end_time: "2026-06-08T14:55:00+08:00"
     dirty: false
   file_stats:
-    files_added: 0
-    files_modified: 0
+    files_added: 2
+    files_modified: 6
     files_deleted: 0
-    total_files_changed: 0
+    total_files_changed: 8
   line_stats:
-    lines_added: 0
-    lines_deleted: 0
+    lines_added: 74
+    lines_deleted: 16
   token_usage:
-    total_input_tokens: 0
-    total_output_tokens: 0
-    total_tokens: 0
-    estimated_cost_usd: 0.0
+    total_input_tokens: 975603
+    total_output_tokens: 43612
+    total_tokens: 1019215
+    estimated_cost_usd: 0
     ccusage_available: true
     auto_installed: false
     install_error: null
@@ -53,3 +53,7 @@ metrics:
         timestamp: "2026-06-08T14:42:00+08:00"
         input_tokens: 591642
         output_tokens: 30805
+      - phase: archive
+        timestamp: "2026-06-08T14:55:00+08:00"
+        input_tokens: 975603
+        output_tokens: 43612
