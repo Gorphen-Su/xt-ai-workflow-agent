@@ -41,13 +41,13 @@
 
 ## 6. CLI 入口与子命令
 
-- [ ] 6.1 实现 `packages/cli/bin/xt-sdd-skills.js`：Node.js 版本检查（< 18 退出 1）、argv 解析（识别子命令和全局参数）、调度到对应子命令
-- [ ] 6.2 实现 `packages/cli/src/commands/install.js`：findProjectRoot → fetchTarball → extractTarball → installFiles(install) → cleanup → 输出摘要
-- [ ] 6.3 实现 `packages/cli/src/commands/update.js`：findProjectRoot → fetchTarball → extractTarball → installFiles(update，内部调 backup) → checkBackupCount 提示 → cleanup → 输出摘要
-- [ ] 6.4 实现 `packages/cli/src/commands/list.js`：直接读取 manifest 输出清单和默认 source/ref，不联网
-- [ ] 6.5 实现统一错误处理：所有 *Error 转化为对应退出码（1/2/3/4）和彩色 stderr 输出
-- [ ] 6.6 实现 usage / help 输出（无参数时 stdout 输出，未知子命令时 stderr 输出）
-- [ ] 6.7 编写 CLI 入口集成测试：用 child_process 执行各子命令，验证退出码、stdout、stderr
+- [x] 6.1 实现 `packages/cli/bin/xt-sdd-skills.js`：Node.js 版本检查（< 18 退出 1）、argv 解析（识别子命令和全局参数）、调度到对应子命令
+- [x] 6.2 实现 `packages/cli/src/commands/install.js`：findProjectRoot → fetchTarball → extractTarball → installFiles(install) → cleanup → 输出摘要
+- [x] 6.3 实现 `packages/cli/src/commands/update.js`：findProjectRoot → fetchTarball → extractTarball → installFiles(update，内部调 backup) → checkBackupCount 提示 → cleanup → 输出摘要
+- [x] 6.4 实现 `packages/cli/src/commands/list.js`：直接读取 manifest 输出清单和默认 source/ref，不联网
+- [x] 6.5 实现统一错误处理：所有 *Error 转化为对应退出码（1/2/3/4）和彩色 stderr 输出
+- [x] 6.6 实现 usage / help 输出（无参数时 stdout 输出，未知子命令时 stderr 输出）
+- [x] 6.7 编写 CLI 入口集成测试：用 child_process 执行各子命令，验证退出码、stdout、stderr
 
 ## 7. 端到端验证与发布准备
 
