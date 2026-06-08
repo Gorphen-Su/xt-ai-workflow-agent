@@ -8,7 +8,7 @@ Commands:
 
 Global options:
   --tag <ref>             Git ref to pull from (default: main)
-  --source <owner/repo>   GitHub source (default: GorphenSu/xt-ai-workflow-agent)
+  --source <owner/repo>   GitHub source (default: Gorphen-Su/xt-ai-workflow-agent)
   --dry-run               Preview operations without writing any files
   --no-backup             update only — skip the backup step (irreversible)
 

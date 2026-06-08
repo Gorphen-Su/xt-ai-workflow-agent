@@ -1,6 +1,6 @@
 # xt-sdd-skills
 
-`npx` CLI to install and update the [xt-sdd](https://github.com/GorphenSu/xt-ai-workflow-agent) workflow skills
+`npx` CLI to install and update the [xt-sdd](https://github.com/Gorphen-Su/xt-ai-workflow-agent) workflow skills
 in any Claude Code project.
 
 ## Why
@@ -70,7 +70,7 @@ All commands accept these global options:
 | Option | Default | Description |
 |--------|---------|-------------|
 | `--tag <ref>` | `main` | Git ref to pull from (branch name or git tag, e.g. `v1.0.0`) |
-| `--source <owner/repo>` | `GorphenSu/xt-ai-workflow-agent` | GitHub repo to pull from (for forks/mirrors) |
+| `--source <owner/repo>` | `Gorphen-Su/xt-ai-workflow-agent` | GitHub repo to pull from (for forks/mirrors) |
 | `--dry-run` | off | Print what would be done without touching any files |
 | `--no-backup` | off | `update` only — skip the backup step (irreversible, use with care) |
 

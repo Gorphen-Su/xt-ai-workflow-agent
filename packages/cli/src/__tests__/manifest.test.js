@@ -36,7 +36,7 @@ describe('manifest', () => {
   });
 
   it('exports DEFAULT_SOURCE and DEFAULT_REF', () => {
-    expect(DEFAULT_SOURCE).toBe('GorphenSu/xt-ai-workflow-agent');
+    expect(DEFAULT_SOURCE).toBe('Gorphen-Su/xt-ai-workflow-agent');
     expect(DEFAULT_REF).toBe('main');
   });
 

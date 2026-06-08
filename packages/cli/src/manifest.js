@@ -1,7 +1,7 @@
 // xt-sdd-skills 分发清单
 // 硬编码以确保可控、可审计。新增/删除 skill 时改这里即可。
 
-export const DEFAULT_SOURCE = 'GorphenSu/xt-ai-workflow-agent';
+export const DEFAULT_SOURCE = 'Gorphen-Su/xt-ai-workflow-agent';
 export const DEFAULT_REF = 'main';
 
 export const MANIFEST = Object.freeze({

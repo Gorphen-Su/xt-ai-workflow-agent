@@ -48,7 +48,7 @@ describe('CLI 入口', () => {
     expect(r.stdout).toContain('Available');
     expect(r.stdout).toContain('xt-sdd-propose');
     expect(r.stdout).toContain('xt-sdd-fix');
-    expect(r.stdout).toContain('GorphenSu/xt-ai-workflow-agent');
+    expect(r.stdout).toContain('Gorphen-Su/xt-ai-workflow-agent');
   });
 
   it('未知子命令 → 错误信息到 stderr，exit 1', async () => {
