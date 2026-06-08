@@ -25,7 +25,7 @@ xt-sdd 规格驱动开发的第四阶段：文档同步 + 双重验证确保实�
 
 **Metrics Token 快照：** 步骤 1 完成后，记录 verify 阶段 Token 快照：
 1. 读取当前变更的 sdd-state.yaml，检查 `metrics.token_usage.ccusage_available`
-2. 如果为 true，执行 `npx ccusage session --json`，解析并追加快照到 `metrics.token_usage.snapshots`：
+2. 如果为 true，执行 `npx ccusage session --json`（**Bash 调用 timeout 至少 120000ms**，session 数据规模大时实测可达 45-60 秒；曾在本项目自举 verify 阶段真实超时），解析并追加快照到 `metrics.token_usage.snapshots`：
    ```yaml
    - phase: verify
      timestamp: <当前 ISO 8601 时间戳>

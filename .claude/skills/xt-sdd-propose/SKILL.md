@@ -25,9 +25,9 @@ xt-sdd 规格驱动开发的第一阶段：项目分析、需求澄清、方案�
    - 用户选择跳过 → 标记 `superpowers_available: false`
 3. 将 superpowers_available 状态写入 sdd-state.yaml（步骤 5 创建时）
 4. 检查 ccusage 可用性并自动安装（Metrics Tracking 前置依赖，作为步骤 0 的第 4 条子项，与 OpenSpec CLI/Superpowers 检测同级）：
-   - 执行 `npx ccusage --version` 检测 ccusage 是否可用
+   - 执行 `npx ccusage --version` 检测 ccusage 是否可用（**Bash 调用 timeout 至少 60000ms**，npx 冷启动可能较慢）
    - 可用 → 标记 `ccusage_available: true`，跳过安装
-   - 不可用 → 自动执行 `npm install -g ccusage` 全局安装
+   - 不可用 → 自动执行 `npm install -g ccusage` 全局安装（**Bash 调用 timeout 至少 180000ms**，npm 全局安装含依赖下载）
      - 安装成功 → 重新验证 `npx ccusage --version`，标记 `ccusage_available: true`、`auto_installed: true`
      - 安装失败 → 标记 `ccusage_available: false`、`auto_installed: false`、`install_error: "<错误信息>"`，提示用户手动安装 `npm install -g ccusage`，**不阻塞流程**
    - 将检测结果写入 sdd-state.yaml（步骤 5 创建时填充 `metrics.token_usage.ccusage_available`、`metrics.token_usage.auto_installed`、`metrics.token_usage.install_error`）
@@ -199,7 +199,7 @@ metrics:
 4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段
 5. 执行 Token 快照记录（propose 阶段）：
    - 如果 `metrics.token_usage.ccusage_available` 为 true：
-     - 执行 `npx ccusage session --json` 获取当前会话 Token 数据
+     - 执行 `npx ccusage session --json` 获取当前会话 Token 数据（**Bash 调用 timeout 至少 120000ms**，session 数据规模大时实测可达 45-60 秒）
      - 解析 JSON 输出，提取 input_tokens 和 output_tokens
      - 追加一条快照到 `metrics.token_usage.snapshots`：
        ```yaml

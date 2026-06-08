@@ -20,7 +20,7 @@ Bug 修复专用入口，内置分诊逻辑，根据信息清晰度自动路由�
 
 **Metrics Token 快照：** 步骤 1 执行前，记录 fix 阶段 Token 快照：
 1. 读取当前变更的 sdd-state.yaml，检查 `metrics.token_usage.ccusage_available`
-2. 如果为 true，执行 `npx ccusage session --json`，解析并追加快照到 `metrics.token_usage.snapshots`：
+2. 如果为 true，执行 `npx ccusage session --json`（**Bash 调用 timeout 至少 120000ms**，session 数据规模大时实测可达 45-60 秒），解析并追加快照到 `metrics.token_usage.snapshots`：
    ```yaml
    - phase: fix
      timestamp: <当前 ISO 8601 时间戳>
@@ -68,9 +68,9 @@ Bug 修复专用入口，内置分诊逻辑，根据信息清晰度自动路由�
 1. 使用 `fix-<简述>` 格式命名（如 `fix-null-pointer-login`）
 2. 运行 `openspec new change "fix-<简述>"` 创建变更目录
 3. 检测 ccusage 可用性（Metrics 前置依赖）：
-   - 执行 `npx ccusage --version` 检测 ccusage 是否可用
+   - 执行 `npx ccusage --version` 检测 ccusage 是否可用（**Bash 调用 timeout 至少 60000ms**，npx 冷启动可能较慢）
    - 可用 → 标记 `ccusage_available: true`，跳过安装
-   - 不可用 → 自动执行 `npm install -g ccusage` 全局安装
+   - 不可用 → 自动执行 `npm install -g ccusage` 全局安装（**Bash 调用 timeout 至少 180000ms**，npm 全局安装含依赖下载）
      - 安装成功 → 重新验证 `npx ccusage --version`，标记 `ccusage_available: true`、`auto_installed: true`
      - 安装失败 → 标记 `ccusage_available: false`、`auto_installed: false`、`install_error: "<错误信息>"`，提示用户手动安装 `npm install -g ccusage`，**不阻塞流程**
    - 将检测结果暂存，用于后续写入 sdd-state.yaml
@@ -145,7 +145,7 @@ metrics:
 4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段
 5. 执行 Token 快照记录（fix-init 阶段）：
    - 如果 `metrics.token_usage.ccusage_available` 为 true：
-     - 执行 `npx ccusage session --json` 获取当前会话 Token 数据
+     - 执行 `npx ccusage session --json` 获取当前会话 Token 数据（**Bash 调用 timeout 至少 120000ms**，session 数据规模大时实测可达 45-60 秒）
      - 解析 JSON 输出，提取 input_tokens 和 output_tokens
      - 追加一条快照到 `metrics.token_usage.snapshots`：
        ```yaml

@@ -25,7 +25,7 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
 
 **Metrics Token 快照：** 步骤 1 完成后，记录 archive 阶段 Token 快照：
 1. 读取当前变更的 sdd-state.yaml，检查 `metrics.token_usage.ccusage_available`
-2. 如果为 true，执行 `npx ccusage session --json`，解析并追加快照到 `metrics.token_usage.snapshots`：
+2. 如果为 true，执行 `npx ccusage session --json`（**Bash 调用 timeout 至少 120000ms**，session 数据规模大时实测可达 45-60 秒），解析并追加快照到 `metrics.token_usage.snapshots`：
    ```yaml
    - phase: archive
      timestamp: <当前 ISO 8601 时间戳>
@@ -56,10 +56,11 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
    - 在 `metrics.line_stats` 中设置 `baseline_missing: true`
    - 所有行数字段（lines_added、lines_deleted）设为 null
    - 跳过后续统计步骤（2.5 的 4-9 均依赖 Git 基线），直接进入步骤 2.6（Token 汇总不依赖 Git 基线，仍可执行）
-3. **Git 脏状态检查**：执行 `git status --porcelain`
-   - 如果有未提交更改 → 提醒用户："当前有未提交更改，建议先提交或 stash 以确保 diff 统计准确。是否继续？"
-   - 用户选择提交 → 协助提交后继续统计
-   - 用户选择继续 → 标记 `metrics.git_baseline.dirty: true`，继续统计
+3. **Git 脏状态检查（含归档前置 commit 约束）**：执行 `git status --porcelain`
+   - 如果有未提交更改 → 提醒用户："**当前有未提交更改，必须先提交后再统计。** 归档阶段的 tasks.md checkbox 勾选、sdd-state.yaml 状态更新等均需纳入本次变更范围，否则文件计数会少算（实测案例：xt-sdd-fix-metrics-init 因此少算 1 个文件）。是否协助提交？"
+     - **强烈建议**：使用 AskUserQuestion 推荐 "立即提交"，避免脏状态影响统计准确性
+     - 用户选择提交 → 协助生成中文 commit message，`git add` 相关文件后 commit；commit 完成后**重新执行 `git status --porcelain` 验证工作区干净**，再进入第 4 步
+     - 用户选择继续（不提交）→ 标记 `metrics.git_baseline.dirty: true`，继续统计，并在 metrics-report.md 中追加 "⚠️ 工作区脏状态统计" 提示
 4. **文件变更统计**：执行 `git diff --name-status <start_sha> HEAD`（获取精确的 A/M/D 文件状态）和 `git diff --stat <start_sha> HEAD`（获取变更概览）
    - 解析 `--name-status` 输出（格式：`<status>\t<filepath>`），按状态前缀统计：
      - `A`（Added）→ `metrics.file_stats.files_added`
@@ -73,7 +74,7 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
    - 累加所有非二进制文件的 deleted 列 → `metrics.line_stats.lines_deleted`
 6. **无变更处理**：如果 start_sha 与 HEAD 相同，所有 file_stats 字段设为 0，所有 line_stats 字段设为 0
 7. 使用 Edit 工具将统计结果写入 sdd-state.yaml 的 metrics 段
-8. 记录 `metrics.git_baseline.end_sha` ← `git rev-parse HEAD`
+8. 记录 `metrics.git_baseline.end_sha` ← `git rev-parse HEAD`（**注意**：第 3 步已保证此时工作区干净，HEAD 即为归档前最后一次 commit；如果归档后还有 commit（如归档收尾的 archive.md 提交），其文件不会被本次统计包含——这是预期行为，归档元数据本身不应计入变更统计）
 9. 记录 `metrics.git_baseline.end_time` ← 当前 ISO 8601 时间戳
 
 ### 步骤 2.6：Metrics Token 数据汇总

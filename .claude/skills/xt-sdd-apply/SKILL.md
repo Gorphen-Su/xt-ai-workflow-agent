@@ -31,7 +31,7 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 
 **Metrics Token 快照：** 步骤 1 完成后，记录 apply 阶段 Token 快照：
 1. 读取当前变更的 sdd-state.yaml，检查 `metrics.token_usage.ccusage_available`
-2. 如果为 true，执行 `npx ccusage session --json`，解析并追加快照到 `metrics.token_usage.snapshots`：
+2. 如果为 true，执行 `npx ccusage session --json`（**Bash 调用 timeout 至少 120000ms**，session 数据规模大时实测可达 45-60 秒），解析并追加快照到 `metrics.token_usage.snapshots`：
    ```yaml
    - phase: apply
      timestamp: <当前 ISO 8601 时间戳>
