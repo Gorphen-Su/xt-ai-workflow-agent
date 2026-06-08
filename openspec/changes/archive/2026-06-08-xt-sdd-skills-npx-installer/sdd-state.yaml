@@ -2,14 +2,14 @@ version: 1
 change: xt-sdd-skills-npx-installer
 
 phase: archive
-checkpoint: archived
+checkpoint: done
 
 phase_checkpoints:
   propose: done
   plan: done
   apply: all-tasks-complete
   verify: done
-  archive: archived
+  archive: done
 
 superpowers_available: true
 
