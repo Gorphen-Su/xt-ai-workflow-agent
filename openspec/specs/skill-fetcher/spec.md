@@ -1,12 +1,11 @@
-# Spec: skill-fetcher
+# skill-fetcher Specification
 
-GitHub tarball 拉取器。
-
-## ADDED Requirements
-
+## Purpose
+TBD - created by archiving change xt-sdd-skills-npx-installer. Update Purpose after archive.
+## Requirements
 ### Requirement: fetcher 必须从 GitHub codeload 下载 tarball
 
-fetcher 模块必须实现 `fetchTarball(source, ref)` 函数，从 `https://codeload.github.com/<source>/tar.gz/<ref>` 下载源仓 tarball 到操作系统临时目录。
+MUST fetcher 模块必须实现 `fetchTarball(source, ref)` 函数，从 `https://codeload.github.com/<source>/tar.gz/<ref>` 下载源仓 tarball 到操作系统临时目录。
 
 #### Scenario: 成功下载 main 分支 tarball
 
@@ -35,7 +34,7 @@ fetcher 模块必须实现 `fetchTarball(source, ref)` 函数，从 `https://cod
 
 ### Requirement: fetcher 必须解压 tarball 并验证清单文件存在
 
-fetcher 必须实现 `extractTarball(tarballPath, manifest)` 函数，将 tarball 解压到临时目录，并校验 manifest 中所有必需文件均存在。
+MUST fetcher 必须实现 `extractTarball(tarballPath, manifest)` 函数，将 tarball 解压到临时目录，并校验 manifest 中所有必需文件均存在。
 
 #### Scenario: 解压并通过清单校验
 
@@ -54,7 +53,7 @@ fetcher 必须实现 `extractTarball(tarballPath, manifest)` 函数，将 tarbal
 
 ### Requirement: fetcher 必须在完成后清理临时文件
 
-fetcher 必须提供 `cleanup(paths)` 函数，删除拉取过程产生的临时 tarball 文件和解压目录。
+MUST fetcher 必须提供 `cleanup(paths)` 函数，删除拉取过程产生的临时 tarball 文件和解压目录。
 
 #### Scenario: 清理成功
 
@@ -65,3 +64,4 @@ fetcher 必须提供 `cleanup(paths)` 函数，删除拉取过程产生的临时
 
 - **WHEN** 调用 `cleanup()` 时某些路径已被其他进程删除
 - **THEN** 函数必须静默忽略 ENOENT 错误，不抛异常
+

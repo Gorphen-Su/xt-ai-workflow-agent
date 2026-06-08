@@ -2,14 +2,14 @@ version: 1
 change: xt-sdd-skills-npx-installer
 
 phase: archive
-checkpoint: entered
+checkpoint: archived
 
 phase_checkpoints:
   propose: done
   plan: done
   apply: all-tasks-complete
   verify: done
-  archive: entered
+  archive: archived
 
 superpowers_available: true
 
@@ -233,22 +233,23 @@ metrics:
   git_baseline:
     start_sha: ca10ae0fba68fe69529e909868353e41242d371d
     start_time: 2026-06-08T15:18:00+08:00
-    end_sha: null
-    end_time: null
-    dirty: false
+    end_sha: 44857898687b519da95977ae2d9aea425c31fe42
+    end_time: 2026-06-08T16:30:00+08:00
+    dirty: true
+    dirty_note: "1 pre-existing deletion (.claude/skills/xt-superpowers-openspec-workflow/SKILL.md) unrelated to this change"
   file_stats:
-    files_added: 0
+    files_added: 48
     files_modified: 0
     files_deleted: 0
-    total_files_changed: 0
+    total_files_changed: 48
   line_stats:
-    lines_added: 0
+    lines_added: 5645
     lines_deleted: 0
   token_usage:
-    total_input_tokens: 0
-    total_output_tokens: 0
-    total_tokens: 0
-    estimated_cost_usd: 0.0
+    total_input_tokens: 763098
+    total_output_tokens: 162784
+    total_tokens: 925882
+    estimated_cost_usd: 17.28
     ccusage_available: true
     auto_installed: false
     install_error: null

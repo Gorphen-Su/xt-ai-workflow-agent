@@ -1,12 +1,11 @@
-# Spec: skill-backup
+# skill-backup Specification
 
-升级前备份管理。
-
-## ADDED Requirements
-
+## Purpose
+TBD - created by archiving change xt-sdd-skills-npx-installer. Update Purpose after archive.
+## Requirements
 ### Requirement: backup 必须在 update 前完整复制已有 skill
 
-backup 必须实现 `createBackup(projectRoot, manifest, meta)` 函数，把 manifest 中声明且目标项目已存在的 skill 完整复制到 `.claude/skills/.backup/<timestamp>/`。
+MUST backup 必须实现 `createBackup(projectRoot, manifest, meta)` 函数，把 manifest 中声明且目标项目已存在的 skill 完整复制到 `.claude/skills/.backup/<timestamp>/`。
 
 #### Scenario: 备份单个已存在的 skill
 
@@ -35,7 +34,7 @@ backup 必须实现 `createBackup(projectRoot, manifest, meta)` 函数，把 man
 
 ### Requirement: backup 必须写入元数据文件
 
-backup 必须在备份目录中写入 `_backup-meta.json`，记录备份时间、源版本、目标版本、备份的清单。
+MUST backup 必须在备份目录中写入 `_backup-meta.json`，记录备份时间、源版本、目标版本、备份的清单。
 
 #### Scenario: 元数据格式
 
@@ -49,7 +48,7 @@ backup 必须在备份目录中写入 `_backup-meta.json`，记录备份时间�
 
 ### Requirement: backup 必须在备份目录数过多时提示用户清理
 
-backup 必须实现 `checkBackupCount(projectRoot)` 函数，扫描 `.claude/skills/.backup/` 子目录数。
+MUST backup 必须实现 `checkBackupCount(projectRoot)` 函数，扫描 `.claude/skills/.backup/` 子目录数。
 
 #### Scenario: 备份数量正常
 
@@ -60,3 +59,4 @@ backup 必须实现 `checkBackupCount(projectRoot)` 函数，扫描 `.claude/ski
 
 - **WHEN** `.claude/skills/.backup/` 下有 > 5 个子目录
 - **THEN** 函数必须返回 `{ count: <N>, shouldWarn: true, oldestDirs: [<最早的 3 个目录名>] }`，调用方据此向用户输出黄色提示
+

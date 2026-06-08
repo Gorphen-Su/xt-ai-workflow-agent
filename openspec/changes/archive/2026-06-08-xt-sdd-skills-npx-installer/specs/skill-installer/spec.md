@@ -6,7 +6,7 @@
 
 ### Requirement: installer 必须识别项目根目录
 
-installer 必须实现 `findProjectRoot(startDir)` 函数，从给定目录向上查找项目根标识。
+MUST installer 必须实现 `findProjectRoot(startDir)` 函数，从给定目录向上查找项目根标识。
 
 #### Scenario: 当前目录是 git 仓库
 
@@ -30,7 +30,7 @@ installer 必须实现 `findProjectRoot(startDir)` 函数，从给定目录向�
 
 ### Requirement: installer 必须支持 install 和 update 两种模式
 
-installer 必须实现 `installFiles(extractedDir, projectRoot, manifest, mode)` 函数，根据 mode 选择行为。
+MUST installer 必须实现 `installFiles(extractedDir, projectRoot, manifest, mode)` 函数，根据 mode 选择行为。
 
 #### Scenario: install 模式且项目无已有 skill
 
@@ -54,7 +54,7 @@ installer 必须实现 `installFiles(extractedDir, projectRoot, manifest, mode)`
 
 ### Requirement: installer 必须按 manifest 中 mode 字段处理模板文件
 
-manifest 中的 templates 条目带 `mode: 'skip-if-exists'`，installer 必须正确处理。
+MUST manifest 中的 templates 条目带 `mode: 'skip-if-exists'`，installer 必须正确处理。
 
 #### Scenario: 模板文件目标不存在
 
@@ -68,7 +68,7 @@ manifest 中的 templates 条目带 `mode: 'skip-if-exists'`，installer 必须�
 
 ### Requirement: installer 必须支持 dry-run 模式
 
-installer 必须接受 `dryRun: true` 选项，仅打印操作而不修改文件系统。
+MUST installer 必须接受 `dryRun: true` 选项，仅打印操作而不修改文件系统。
 
 #### Scenario: dry-run 模式下执行 update
 
@@ -77,7 +77,7 @@ installer 必须接受 `dryRun: true` 选项，仅打印操作而不修改文件
 
 ### Requirement: installer 必须支持跨平台路径处理
 
-installer 必须用 `path.join`/`path.sep` 等 Node API 处理路径，确保 Windows/macOS/Linux 行为一致。
+MUST installer 必须用 `path.join`/`path.sep` 等 Node API 处理路径，确保 Windows/macOS/Linux 行为一致。
 
 #### Scenario: Windows 下复制 skill
 

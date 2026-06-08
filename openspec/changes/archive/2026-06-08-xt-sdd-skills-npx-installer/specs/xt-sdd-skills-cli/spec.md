@@ -6,7 +6,7 @@ CLI 入口与子命令调度。
 
 ### Requirement: CLI 必须提供 install/update/list 三个子命令
 
-CLI 必须识别 `install`、`update`、`list` 三个子命令，每个子命令有独立的参数解析和职责分工。
+MUST CLI 必须识别 `install`、`update`、`list` 三个子命令，每个子命令有独立的参数解析和职责分工。
 
 #### Scenario: 用户运行 install 子命令
 
@@ -35,7 +35,7 @@ CLI 必须识别 `install`、`update`、`list` 三个子命令，每个子命令
 
 ### Requirement: CLI 必须支持 --tag/--source/--dry-run/--no-backup 全局参数
 
-CLI 必须解析以下全局参数，对适用的子命令生效。
+MUST CLI 必须解析以下全局参数，对适用的子命令生效。
 
 #### Scenario: 用户用 --tag 指定版本
 
@@ -59,7 +59,7 @@ CLI 必须解析以下全局参数，对适用的子命令生效。
 
 ### Requirement: CLI 必须在 Node.js 版本不足时拒绝启动
 
-CLI 必须在启动时检查 Node.js 版本是否 >= 18。
+MUST CLI 必须在启动时检查 Node.js 版本是否 >= 18。
 
 #### Scenario: 用户在 Node 16 上运行 CLI
 
@@ -68,7 +68,7 @@ CLI 必须在启动时检查 Node.js 版本是否 >= 18。
 
 ### Requirement: CLI 必须提供 --help 和 --version 元命令
 
-CLI 必须支持通用 CLI 惯例：`--help`/`-h` 打印帮助，`--version`/`-v` 打印版本号。这两个 flag 优先级高于子命令。
+MUST CLI 必须支持通用 CLI 惯例：`--help`/`-h` 打印帮助，`--version`/`-v` 打印版本号。这两个 flag 优先级高于子命令。
 
 #### Scenario: 用户用 --help 查看帮助
 
