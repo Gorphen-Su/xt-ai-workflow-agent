@@ -11,10 +11,10 @@
 
 ## 2. Manifest 与工具函数
 
-- [ ] 2.1 实现 `packages/cli/src/manifest.js`，硬编码分发清单（6 个 skill、模板、命令文件、默认 source/ref）
-- [ ] 2.2 实现 `packages/cli/src/errors.js`，定义 `FetcherError`、`InstallerError`、`BackupError` 等错误类（带 code 字段）
-- [ ] 2.3 实现 `packages/cli/src/logger.js`，封装彩色输出（基于 kleur），提供 info/warn/error/success 方法
-- [ ] 2.4 编写 manifest/errors/logger 的单元测试
+- [x] 2.1 实现 `packages/cli/src/manifest.js`，硬编码分发清单（6 个 skill、模板、命令文件、默认 source/ref）
+- [x] 2.2 实现 `packages/cli/src/errors.js`，定义 `FetcherError`、`InstallerError`、`BackupError` 等错误类（带 code 字段）
+- [x] 2.3 实现 `packages/cli/src/logger.js`，封装彩色输出（基于 kleur），提供 info/warn/error/success 方法
+- [x] 2.4 编写 manifest/errors/logger 的单元测试
 
 ## 3. Fetcher 模块
 

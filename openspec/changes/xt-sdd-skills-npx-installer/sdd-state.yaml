@@ -2,12 +2,12 @@ version: 1
 change: xt-sdd-skills-npx-installer
 
 phase: apply
-checkpoint: task-1.4-complete
+checkpoint: task-2.4-complete
 
 phase_checkpoints:
   propose: done
   plan: done
-  apply: task-1.4-complete
+  apply: task-2.4-complete
   verify: null
   archive: null
 
@@ -40,28 +40,28 @@ tasks:
     checkpoint: complete
   - id: "2.1"
     description: 实现 manifest.js（硬编码分发清单）
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T15:50:51+08:00
+    test_result: 20 tests pass
+    checkpoint: complete
   - id: "2.2"
     description: 实现 errors.js（错误类）
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T15:50:51+08:00
+    test_result: 20 tests pass
+    checkpoint: complete
   - id: "2.3"
     description: 实现 logger.js（彩色输出）
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T15:50:51+08:00
+    test_result: 20 tests pass
+    checkpoint: complete
   - id: "2.4"
     description: 编写 manifest/errors/logger 的单元测试
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T15:50:51+08:00
+    test_result: 20 tests pass
+    checkpoint: complete
   - id: "3.1"
     description: 实现 fetchTarball 函数（下载、超时、重试）
     status: pending
