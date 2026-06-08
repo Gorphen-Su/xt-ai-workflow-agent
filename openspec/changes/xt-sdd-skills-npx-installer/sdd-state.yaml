@@ -88,28 +88,28 @@ tasks:
     checkpoint: complete
   - id: "4.1"
     description: 实现 createBackup（完整复制 + meta 写入）
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T15:58:12+08:00
+    test_result: 40 tests pass
+    checkpoint: complete
   - id: "4.2"
     description: 实现时间戳冲突处理
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T15:58:12+08:00
+    test_result: 40 tests pass
+    checkpoint: complete
   - id: "4.3"
     description: 实现 checkBackupCount
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T15:58:12+08:00
+    test_result: 40 tests pass
+    checkpoint: complete
   - id: "4.4"
     description: 编写 backup 模块测试
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T15:58:12+08:00
+    test_result: 40 tests pass
+    checkpoint: complete
   - id: "5.1"
     description: 实现 findProjectRoot
     status: pending

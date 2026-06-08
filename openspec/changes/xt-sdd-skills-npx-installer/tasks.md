@@ -25,10 +25,10 @@
 
 ## 4. Backup 模块
 
-- [ ] 4.1 实现 `packages/cli/src/backup.js` 的 `createBackup(projectRoot, manifest, meta)` 函数：扫描已存在的 skill、生成时间戳目录名、完整复制、写入 `_backup-meta.json`
-- [ ] 4.2 实现时间戳冲突处理：同一秒内多次调用时自动加 `-2`/`-3` 后缀
-- [ ] 4.3 实现 `checkBackupCount(projectRoot)` 函数：扫描 `.backup/` 子目录数，返回是否需要提示
-- [ ] 4.4 编写 backup 模块测试：用临时目录验证完整复制、meta 文件格式、时间戳冲突、空备份情况、备份计数提示
+- [x] 4.1 实现 `packages/cli/src/backup.js` 的 `createBackup(projectRoot, manifest, meta)` 函数：扫描已存在的 skill、生成时间戳目录名、完整复制、写入 `_backup-meta.json`
+- [x] 4.2 实现时间戳冲突处理：同一秒内多次调用时自动加 `-2`/`-3` 后缀
+- [x] 4.3 实现 `checkBackupCount(projectRoot)` 函数：扫描 `.backup/` 子目录数，返回是否需要提示
+- [x] 4.4 编写 backup 模块测试：用临时目录验证完整复制、meta 文件格式、时间戳冲突、空备份情况、备份计数提示
 
 ## 5. Installer 模块
 
