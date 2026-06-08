@@ -32,12 +32,12 @@
 
 ## 5. Installer 模块
 
-- [ ] 5.1 实现 `packages/cli/src/installer.js` 的 `findProjectRoot(startDir)` 函数：向上查找 `.git`/`package.json`/`openspec/`/`.claude/`，返回根路径或 autoDetected=false
-- [ ] 5.2 实现 `installFiles(extractedDir, projectRoot, manifest, options)` 函数主体：支持 `mode: 'install'|'update'`、调用 backup、按 manifest 复制 skill 和 commands
-- [ ] 5.3 实现模板的 `skip-if-exists` 处理逻辑
-- [ ] 5.4 实现 install 模式的 `ALREADY_INSTALLED` 校验和 update 模式的 `degradedToInstall` 退化
-- [ ] 5.5 实现 `dryRun` 模式：计算所有操作并返回，但不调用任何写入 API
-- [ ] 5.6 编写 installer 模块测试：覆盖 install/update 两种模式、ALREADY_INSTALLED、退化、skip-if-exists、dryRun、Windows 路径
+- [x] 5.1 实现 `packages/cli/src/installer.js` 的 `findProjectRoot(startDir)` 函数：向上查找 `.git`/`package.json`/`openspec/`/`.claude/`，返回根路径或 autoDetected=false
+- [x] 5.2 实现 `installFiles(extractedDir, projectRoot, manifest, options)` 函数主体：支持 `mode: 'install'|'update'`、调用 backup、按 manifest 复制 skill 和 commands
+- [x] 5.3 实现模板的 `skip-if-exists` 处理逻辑
+- [x] 5.4 实现 install 模式的 `ALREADY_INSTALLED` 校验和 update 模式的 `degradedToInstall` 退化
+- [x] 5.5 实现 `dryRun` 模式：计算所有操作并返回，但不调用任何写入 API
+- [x] 5.6 编写 installer 模块测试：覆盖 install/update 两种模式、ALREADY_INSTALLED、退化、skip-if-exists、dryRun、Windows 路径
 
 ## 6. CLI 入口与子命令
 

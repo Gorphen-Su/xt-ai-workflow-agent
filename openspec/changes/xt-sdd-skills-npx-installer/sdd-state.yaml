@@ -2,12 +2,12 @@ version: 1
 change: xt-sdd-skills-npx-installer
 
 phase: apply
-checkpoint: task-3.4-complete
+checkpoint: task-4.4-complete
 
 phase_checkpoints:
   propose: done
   plan: done
-  apply: task-3.4-complete
+  apply: task-4.4-complete
   verify: null
   archive: null
 
@@ -112,40 +112,40 @@ tasks:
     checkpoint: complete
   - id: "5.1"
     description: 实现 findProjectRoot
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T16:01:45+08:00
+    test_result: 53 tests pass
+    checkpoint: complete
   - id: "5.2"
     description: 实现 installFiles 主函数（install/update 双模式）
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T16:01:45+08:00
+    test_result: 53 tests pass
+    checkpoint: complete
   - id: "5.3"
     description: 实现模板 skip-if-exists 处理
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T16:01:45+08:00
+    test_result: 53 tests pass
+    checkpoint: complete
   - id: "5.4"
     description: 实现 install 的 ALREADY_INSTALLED 校验和 update 的 degradedToInstall
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T16:01:45+08:00
+    test_result: 53 tests pass
+    checkpoint: complete
   - id: "5.5"
     description: 实现 dryRun 模式
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T16:01:45+08:00
+    test_result: 53 tests pass
+    checkpoint: complete
   - id: "5.6"
     description: 编写 installer 模块测试
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T16:01:45+08:00
+    test_result: 53 tests pass
+    checkpoint: complete
   - id: "6.1"
     description: 实现 CLI 入口（Node 版本检查 + argv 解析）
     status: pending
