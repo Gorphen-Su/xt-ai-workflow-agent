@@ -40,7 +40,7 @@ export async function install(options) {
       dryRun,
     });
   } finally {
-    await cleanup({ tarballPath: fetched.tarballPath, extractedDir: extracted.extractedDir });
+    await cleanup({ tarballPath: fetched.tarballPath, extractedDir: extracted?.extractedDir });
   }
 
   // 5. summary

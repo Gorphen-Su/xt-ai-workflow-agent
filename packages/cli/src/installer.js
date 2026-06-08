@@ -80,8 +80,10 @@ export async function installFiles(extractedDir, projectRoot, manifest, options 
   let backupResult = null;
   if (effectiveMode === 'update' && !noBackup) {
     if (dryRun) {
+      // dryRun 时只记录到 installOps，不实际备份
       installOps.push({ action: 'backup', source: skillsDir, items: existingSkills });
     } else {
+      // 非 dryRun 立即执行备份，结果在最终返回值中提供
       backupResult = await createBackup(projectRoot, manifest, meta);
       backed_up_items = backupResult.items;
     }
@@ -146,9 +148,8 @@ export async function installFiles(extractedDir, projectRoot, manifest, options 
       installed.push(op.dst);
     } else if (op.action === 'skip-template') {
       skipped.push(op.dst);
-    } else if (op.action === 'backup') {
-      // 实际执行路径中 backup 已经在前面做过，这里不重复
     }
+    // 注：op.action === 'backup' 仅出现在 dryRun 路径，本循环只在非 dryRun 执行
   }
 
   return {

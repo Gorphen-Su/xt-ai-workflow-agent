@@ -1,11 +1,9 @@
 // GitHub tarball 拉取器：下载 → 解压 → 校验清单 → 清理
 // 用 Node 18+ 内置 fetch，避免引入 axios/node-fetch 增加体积。
 
-import { promises as fs, createWriteStream } from 'node:fs';
+import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { Readable } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
 import { randomBytes } from 'node:crypto';
 import * as tar from 'tar';
 import { FetcherError } from './errors.js';
@@ -142,23 +140,25 @@ export async function extractTarball(tarballPath, manifest) {
 
 /**
  * 清理临时文件（tarball 和解压目录）。
+ * 使用 allSettled 确保一个清理失败不会阻断另一个。
  * @param {{tarballPath?: string, extractedDir?: string}} paths
  */
 export async function cleanup(paths = {}) {
   const tasks = [];
   if (paths.tarballPath) {
-    tasks.push(
-      fs.rm(paths.tarballPath, { force: true }).catch((err) => {
-        if (err.code !== 'ENOENT') throw err;
-      })
-    );
+    tasks.push(fs.rm(paths.tarballPath, { force: true }));
   }
   if (paths.extractedDir) {
-    tasks.push(
-      fs.rm(paths.extractedDir, { recursive: true, force: true }).catch((err) => {
-        if (err.code !== 'ENOENT') throw err;
-      })
-    );
+    tasks.push(fs.rm(paths.extractedDir, { recursive: true, force: true }));
   }
-  await Promise.all(tasks);
+  const results = await Promise.allSettled(tasks);
+  for (const r of results) {
+    if (r.status === 'rejected') {
+      const err = r.reason;
+      // ENOENT 静默忽略；其他错误打 warning 但不阻断（清理是 best-effort）
+      if (err?.code !== 'ENOENT') {
+        process.stderr.write(`cleanup warning: ${err?.message || String(err)}\n`);
+      }
+    }
+  }
 }

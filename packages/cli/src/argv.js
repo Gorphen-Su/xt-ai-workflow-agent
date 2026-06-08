@@ -49,7 +49,7 @@ export function parseArgv(argv) {
       case '--tag':
       case '-t': {
         const v = argv[++i];
-        if (!v) {
+        if (!v || v.startsWith('-')) {
           result.error = `flag '${arg}' requires a value`;
           return result;
         }
@@ -59,7 +59,7 @@ export function parseArgv(argv) {
       case '--source':
       case '-s': {
         const v = argv[++i];
-        if (!v) {
+        if (!v || v.startsWith('-')) {
           result.error = `flag '${arg}' requires a value`;
           return result;
         }

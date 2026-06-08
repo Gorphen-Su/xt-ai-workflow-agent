@@ -65,3 +65,22 @@ CLI 必须在启动时检查 Node.js 版本是否 >= 18。
 
 - **WHEN** 用户在 Node 16.x 环境执行 `npx xt-sdd-skills update`
 - **THEN** CLI 必须立即以退出码 1 退出，stderr 输出 "xt-sdd-skills requires Node.js >= 18 (current: v16.x.x). Please upgrade Node."
+
+### Requirement: CLI 必须提供 --help 和 --version 元命令
+
+CLI 必须支持通用 CLI 惯例：`--help`/`-h` 打印帮助，`--version`/`-v` 打印版本号。这两个 flag 优先级高于子命令。
+
+#### Scenario: 用户用 --help 查看帮助
+
+- **WHEN** 用户执行 `npx xt-sdd-skills --help` 或 `npx xt-sdd-skills -h`
+- **THEN** CLI 必须打印 usage 到 stdout（含子命令列表、全局选项、示例、退出码表），以退出码 0 退出
+
+#### Scenario: 用户用 --version 查看版本
+
+- **WHEN** 用户执行 `npx xt-sdd-skills --version` 或 `npx xt-sdd-skills -v`
+- **THEN** CLI 必须从 `package.json` 读取并打印 `<major>.<minor>.<patch>` 格式的版本号到 stdout，以退出码 0 退出
+
+#### Scenario: --version 优先级高于其他参数
+
+- **WHEN** 用户执行 `npx xt-sdd-skills install --version`
+- **THEN** CLI 必须只打印版本号，不执行 install 命令

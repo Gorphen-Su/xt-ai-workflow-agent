@@ -59,6 +59,11 @@ describe('parseArgv', () => {
     expect(parseArgv(['install', '--tag']).error).toMatch(/requires a value/);
   });
 
+  it('--tag 后跟另一个 flag → error（不静默把 flag 当 tag 值）', () => {
+    expect(parseArgv(['install', '--tag', '--dry-run']).error).toMatch(/requires a value/);
+    expect(parseArgv(['update', '--source', '--no-backup']).error).toMatch(/requires a value/);
+  });
+
   it('默认值正确', () => {
     const r = parseArgv(['install']);
     expect(r.tag).toBe(DEFAULT_REF);

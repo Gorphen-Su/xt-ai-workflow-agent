@@ -43,7 +43,7 @@ export async function update(options) {
       meta: { fromVersion: null, toVersion: `${tag} (${fetched.sourceCommitSha ?? 'unknown'})` },
     });
   } finally {
-    await cleanup({ tarballPath: fetched.tarballPath, extractedDir: extracted.extractedDir });
+    await cleanup({ tarballPath: fetched.tarballPath, extractedDir: extracted?.extractedDir });
   }
 
   if (result.dryRun) {

@@ -1,14 +1,14 @@
 version: 1
 change: xt-sdd-skills-npx-installer
 
-phase: apply
-checkpoint: task-6.7-complete
+phase: verify
+checkpoint: code-reviewed
 
 phase_checkpoints:
   propose: done
   plan: done
-  apply: task-6.7-complete
-  verify: null
+  apply: all-tasks-complete
+  verify: code-reviewed
   archive: null
 
 superpowers_available: true
@@ -263,5 +263,9 @@ metrics:
         output_tokens: 162784
       - phase: apply
         timestamp: 2026-06-08T15:40:00+08:00
+        input_tokens: 763098
+        output_tokens: 162784
+      - phase: verify
+        timestamp: 2026-06-08T16:11:00+08:00
         input_tokens: 763098
         output_tokens: 162784
