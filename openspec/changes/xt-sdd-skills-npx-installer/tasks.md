@@ -18,10 +18,10 @@
 
 ## 3. Fetcher 模块
 
-- [ ] 3.1 实现 `packages/cli/src/fetcher.js` 的 `fetchTarball(source, ref)` 函数：构造 codeload URL、用 fetch 下载到 OS 临时目录、超时 30 秒、失败自动重试一次
-- [ ] 3.2 实现 `extractTarball(tarballPath, manifest)` 函数：用 tar 包解压、校验 manifest 中必需文件均存在、返回解压根目录
-- [ ] 3.3 实现 `cleanup({ tarballPath, extractedDir })` 函数：删除临时文件，静默忽略 ENOENT
-- [ ] 3.4 编写 fetcher 模块测试：mock fetch 验证成功路径、404、超时、网络错误、tarball 校验失败
+- [x] 3.1 实现 `packages/cli/src/fetcher.js` 的 `fetchTarball(source, ref)` 函数：构造 codeload URL、用 fetch 下载到 OS 临时目录、超时 30 秒、失败自动重试一次
+- [x] 3.2 实现 `extractTarball(tarballPath, manifest)` 函数：用 tar 包解压、校验 manifest 中必需文件均存在、返回解压根目录
+- [x] 3.3 实现 `cleanup({ tarballPath, extractedDir })` 函数：删除临时文件，静默忽略 ENOENT
+- [x] 3.4 编写 fetcher 模块测试：mock fetch 验证成功路径、404、超时、网络错误、tarball 校验失败
 
 ## 4. Backup 模块
 
