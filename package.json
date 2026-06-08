@@ -1,0 +1,14 @@
+{
+  "name": "xt-ai-workflow-agent",
+  "version": "0.0.0",
+  "private": true,
+  "description": "xt-sdd workflow skills source repository (monorepo root, not published).",
+  "scripts": {
+    "test:cli": "cd packages/cli && npm test",
+    "build:cli": "cd packages/cli && npm run build --if-present",
+    "pack:cli": "cd packages/cli && npm pack"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

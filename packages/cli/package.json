@@ -1,0 +1,38 @@
+{
+  "name": "xt-sdd-skills",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Install and update xt-sdd workflow skills from xt-ai-workflow-agent repo via npx",
+  "type": "module",
+  "bin": {
+    "xt-sdd-skills": "./bin/xt-sdd-skills.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "xt-sdd",
+    "openspec",
+    "claude-code",
+    "skills",
+    "installer"
+  ],
+  "author": "Gorphen Su",
+  "license": "MIT",
+  "dependencies": {
+    "tar": "^7.0.0",
+    "kleur": "^4.1.5"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0"
+  }
+}
