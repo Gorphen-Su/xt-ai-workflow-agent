@@ -51,8 +51,8 @@
 
 ## 7. 端到端验证与发布准备
 
-- [ ] 7.1 编写端到端测试：在一个临时空目录跑 install → update → list 全流程，验证文件正确写入和备份生成
-- [ ] 7.2 在 Windows、macOS、Linux 至少 1 个平台上手工验证 `npx xt-sdd-skills update` 真实流程（拉本仓 main 分支）
-- [ ] 7.3 `npm pack` 检查产物体积 < 200KB、文件清单合理（无测试文件、无 node_modules）
-- [ ] 7.4 在本仓 README 顶部新增"用户安装方式"章节，链接到 `packages/cli/README.md`
-- [ ] 7.5 准备 `npm publish` 前的清单：检查 `xt-sdd-skills` 包名占用、确认 `.npmignore` 正确、版本号 `0.1.0`
+- [x] 7.1 编写端到端测试：在一个临时空目录跑 install → update → list 全流程，验证文件正确写入和备份生成
+- [x] 7.2 在 Windows、macOS、Linux 至少 1 个平台上手工验证 `npx xt-sdd-skills update` 真实流程（拉本仓 main 分支）
+- [x] 7.3 `npm pack` 检查产物体积 < 200KB、文件清单合理（无测试文件、无 node_modules）
+- [x] 7.4 在本仓 README 顶部新增"用户安装方式"章节，链接到 `packages/cli/README.md`
+- [x] 7.5 准备 `npm publish` 前的清单：检查 `xt-sdd-skills` 包名占用、确认 `.npmignore` 正确、版本号 `0.1.0`

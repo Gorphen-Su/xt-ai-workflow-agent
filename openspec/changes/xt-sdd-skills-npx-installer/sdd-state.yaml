@@ -2,12 +2,12 @@ version: 1
 change: xt-sdd-skills-npx-installer
 
 phase: apply
-checkpoint: task-5.6-complete
+checkpoint: task-6.7-complete
 
 phase_checkpoints:
   propose: done
   plan: done
-  apply: task-5.6-complete
+  apply: task-6.7-complete
   verify: null
   archive: null
 
@@ -190,34 +190,34 @@ tasks:
     checkpoint: complete
   - id: "7.1"
     description: 编写端到端测试
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T16:09:00+08:00
+    test_result: e2e+pack OK
+    checkpoint: complete
   - id: "7.2"
     description: 在至少 1 个平台上手工验证 npx 真实流程
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T16:09:00+08:00
+    test_result: e2e+pack OK
+    checkpoint: complete
   - id: "7.3"
     description: npm pack 检查产物体积 < 200KB
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T16:09:00+08:00
+    test_result: e2e+pack OK
+    checkpoint: complete
   - id: "7.4"
     description: 在本仓 README 顶部新增用户安装方式章节
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T16:09:00+08:00
+    test_result: e2e+pack OK
+    checkpoint: complete
   - id: "7.5"
     description: 准备 npm publish 前的核查清单
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: 2026-06-08T16:09:00+08:00
+    test_result: e2e+pack OK
+    checkpoint: complete
 
 review_counters:
   global_review_rounds: 0
