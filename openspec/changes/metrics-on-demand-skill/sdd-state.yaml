@@ -23,46 +23,46 @@ tasks:
     checkpoint: complete
   - id: 2
     description: "1.2 创建 scripts/lib/cutoff.js"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "cutoff 读写逻辑完成"
+    checkpoint: complete
   - id: 3
     description: "1.3 创建 scripts/lib/ccusage.js"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "ccusage 查询+降级逻辑完成"
+    checkpoint: complete
   - id: 4
     description: "1.4 创建 scripts/lib/git-stats.js"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "git 增量统计逻辑完成"
+    checkpoint: complete
   - id: 5
     description: "1.5 创建 scripts/lib/attributor.js"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "归因计算逻辑完成"
+    checkpoint: complete
   - id: 6
     description: "1.6 创建 scripts/lib/report-writer.js"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "报告生成+历史更新逻辑完成"
+    checkpoint: complete
   - id: 7
     description: "1.7 创建 scripts/report.js"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "report 入口脚本完成"
+    checkpoint: complete
   - id: 8
     description: "1.8 创建 scripts/summary.js"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "summary 入口脚本完成"
+    checkpoint: complete
   - id: 9
     description: "1.9 编写 SKILL.md report 子命令"
     status: pending
@@ -77,64 +77,64 @@ tasks:
     checkpoint: null
   - id: 11
     description: "2.1 定义 cutoff.yaml 结构"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "cutoff 结构定义在 cutoff.js 中"
+    checkpoint: complete
   - id: 12
     description: "2.2 定义 history.yaml 结构"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "history 结构定义在 report-writer.js 中"
+    checkpoint: complete
   - id: 13
     description: "2.3 定义 reports YAML 结构"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "report 结构定义在 report-writer.js 中"
+    checkpoint: complete
   - id: 14
     description: "2.4 实现 cutoff.js 全量查询逻辑"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "readOrCreateCutoff 无 cutoff 时创建"
+    checkpoint: complete
   - id: 15
     description: "2.5 实现 cutoff.js 增量查询逻辑"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "readOrCreateCutoff 有 cutoff 时读取"
+    checkpoint: complete
   - id: 16
     description: "2.6 实现 cutoff.js 损坏重建逻辑"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "readOrCreateCutoff damaged 时重建"
+    checkpoint: complete
   - id: 17
     description: "3.1 实现 attributor.js 扫描时间窗口"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "scanChangeTimeWindows 完成"
+    checkpoint: complete
   - id: 18
     description: "3.2 实现单一变更归因"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "buildSingleAttribution 完成"
+    checkpoint: complete
   - id: 19
     description: "3.3 实现多变更并发归因"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "buildSharedAttribution 完成"
+    checkpoint: complete
   - id: 20
     description: "3.4 实现 _unattributed 归因"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:10:00+08:00"
+    test_result: "buildUnattributedResult 完成"
+    checkpoint: complete
   - id: 21
     description: "4.1 移除 xt-sdd-propose ccusage 逻辑"
     status: pending
