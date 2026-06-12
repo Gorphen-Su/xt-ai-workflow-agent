@@ -1,14 +1,14 @@
 version: 1
 change: metrics-on-demand-skill
 
-phase: apply
-checkpoint: entered
+phase: verify
+checkpoint: code-reviewed
 
 phase_checkpoints:
   propose: done
   plan: done
-  apply: entered
-  verify: null
+  apply: done
+  verify: in-review
   archive: null
 
 superpowers_available: false

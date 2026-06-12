@@ -68,6 +68,11 @@ function queryCcusageSession(since) {
     const rawData = JSON.parse(output)
     const tokenData = extractTokenData(rawData, since)
 
+    // 格式校验日志：标记使用的解析格式，便于排查 ccusage 版本兼容问题
+    if (tokenData.raw_format === 'unknown') {
+      tokenData._format_warning = 'ccusage session 输出格式未匹配已知模式，使用兜底解析。如数据异常请检查 ccusage 版本兼容性'
+    }
+
     return { success: true, data: tokenData, error: null }
   } catch (err) {
     if (err.killed) {

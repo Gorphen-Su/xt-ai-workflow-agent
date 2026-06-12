@@ -112,6 +112,12 @@ function stringifyReport(data) {
   lines.push(`  type: ${data.attribution.attribution_type}`)
   if (data.attribution.total_active_changes) {
     lines.push(`  total_active_changes: ${data.attribution.total_active_changes}`)
+    lines.push('  # 注意: 多变更并发时按时间窗口比例分配，为估算值，精确度取决于变更时间窗口重叠程度')
+  }
+  if (data.attribution.attribution_type === 'single') {
+    lines.push('  # 归因方式: 单一活跃变更，token 和代码统计全量归属')
+  } else if (data.attribution.attribution_type === 'unattributed') {
+    lines.push('  # 归因方式: 无活跃 sdd 变更，统计归入 _unattributed 分类')
   }
   lines.push('')
 
