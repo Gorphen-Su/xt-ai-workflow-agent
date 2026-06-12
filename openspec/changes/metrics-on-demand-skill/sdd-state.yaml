@@ -1,0 +1,281 @@
+version: 1
+change: metrics-on-demand-skill
+
+phase: apply
+checkpoint: entered
+
+phase_checkpoints:
+  propose: done
+  plan: done
+  apply: entered
+  verify: null
+  archive: null
+
+superpowers_available: false
+execution_mode: lightweight
+
+tasks:
+  - id: 1
+    description: "1.1 创建 .claude/skills/xt-metrics/ 目录结构"
+    status: completed
+    updated: "2026-06-12T14:05:00+08:00"
+    test_result: "目录结构创建成功"
+    checkpoint: complete
+  - id: 2
+    description: "1.2 创建 scripts/lib/cutoff.js"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 3
+    description: "1.3 创建 scripts/lib/ccusage.js"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 4
+    description: "1.4 创建 scripts/lib/git-stats.js"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 5
+    description: "1.5 创建 scripts/lib/attributor.js"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 6
+    description: "1.6 创建 scripts/lib/report-writer.js"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 7
+    description: "1.7 创建 scripts/report.js"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 8
+    description: "1.8 创建 scripts/summary.js"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 9
+    description: "1.9 编写 SKILL.md report 子命令"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 10
+    description: "1.10 编写 SKILL.md summary 子命令"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 11
+    description: "2.1 定义 cutoff.yaml 结构"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 12
+    description: "2.2 定义 history.yaml 结构"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 13
+    description: "2.3 定义 reports YAML 结构"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 14
+    description: "2.4 实现 cutoff.js 全量查询逻辑"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 15
+    description: "2.5 实现 cutoff.js 增量查询逻辑"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 16
+    description: "2.6 实现 cutoff.js 损坏重建逻辑"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 17
+    description: "3.1 实现 attributor.js 扫描时间窗口"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 18
+    description: "3.2 实现单一变更归因"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 19
+    description: "3.3 实现多变更并发归因"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 20
+    description: "3.4 实现 _unattributed 归因"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 21
+    description: "4.1 移除 xt-sdd-propose ccusage 逻辑"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 22
+    description: "4.2 移除 xt-sdd-plan Token 快照"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 23
+    description: "4.3 移除 xt-sdd-apply Token 快照"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 24
+    description: "4.4 移除 xt-sdd-verify Token 快照"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 25
+    description: "4.5 移除 xt-sdd-archive Token 汇总"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 26
+    description: "4.6 移除 xt-sdd-fix ccusage 和快照"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 27
+    description: "5.1 更新 propose SKILL.md sdd-state 模板"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 28
+    description: "5.2 更新 fix SKILL.md sdd-state 模板"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 29
+    description: "5.3 更新 CLAUDE.md sdd-state 结构规范"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 30
+    description: "6.1 添加 archive /xt-metrics 提示"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 31
+    description: "6.2 确保 archive git 代码统计正常"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 32
+    description: "6.3 更新 archive metrics-report 模板"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 33
+    description: "7.1 验证脚本独立运行"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 34
+    description: "7.2 验证 /xt-metrics report 首次调用"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 35
+    description: "7.3 验证 /xt-metrics report 增量调用"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 36
+    description: "7.4 验证 /xt-metrics summary 输出"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 37
+    description: "7.5 验证 xt-sdd propose 无 ccusage"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+  - id: 38
+    description: "7.6 验证 xt-sdd archive 正常 + 提示"
+    status: pending
+    updated: "-"
+    test_result: "-"
+    checkpoint: null
+
+review_counters:
+  global_review_rounds: 0
+  task_retries: {}
+
+cascade:
+  last_affected_phase: null
+  invalidated_from: null
+  reason: null
+  preserved_tasks: []
+
+metrics:
+  git_baseline:
+    start_sha: d566bddb2d46c88b025318ca54130e13ca41852a
+    start_time: "2026-06-12T10:00:00+08:00"
+    end_sha: null
+    end_time: null
+    dirty: false
+  file_stats:
+    files_added: 0
+    files_modified: 0
+    files_deleted: 0
+    total_files_changed: 0
+  line_stats:
+    lines_added: 0
+    lines_deleted: 0
+  token_usage:
+    total_input_tokens: 0
+    total_output_tokens: 0
+    total_tokens: 0
+    estimated_cost_usd: 0.0
+    ccusage_available: true
+    auto_installed: false
+    install_error: null
+    token_data_unavailable: null
+    snapshots: []
