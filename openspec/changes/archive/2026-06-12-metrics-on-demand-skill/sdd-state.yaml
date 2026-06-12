@@ -2,14 +2,14 @@ version: 1
 change: metrics-on-demand-skill
 
 phase: archive
-checkpoint: archived
+checkpoint: done
 
 phase_checkpoints:
   propose: done
   plan: done
   apply: done
   verify: done
-  archive: archived
+  archive: done
 
 superpowers_available: false
 execution_mode: lightweight
