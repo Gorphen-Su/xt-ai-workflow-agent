@@ -65,16 +65,16 @@ tasks:
     checkpoint: complete
   - id: 9
     description: "1.9 编写 SKILL.md report 子命令"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:15:00+08:00"
+    test_result: "SKILL.md report 子命令完成"
+    checkpoint: complete
   - id: 10
     description: "1.10 编写 SKILL.md summary 子命令"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:15:00+08:00"
+    test_result: "SKILL.md summary 子命令完成"
+    checkpoint: complete
   - id: 11
     description: "2.1 定义 cutoff.yaml 结构"
     status: completed

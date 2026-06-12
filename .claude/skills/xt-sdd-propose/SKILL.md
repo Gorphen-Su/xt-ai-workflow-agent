@@ -24,13 +24,6 @@ xt-sdd 规格驱动开发的第一阶段：项目分析、需求澄清、方案�
    - 不可用 → 提示用户："Superpowers skill 未安装，部分功能将降级为自包含模式。是否安装？`/plugin install superpowers@claude-plugins-official`"
    - 用户选择跳过 → 标记 `superpowers_available: false`
 3. 将 superpowers_available 状态写入 sdd-state.yaml（步骤 5 创建时）
-4. 检查 ccusage 可用性并自动安装（Metrics Tracking 前置依赖，作为步骤 0 的第 4 条子项，与 OpenSpec CLI/Superpowers 检测同级）：
-   - 执行 `npx ccusage --version` 检测 ccusage 是否可用（**Bash 调用 timeout 至少 60000ms**，npx 冷启动可能较慢）
-   - 可用 → 标记 `ccusage_available: true`，跳过安装
-   - 不可用 → 自动执行 `npm install -g ccusage` 全局安装（**Bash 调用 timeout 至少 180000ms**，npm 全局安装含依赖下载）
-     - 安装成功 → 重新验证 `npx ccusage --version`，标记 `ccusage_available: true`、`auto_installed: true`
-     - 安装失败 → 标记 `ccusage_available: false`、`auto_installed: false`、`install_error: "<错误信息>"`，提示用户手动安装 `npm install -g ccusage`，**不阻塞流程**
-   - 将检测结果写入 sdd-state.yaml（步骤 5 创建时填充 `metrics.token_usage.ccusage_available`、`metrics.token_usage.auto_installed`、`metrics.token_usage.install_error`）
 
 ### 步骤 1：Git 状态前置检查
 
@@ -176,16 +169,6 @@ metrics:
   line_stats:
     lines_added: 0
     lines_deleted: 0
-  token_usage:
-    total_input_tokens: 0
-    total_output_tokens: 0
-    total_tokens: 0
-    estimated_cost_usd: 0.0
-    ccusage_available: null
-    auto_installed: null
-    install_error: null
-    # token_data_unavailable 在 archive 阶段降级时动态设置，初始不需要
-    snapshots: []
 ```
 
 **Metrics 初始化操作：**
@@ -197,36 +180,6 @@ metrics:
    - `metrics.git_baseline.start_time` ← 当前 ISO 8601 时间戳
    - `metrics.git_baseline.dirty` ← 工作区干净则为 `false`，有未提交更改则为 `true`
 4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段
-5. 执行 Token 快照记录（propose 阶段）：
-   - 如果 `metrics.token_usage.ccusage_available` 为 true：
-     - 执行 `npx ccusage session --json` 获取当前会话 Token 数据（**Bash 调用 timeout 至少 120000ms**，session 数据规模大时实测可达 45-60 秒）
-     - 解析 JSON 输出，提取 input_tokens 和 output_tokens
-     - 追加一条快照到 `metrics.token_usage.snapshots`：
-       ```yaml
-       - phase: propose
-         timestamp: <当前 ISO 8601 时间戳>
-         input_tokens: <从 ccusage 获取>
-         output_tokens: <从 ccusage 获取>
-       ```
-   - 如果 `metrics.token_usage.ccusage_available` 为 false：
-     - 追加一条标记不可用的快照：
-       ```yaml
-       - phase: propose
-         timestamp: <当前 ISO 8601 时间戳>
-         input_tokens: null
-         output_tokens: null
-         unavailable: true
-       ```
-   - 如果 ccusage 命令执行失败（超时、格式错误等）：
-     - 追加一条标记错误的快照：
-       ```yaml
-       - phase: propose
-         timestamp: <当前 ISO 8601 时间戳>
-         input_tokens: null
-         output_tokens: null
-         error: "<错误信息>"
-       ```
-   - **不阻塞流程**：无论快照记录成功与否，继续执行步骤 6
 
 ### 步骤 6：探索与需求澄清
 
@@ -328,22 +281,6 @@ metrics:
   line_stats:
     lines_added: 0
     lines_deleted: 0
-  token_usage:
-    total_input_tokens: 0
-    total_output_tokens: 0
-    total_tokens: 0
-    estimated_cost_usd: 0.0
-    ccusage_available: <true 或 false 或 null>
-    auto_installed: <true 或 false 或 null>
-    install_error: <错误信息字符串或 null>
-    token_data_unavailable: <true 或 null>
-    snapshots:
-      - phase: <阶段名>
-        timestamp: <ISO 8601>
-        input_tokens: <数值或 null>
-        output_tokens: <数值或 null>
-        unavailable: <true 或 omit>
-        error: <错误信息或 omit>
 ```
 
 ### 各阶段 checkpoint 定义

@@ -23,19 +23,6 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
 2. 如果 sdd-state.yaml 不存在，扫描 `openspec/changes/` 目录查找进行中的变更
 3. 如果有多个 → 使用 AskUserQuestion 让用户选择
 
-**Metrics Token 快照：** 步骤 1 完成后，记录 archive 阶段 Token 快照：
-1. 读取当前变更的 sdd-state.yaml，检查 `metrics.token_usage.ccusage_available`
-2. 如果为 true，执行 `npx ccusage session --json`（**Bash 调用 timeout 至少 120000ms**，session 数据规模大时实测可达 45-60 秒），解析并追加快照到 `metrics.token_usage.snapshots`：
-   ```yaml
-   - phase: archive
-     timestamp: <当前 ISO 8601 时间戳>
-     input_tokens: <从 ccusage 获取>
-     output_tokens: <从 ccusage 获取>
-   ```
-3. 如果为 false，追加 `unavailable: true` 快照
-4. 如果 ccusage 执行失败，追加 `error: "<错误信息>"` 快照
-5. 使用 Edit 工具更新 sdd-state.yaml，**不阻塞流程**
-
 ### 步骤 2：归档前验证
 
 1. 读取 sdd-state.yaml，检查所有任务状态
@@ -77,26 +64,6 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
 8. 记录 `metrics.git_baseline.end_sha` ← `git rev-parse HEAD`（**注意**：第 3 步已保证此时工作区干净，HEAD 即为归档前最后一次 commit；如果归档后还有 commit（如归档收尾的 archive.md 提交），其文件不会被本次统计包含——这是预期行为，归档元数据本身不应计入变更统计）
 9. 记录 `metrics.git_baseline.end_time` ← 当前 ISO 8601 时间戳
 
-### 步骤 2.6：Metrics Token 数据汇总
-
-1. 读取 sdd-state.yaml 的 `metrics.token_usage.snapshots` 数组
-2. **无数据降级处理**：如果 snapshots 数组为空，或所有快照均标记 `unavailable: true` 或包含 `error` 字段：
-   - 设置 `metrics.token_usage.total_input_tokens: null`
-   - 设置 `metrics.token_usage.total_output_tokens: null`
-   - 设置 `metrics.token_usage.total_tokens: null`
-   - 设置 `metrics.token_usage.estimated_cost_usd: null`
-   - 设置 `metrics.token_usage.token_data_unavailable: true`
-   - 跳过后续步骤
-3. **提取有效数据**：从 snapshots 数组中找到最后一个不包含 `unavailable` 且不包含 `error` 的快照
-   - **注意**：ccusage session 默认返回累计值（整个会话的 Token 总量），因此取最后一个有效快照即可代表总量。如果 ccusage 行为变更（改为增量值），则应累加所有有效快照。可在首次使用时验证 ccusage 输出格式
-4. 从该快照中提取 `input_tokens` 和 `output_tokens`
-5. 填充汇总字段：
-   - `metrics.token_usage.total_input_tokens` ← 快照的 `input_tokens`
-   - `metrics.token_usage.total_output_tokens` ← 快照的 `output_tokens`
-   - `metrics.token_usage.total_tokens` ← `total_input_tokens + total_output_tokens`
-   - `metrics.token_usage.estimated_cost_usd` ← 如果 ccusage session 输出包含 cost 字段则使用该值，否则设为 null
-6. 使用 Edit 工具更新 sdd-state.yaml
-
 ### 步骤 2.7：生成 Metrics Report
 
 使用 Write 工具在变更目录下生成 `metrics-report.md`，内容模板如下（根据实际数据填充，缺失数据标记 "数据不可用"）：
@@ -127,21 +94,6 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
 
 - **新增行数**：<metrics.line_stats.lines_added 或 "N/A">
 - **删除行数**：<metrics.line_stats.lines_deleted 或 "N/A">
-
-## Token 消费统计
-
-| 指标 | 数值 |
-|------|------|
-| 输入 Tokens | <metrics.token_usage.total_input_tokens 或 "数据不可用"> |
-| 输出 Tokens | <metrics.token_usage.total_output_tokens 或 "数据不可用"> |
-| 总 Tokens | <metrics.token_usage.total_tokens 或 "数据不可用"> |
-| 预估费用 (USD) | <metrics.token_usage.estimated_cost_usd 或 "数据不可用"> |
-
-### 各阶段 Token 快照明细
-
-| 阶段 | 时间 | 输入 Tokens | 输出 Tokens | 状态 |
-|------|------|------------|------------|------|
-| <对 metrics.token_usage.snapshots 每条记录生成一行> | <timestamp> | <input_tokens 或 "N/A"> | <output_tokens 或 "N/A"> | <正常/unavailable/error> |
 ```
 
 **部分数据缺失处理**：
@@ -227,7 +179,7 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
 ### 步骤 7：阶段完成确认
 
 使用 AskUserQuestion 展示归档摘要，提供三个选项：
-- **A. 确认归档完成**：更新 sdd-state.yaml（phase_checkpoints.archive: done, phase: archive, checkpoint: done），展示变更摘要
+- **A. 确认归档完成**：更新 sdd-state.yaml（phase_checkpoints.archive: done, phase: archive, checkpoint: done），展示变更摘要，并在输出中包含提示信息：建议运行 `/xt-metrics report` 更新项目统计数据
 - **B. 取消归档**：不修改状态，退出
 - **C. 暂停**：保存当前进度，退出
 
