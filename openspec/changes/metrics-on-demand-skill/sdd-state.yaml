@@ -137,112 +137,112 @@ tasks:
     checkpoint: complete
   - id: 21
     description: "4.1 移除 xt-sdd-propose ccusage 逻辑"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "propose ccusage+快照+token_usage 已移除"
+    checkpoint: complete
   - id: 22
     description: "4.2 移除 xt-sdd-plan Token 快照"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "plan Token 快照已移除"
+    checkpoint: complete
   - id: 23
     description: "4.3 移除 xt-sdd-apply Token 快照"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "apply Token 快照已移除"
+    checkpoint: complete
   - id: 24
     description: "4.4 移除 xt-sdd-verify Token 快照"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "verify Token 快照已移除"
+    checkpoint: complete
   - id: 25
     description: "4.5 移除 xt-sdd-archive Token 汇总"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "archive Token快照+汇总+metrics-report Token行已移除"
+    checkpoint: complete
   - id: 26
     description: "4.6 移除 xt-sdd-fix ccusage 和快照"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "fix ccusage+快照+汇总+token_usage 已移除"
+    checkpoint: complete
   - id: 27
     description: "5.1 更新 propose SKILL.md sdd-state 模板"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "propose 模板已移除 token_usage"
+    checkpoint: complete
   - id: 28
     description: "5.2 更新 fix SKILL.md sdd-state 模板"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "fix 模板已移除 token_usage"
+    checkpoint: complete
   - id: 29
     description: "5.3 更新 CLAUDE.md sdd-state 结构规范"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "CLAUDE.md 无 token_usage 引用，无需修改"
+    checkpoint: complete
   - id: 30
     description: "6.1 添加 archive /xt-metrics 提示"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "archive 步骤 7 选项 A 已添加提示"
+    checkpoint: complete
   - id: 31
     description: "6.2 确保 archive git 代码统计正常"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "archive 保留 git 代码统计逻辑"
+    checkpoint: complete
   - id: 32
     description: "6.3 更新 archive metrics-report 模板"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:30:00+08:00"
+    test_result: "metrics-report Token 行已移除，保留代码统计"
+    checkpoint: complete
   - id: 33
     description: "7.1 验证脚本独立运行"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:35:00+08:00"
+    test_result: "report.js 和 summary.js 独立运行成功，JSON 输出正确"
+    checkpoint: complete
   - id: 34
     description: "7.2 验证 /xt-metrics report 首次调用"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:35:00+08:00"
+    test_result: "首次全量查询成功，生成报告文件"
+    checkpoint: complete
   - id: 35
     description: "7.3 验证 /xt-metrics report 增量调用"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:35:00+08:00"
+    test_result: "增量查询成功，使用 cutoff 截止时间，报告文件名带时间戳后缀"
+    checkpoint: complete
   - id: 36
     description: "7.4 验证 /xt-metrics summary 输出"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:35:00+08:00"
+    test_result: "summary 输出正确，包含累计统计和最近查询"
+    checkpoint: complete
   - id: 37
     description: "7.5 验证 xt-sdd propose 无 ccusage"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:35:00+08:00"
+    test_result: "propose SKILL.md 无 ccusage/Token快照/token_usage 引用"
+    checkpoint: complete
   - id: 38
     description: "7.6 验证 xt-sdd archive 正常 + 提示"
-    status: pending
-    updated: "-"
-    test_result: "-"
-    checkpoint: null
+    status: completed
+    updated: "2026-06-12T14:35:00+08:00"
+    test_result: "archive SKILL.md 保留 git 代码统计，已添加 /xt-metrics 提示"
+    checkpoint: complete
 
 review_counters:
   global_review_rounds: 0
