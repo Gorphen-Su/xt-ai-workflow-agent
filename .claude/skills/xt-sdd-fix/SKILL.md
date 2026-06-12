@@ -18,19 +18,6 @@ Bug 修复专用入口，内置分诊逻辑，根据信息清晰度自动路由�
 
 ### 步骤 1：分诊判断
 
-**Metrics Token 快照：** 步骤 1 执行前，记录 fix 阶段 Token 快照：
-1. 读取当前变更的 sdd-state.yaml，检查 `metrics.token_usage.ccusage_available`
-2. 如果为 true，执行 `npx ccusage session --json`（**Bash 调用 timeout 至少 120000ms**，session 数据规模大时实测可达 45-60 秒），解析并追加快照到 `metrics.token_usage.snapshots`：
-   ```yaml
-   - phase: fix
-     timestamp: <当前 ISO 8601 时间戳>
-     input_tokens: <从 ccusage 获取>
-     output_tokens: <从 ccusage 获取>
-   ```
-3. 如果为 false，追加 `unavailable: true` 快照
-4. 如果 ccusage 执行失败，追加 `error: "<错误信息>"` 快照
-5. 使用 Edit 工具更新 sdd-state.yaml，**不阻塞流程**
-
 分析用户描述 + 扫描相关代码，在两个维度上评估：
 
 ```
@@ -67,14 +54,7 @@ Bug 修复专用入口，内置分诊逻辑，根据信息清晰度自动路由�
 
 1. 使用 `fix-<简述>` 格式命名（如 `fix-null-pointer-login`）
 2. 运行 `openspec new change "fix-<简述>"` 创建变更目录
-3. 检测 ccusage 可用性（Metrics 前置依赖）：
-   - 执行 `npx ccusage --version` 检测 ccusage 是否可用（**Bash 调用 timeout 至少 60000ms**，npx 冷启动可能较慢）
-   - 可用 → 标记 `ccusage_available: true`，跳过安装
-   - 不可用 → 自动执行 `npm install -g ccusage` 全局安装（**Bash 调用 timeout 至少 180000ms**，npm 全局安装含依赖下载）
-     - 安装成功 → 重新验证 `npx ccusage --version`，标记 `ccusage_available: true`、`auto_installed: true`
-     - 安装失败 → 标记 `ccusage_available: false`、`auto_installed: false`、`install_error: "<错误信息>"`，提示用户手动安装 `npm install -g ccusage`，**不阻塞流程**
-   - 将检测结果暂存，用于后续写入 sdd-state.yaml
-4. 初始化 sdd-state.yaml，包含完整的 metrics 段结构，phase 设为路由目标阶段：
+3. 初始化 sdd-state.yaml，包含 metrics 段结构（git_baseline + file_stats + line_stats），phase 设为路由目标阶段：
 
 ```yaml
 version: 1
@@ -119,16 +99,6 @@ metrics:
   line_stats:
     lines_added: 0
     lines_deleted: 0
-  token_usage:
-    total_input_tokens: 0
-    total_output_tokens: 0
-    total_tokens: 0
-    estimated_cost_usd: 0.0
-    ccusage_available: null
-    auto_installed: null
-    install_error: null
-    # token_data_unavailable 在 archive 阶段降级时动态设置，初始不需要
-    snapshots: []
 ```
 
 **Metrics 初始化操作：**
@@ -139,40 +109,7 @@ metrics:
    - `metrics.git_baseline.start_sha` ← `git rev-parse HEAD` 的输出
    - `metrics.git_baseline.start_time` ← 当前 ISO 8601 时间戳
    - `metrics.git_baseline.dirty` ← 工作区干净则为 `false`，有未提交更改则为 `true`
-   - `metrics.token_usage.ccusage_available` ← 步骤 2 第 3 条的检测结果
-   - `metrics.token_usage.auto_installed` ← 是否自动安装了 ccusage
-   - `metrics.token_usage.install_error` ← 安装错误信息（如无错误则为 null）
 4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段
-5. 执行 Token 快照记录（fix-init 阶段）：
-   - 如果 `metrics.token_usage.ccusage_available` 为 true：
-     - 执行 `npx ccusage session --json` 获取当前会话 Token 数据（**Bash 调用 timeout 至少 120000ms**，session 数据规模大时实测可达 45-60 秒）
-     - 解析 JSON 输出，提取 input_tokens 和 output_tokens
-     - 追加一条快照到 `metrics.token_usage.snapshots`：
-       ```yaml
-       - phase: fix-init
-         timestamp: <当前 ISO 8601 时间戳>
-         input_tokens: <从 ccusage 获取>
-         output_tokens: <从 ccusage 获取>
-       ```
-   - 如果 `metrics.token_usage.ccusage_available` 为 false：
-     - 追加一条标记不可用的快照：
-       ```yaml
-       - phase: fix-init
-         timestamp: <当前 ISO 8601 时间戳>
-         input_tokens: null
-         output_tokens: null
-         unavailable: true
-       ```
-   - 如果 ccusage 命令执行失败（超时、格式错误等）：
-     - 追加一条标记错误的快照：
-       ```yaml
-       - phase: fix-init
-         timestamp: <当前 ISO 8601 时间戳>
-         input_tokens: null
-         output_tokens: null
-         error: "<错误信息>"
-       ```
-   - **不阻塞流程**：无论快照记录成功与否，继续执行步骤 3
 
 ### 步骤 3：按路由执行
 
@@ -268,11 +205,7 @@ fix 流程的 verify 使用**聚焦验证**，非全量回归：
 
 fix 流程使用简化归档：
 
-**Metrics 汇总**：如果 sdd-state.yaml 中包含 `metrics.git_baseline.start_sha` 且非 null，在归档前应执行 metrics 汇总步骤（参照 xt-sdd-archive 的步骤 2.5/2.6/2.7）：
-1. 执行 Git Diff 统计（`git diff --name-status` + `git diff --numstat`）
-2. 执行 Token 数据汇总（从 snapshots 提取最后一个有效快照）
-3. 生成 `metrics-report.md`
-如果 metrics 段不存在或 start_sha 为 null，跳过此步骤。
+**建议运行 /xt-metrics**：归档完成后，提示用户"建议运行 `/xt-metrics report` 更新项目统计数据"。
 
 ```markdown
 # 归档记录 - fix-<简述>
