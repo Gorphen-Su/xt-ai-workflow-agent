@@ -2,14 +2,14 @@ version: 1
 change: metrics-on-demand-skill
 
 phase: archive
-checkpoint: entered
+checkpoint: archived
 
 phase_checkpoints:
   propose: done
   plan: done
   apply: done
   verify: done
-  archive: entered
+  archive: archived
 
 superpowers_available: false
 execution_mode: lightweight
@@ -258,24 +258,14 @@ metrics:
   git_baseline:
     start_sha: d566bddb2d46c88b025318ca54130e13ca41852a
     start_time: "2026-06-12T10:00:00+08:00"
-    end_sha: null
-    end_time: null
+    end_sha: cdd43dffdc184afd1163d009d427df94551d64ea
+    end_time: "2026-06-12T15:05:00+08:00"
     dirty: false
   file_stats:
-    files_added: 0
-    files_modified: 0
+    files_added: 23
+    files_modified: 6
     files_deleted: 0
-    total_files_changed: 0
+    total_files_changed: 29
   line_stats:
-    lines_added: 0
-    lines_deleted: 0
-  token_usage:
-    total_input_tokens: 0
-    total_output_tokens: 0
-    total_tokens: 0
-    estimated_cost_usd: 0.0
-    ccusage_available: true
-    auto_installed: false
-    install_error: null
-    token_data_unavailable: null
-    snapshots: []
+    lines_added: 2363
+    lines_deleted: 220
