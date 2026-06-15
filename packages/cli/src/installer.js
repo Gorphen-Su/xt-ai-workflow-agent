@@ -64,7 +64,7 @@ export async function installFiles(extractedDir, projectRoot, manifest, options 
   if (mode === 'install' && existingSkills.length > 0) {
     throw new InstallerError(
       'ALREADY_INSTALLED',
-      `target already has ${existingSkills.length} xt-sdd-* skill(s): ${existingSkills.join(', ')}. Use 'update' instead.`
+      `target already has ${existingSkills.length} xt-sdd skill(s): ${existingSkills.join(', ')}. Use 'update' instead.`
     );
   }
   if (mode === 'update' && existingSkills.length === 0) {

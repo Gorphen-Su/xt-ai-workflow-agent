@@ -2,14 +2,14 @@ import { describe, it, expect } from 'vitest';
 import { MANIFEST, DEFAULT_SOURCE, DEFAULT_REF, getManifestSkillNames } from '../manifest.js';
 
 describe('manifest', () => {
-  it('exports MANIFEST with 6 xt-sdd-* skills', () => {
-    expect(MANIFEST.skills).toHaveLength(6);
-    for (const name of MANIFEST.skills) {
-      expect(name).toMatch(/^xt-sdd-/);
-    }
+  it('exports MANIFEST with 6 xt-sdd-* skills + 1 xt-metrics skill', () => {
+    expect(MANIFEST.skills).toHaveLength(7);
+    const xtSddCount = MANIFEST.skills.filter((n) => n.startsWith('xt-sdd-')).length;
+    expect(xtSddCount).toBe(6);
+    expect(MANIFEST.skills).toContain('xt-metrics');
   });
 
-  it('MANIFEST.skills contains the canonical 6 names', () => {
+  it('MANIFEST.skills contains the canonical 7 names', () => {
     expect(MANIFEST.skills).toEqual([
       'xt-sdd-propose',
       'xt-sdd-plan',
@@ -17,6 +17,7 @@ describe('manifest', () => {
       'xt-sdd-verify',
       'xt-sdd-archive',
       'xt-sdd-fix',
+      'xt-metrics',
     ]);
   });
 

@@ -1,7 +1,7 @@
 {
   "name": "xt-sdd-skills",
-  "version": "0.1.0",
-  "description": "Install and update xt-sdd workflow skills from xt-ai-workflow-agent repo via npx",
+  "version": "0.2.0",
+  "description": "Install and update xt-sdd workflow skills + xt-metrics skill from xt-ai-workflow-agent repo via npx",
   "type": "module",
   "bin": {
     "xt-sdd-skills": "./bin/xt-sdd-skills.js"

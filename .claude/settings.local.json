@@ -10,7 +10,9 @@
       "Bash(chmod +x *)",
       "Bash(grep -E \"\\\\.\\(md|txt\\)$\")",
       "Bash(xargs grep *)",
-      "Bash(npx @fission-ai/openspec *)"
+      "Bash(npx @fission-ai/openspec *)",
+      "Bash(npx ccusage *)",
+      "Bash(npx vitest *)"
     ]
   }
 }

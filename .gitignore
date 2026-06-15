@@ -1,0 +1,20 @@
+# Node
+node_modules/
+*.log
+npm-debug.log*
+
+# xt-metrics 运行时数据（cutoff、history、reports 由 /xt-metrics 命令生成）
+openspec/metrics/
+
+# 编辑器/系统
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 测试覆盖率
+coverage/
+*.lcov
+
+# npm pack 产物
+*.tgz

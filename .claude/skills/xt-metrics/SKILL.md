@@ -1,3 +1,8 @@
+---
+name: xt-metrics
+description: xt-metrics — 按需统计 xt-sdd 项目的 token 用量、代码变更和成本归因。用户主动调用，不阻塞开发流程。当用户说"统计"、"metrics"、"token 用量"、"成本"、"代码统计"、使用 /xt-metrics、/xt-metrics report 或 /xt-metrics summary 时触发。
+---
+
 # xt-metrics — 按需统计 Skill
 
 独立按需统计 xt-sdd 项目的 token 用量、代码变更和成本归因。用户主动调用，不阻塞开发流程。
