@@ -5,7 +5,7 @@ export const DEFAULT_SOURCE = 'Gorphen-Su/xt-ai-workflow-agent';
 export const DEFAULT_REF = 'main';
 
 export const MANIFEST = Object.freeze({
-  // 6 个核心 xt-sdd-* skill + 1 个按需统计 skill，分发到目标项目的 .claude/skills/<name>/
+  // 6 个核心 xt-sdd-* skill + xt-metrics 按需统计 + xt-codegraph-init 代码图谱初始化，分发到目标项目的 .claude/skills/<name>/
   skills: Object.freeze([
     'xt-sdd-propose',
     'xt-sdd-plan',
@@ -14,6 +14,7 @@ export const MANIFEST = Object.freeze({
     'xt-sdd-archive',
     'xt-sdd-fix',
     'xt-metrics',
+    'xt-codegraph-init',
   ]),
 
   // 模板文件：目标已存在时跳过，避免覆盖用户已定制的内容

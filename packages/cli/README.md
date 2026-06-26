@@ -7,7 +7,8 @@ in any Claude Code project.
 
 `xt-sdd` is a spec-driven development workflow built on top of OpenSpec and Superpowers.
 Its 6 core skills (`xt-sdd-propose`, `xt-sdd-plan`, `xt-sdd-apply`, `xt-sdd-verify`, `xt-sdd-archive`,
-`xt-sdd-fix`) plus the on-demand `xt-metrics` skill live under `.claude/skills/` in your project.
+`xt-sdd-fix`), the on-demand `xt-metrics` skill, and the `xt-codegraph-init` skill (one-shot CodeGraph
+indexing setup) live under `.claude/skills/` in your project.
 This CLI fetches the latest version of those skills from the upstream repo so you don't have to
 clone or copy files manually.
 
@@ -94,6 +95,7 @@ All commands accept these global options:
 - `.claude/skills/xt-sdd-archive/`
 - `.claude/skills/xt-sdd-fix/`
 - `.claude/skills/xt-metrics/` (按需 token / 代码统计)
+- `.claude/skills/xt-codegraph-init/` (一键接入 CodeGraph 代码知识图谱)
 - `.claude/commands/xt-sdd-*.md`、`.claude/commands/xt-metrics.md` (slash command 入口，存在时分发)
 - `openspec/sdd-project-profile.yaml` (template, **skipped if you already have one**)
 - `openspec/openspec.yaml` (template, **skipped if you already have one**)

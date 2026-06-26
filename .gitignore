@@ -18,3 +18,6 @@ coverage/
 
 # npm pack 产物
 *.tgz
+
+# CodeGraph 本地索引产物
+.codegraph/

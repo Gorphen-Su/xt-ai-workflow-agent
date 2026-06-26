@@ -68,3 +68,5 @@
 - 多需求并发：每个变更目录独立 sdd-state.yaml，互不干扰
 - 并发冲突：后者覆盖前者，apply 时检测文件冲突并警告
 - 归档时机：verify 通过 + 用户确认即可归档
+- 代码检索强制优先：理解或定位代码（函数/类、调用链、改动影响面）时，必须先用 `codegraph_explore`（MCP）或 `codegraph explore`（CLI），禁止先 grep + read 整文件——一次调用即拿到符号源码 + 调用链 + 影响半径
+- 检索例外：查 `.md` 文档内容或 `specs/` 下的规格 yaml 时用 Grep/Read（这两类不在 codegraph 符号索引内）
