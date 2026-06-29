@@ -18,7 +18,9 @@ Bug 修复专用入口，内置分诊逻辑，根据信息清晰度自动路由�
 
 ### 步骤 1：分诊判断
 
-分析用户描述 + 扫描相关代码，在两个维度上评估：
+> 若 CodeGraph 可用，优先用 `codegraph explore <报错入口/相关关键词>` 一次拿到调用链与影响半径定位根因，替代反复 grep + read。详见 [CodeGraph × xt-sdd 提效指南 · fix](.claude/skills/xt-codegraph-init/references/codegraph-xt-sdd.md#fixbug-修复)。
+
+分析用户描述 + 定位相关代码，在两个维度上评估：
 
 ```
 根因明确？
@@ -54,7 +56,7 @@ Bug 修复专用入口，内置分诊逻辑，根据信息清晰度自动路由�
 
 1. 使用 `fix-<简述>` 格式命名（如 `fix-null-pointer-login`）
 2. 运行 `openspec new change "fix-<简述>"` 创建变更目录
-3. 初始化 sdd-state.yaml，包含 metrics 段结构（git_baseline + file_stats + line_stats），phase 设为路由目标阶段：
+3. 初始化 sdd-state.yaml，包含 metrics 段结构（仅 git_baseline，文件/行数/token 统计由 `/xt-metrics` 按需计算），phase 设为路由目标阶段：
 
 ```yaml
 version: 1
@@ -91,14 +93,6 @@ metrics:
     end_sha: null
     end_time: null
     dirty: false
-  file_stats:
-    files_added: 0
-    files_modified: 0
-    files_deleted: 0
-    total_files_changed: 0
-  line_stats:
-    lines_added: 0
-    lines_deleted: 0
 ```
 
 **Metrics 初始化操作：**

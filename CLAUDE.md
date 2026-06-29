@@ -16,16 +16,17 @@
 
 **核心纪律：先探索、再锁规范、最后严谨执行。**
 
-### 六命令五阶段 + Bug 修复
+### 六命令五阶段 + Bug 修复 + 快速变更
 
 | 阶段 | 命令 | 说明 | 产出 |
 |------|------|------|------|
 | 需求探索 | `/xt-sdd:propose` | 项目分析、需求澄清、规格生成 | proposal.md |
-| 方案设计 | `/xt-sdd:plan` | 规范产物 + Bridge 转换 + 实现计划 | design.md、specs/、tasks.md、plans/、plan.md |
-| TDD 实现 | `/xt-sdd:apply` | subagent/inline 双模式 TDD | 代码 + 测试 |
+| 方案设计 | `/xt-sdd:plan` | 规范产物 + 规格→TDD 转换 + 实现计划 | design.md、specs/、tasks.md、plans/、plan.md |
+| TDD 实现 | `/xt-sdd:apply` | subagent/inline 双模式 TDD，连续执行 + 分组提交 | 代码 + 测试 |
 | 验证审查 | `/xt-sdd:verify` | 文档同步 + 合规验证 + 代码审查 | 验证报告 |
 | 归档收尾 | `/xt-sdd:archive` | 双源合并归档 + Git 提交 | archive.md |
 | Bug 修复 | `/xt-sdd:fix` | 分诊路由 + 自动升级 + 简化流程 | 动态产出 |
+| 快速变更 | `/xt-sdd:quick` | 小功能轻量通道（分诊 + 简化规格 + TDD + codegraph 精准回归） | 代码 + 简化归档 |
 
 每个阶段完成后必须用户确认，禁止跳过。
 

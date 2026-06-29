@@ -20,14 +20,15 @@ xt-sdd 规格驱动开发的第四阶段：文档同步 + 双重验证确保实�
 ### 步骤 1：确定当前变更
 
 1. 读取变更目录下的 `sdd-state.yaml`，获取当前 change 名和 checkpoint
-2. 如果 sdd-state.yaml 不存在，扫描 `openspec/changes/` 目录查找进行中的变更
+2. 如果 sdd-state.yaml 不存在，扫描 `openspec/changes/` **顶层目录**（排除 `openspec/changes/archive/` 归档子目录），查找进行中的变更
 3. 如果有多个 → 使用 AskUserQuestion 让用户选择
 
-### 步骤 2：读取上下文
+### 步骤 2：读取上下文（按需，非全量）
 
-1. 读取变更目录下的所有产物：proposal.md、design.md、specs/、tasks.md、plan.md、sdd-state.yaml
+1. 必读：`sdd-state.yaml`（任务最终状态、审查计数）、`tasks.md`（任务清单）
 2. 读取 `openspec/sdd-project-profile.yaml`（如果存在），获取 test_command 和 compile_command
-3. 读取项目代码和测试文件
+3. 通过 `git diff`（见步骤 3a）确定本次变更涉及的 capability / 文件，**仅读取受影响的 `specs/<capability>/spec.md` 与 design.md 相关章节**，MUST NOT 一上来全量读取所有 specs/proposal/design
+4. 定位/理解代码与测试遵循 CLAUDE.md 的 codegraph 纪律：先用 `codegraph_explore`（MCP）或 `codegraph explore`（CLI）定位变更涉及的符号与调用链，禁止 grep + read 整文件。详见 [CodeGraph × xt-sdd 提效指南 · verify](.claude/skills/xt-codegraph-init/references/codegraph-xt-sdd.md#verify验证回归)
 
 ### 步骤 3：文档同步检查（前置步骤）
 
@@ -40,10 +41,16 @@ xt-sdd 规格驱动开发的第四阶段：文档同步 + 双重验证确保实�
 1. 运行 `git diff` 获取本次变更涉及的所有代码改动
 2. 提取改动涉及的模块、接口、行为变更
 
-#### 3b. 对比 specs/design
+#### 3b. 对比 specs/design（单次遍历，同时收集文档同步与覆盖信息）
 
-1. 读取 specs/ 下的所有 spec.md，检查每个 Scenario 描述的行为是否与代码变更一致
+**只遍历一次** specs（避免与步骤 5a 重复遍历），对每个 spec.md 的每个 Scenario 同时记录两份信息：
+
+1. 读取**受本次变更影响**的 specs（由 3a 的 git diff 圈定，非全量），逐 Scenario 检查：
+   - **文档同步维度**：该 Scenario 描述的行为是否与代码变更一致（用于步骤 3c 的文档更新决策）
+   - **覆盖维度**：该 Scenario 是否有对应实现代码、是否有对应测试用例（**记录到中间清单**，供步骤 5a 直接复用，不再重复遍历）
 2. 读取 design.md 中的 Decisions 部分，检查架构决策是否被代码变更改变
+
+> 覆盖清单在内存/草稿中保留，步骤 5a 直接读取，MUST NOT 再次遍历 specs。
 
 #### 3c. 按影响级别处理
 
@@ -63,6 +70,8 @@ xt-sdd 规格驱动开发的第四阶段：文档同步 + 双重验证确保实�
 更新 sdd-state.yaml checkpoint: doc-sync-done
 
 ### 步骤 4：代码质量验证
+
+> 若 CodeGraph 可用，精准回归用 `codegraph affected <变更文件...>` 只跑受本次改动影响的测试（替代全量套件）。apply 刚写的新代码可能尚未 sync，**先 `codegraph status` 确认索引未过期**，必要时 `codegraph sync` 再查。
 
 #### 4a. 调用 `superpowers:verification-before-completion`（需要 Superpowers）
 
@@ -88,12 +97,10 @@ xt-sdd 规格驱动开发的第四阶段：文档同步 + 双重验证确保实�
 
 ### 步骤 5：规范合规检查
 
-#### 5a. 场景实现覆盖检查
+#### 5a. 场景实现覆盖检查（复用步骤 3b 的覆盖清单）
 
-1. 遍历 specs/ 下每个 spec.md 中的每个 Scenario
-2. 检查对应的实现代码是否存在
-3. 检查对应的测试用例是否存在
-4. 未覆盖的场景标记为 CRITICAL
+1. 直接读取步骤 3b 遍历时记录的覆盖清单（**MUST NOT 再次遍历 specs**）
+2. 未覆盖的 Scenario 标记为 CRITICAL
 
 #### 5b. 架构决策遵循检查
 

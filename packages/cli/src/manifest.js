@@ -13,6 +13,7 @@ export const MANIFEST = Object.freeze({
     'xt-sdd-verify',
     'xt-sdd-archive',
     'xt-sdd-fix',
+    'xt-sdd-quick',
     'xt-metrics',
     'xt-codegraph-init',
   ]),
@@ -39,6 +40,7 @@ export const MANIFEST = Object.freeze({
     'xt-sdd-verify',
     'xt-sdd-archive',
     'xt-sdd-fix',
+    'xt-sdd-quick',
     'xt-metrics',
   ]),
 });

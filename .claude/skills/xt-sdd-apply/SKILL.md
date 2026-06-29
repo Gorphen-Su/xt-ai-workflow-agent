@@ -1,6 +1,6 @@
 ---
 name: xt-sdd-apply
-description: xt-sdd 实现阶段 — 支持完整模式（subagent 驱动）和轻量模式（内联 TDD），基于 sdd-state.yaml checkpoint 精确断点恢复，审查循环限制 5 次，级联回退触发（执行归 xt-sdd-plan），并发变更冲突检测，编译检查，每个任务完成后要求用户确认。当用户说"开始实现"、"执行任务"、"TDD 实现"、使用 /xt-sdd:apply 时触发。
+description: xt-sdd 实现阶段 — 支持完整模式（subagent 驱动）和轻量模式（内联 TDD），基于 sdd-state.yaml checkpoint 精确断点恢复，审查循环限制 5 次，级联回退触发（执行归 xt-sdd-plan），并发变更冲突检测，编译检查，默认连续执行（异常才停）、按分组批量提交。当用户说"开始实现"、"执行任务"、"TDD 实现"、使用 /xt-sdd:apply 时触发。
 ---
 
 # xt-sdd 实现阶段
@@ -10,7 +10,7 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 ## 铁律
 
 1. **新行为 MUST 先写失败测试，MUST NOT 在未写失败测试的情况下编写实现代码**
-2. **每个任务完成后 MUST 要求用户确认，MUST NOT 自动跳过**
+2. **默认连续执行所有任务，仅在异常（测试失败 / 编译失败 / 规范偏离）时暂停；分组或全部任务完成后统一汇报。用户可在步骤 2.5 选择更细的确认节奏（按分组 / 每任务）**
 3. **发现规范偏离时 MUST 暂停，MUST NOT 默默偏离规范**
 4. **单任务修改 MUST NOT 超过 5 次，全局审查 MUST NOT 超过 5 轮**
 5. **此阶段 MUST NOT 修改规格文档**（proposal.md、design.md、specs/、tasks.md 的内容）
@@ -19,7 +19,7 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 
 ### 步骤 1：确定当前变更 + Superpowers 前置检查
 
-1. 扫描 `openspec/changes/` 目录，查找进行中的变更（有 sdd-state.yaml 且 phase 为 apply 或 plan 已完成）
+1. 扫描 `openspec/changes/` **顶层目录**（排除 `openspec/changes/archive/` 归档子目录），查找进行中的变更（有 sdd-state.yaml 且 phase 为 apply 或 plan 已完成）
 2. 如果只有一个 → 自动选择
 3. 如果有多个 → 使用 AskUserQuestion 让用户选择
 4. 如果没有 → 提示用户先运行 `/xt-sdd:propose` 和 `/xt-sdd:plan`
@@ -81,28 +81,41 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 - **独立性否决**：即使任务数 >= 6 或跨 >= 3 模块，如果任务有强编译依赖，仍用轻量模式
 - Superpowers 不可用时强制使用轻量模式
 
-使用 AskUserQuestion 向用户展示推荐模式和理由，让用户确认或选择另一种模式。
+使用 AskUserQuestion 向用户展示推荐模式、理由，并一并确认**确认节奏**：
 
-将选择的模式记录到 sdd-state.yaml（新增字段 `execution_mode: full | lightweight`）。
+- **执行模式**（完整 / 轻量）：如上决策因素推荐
+- **确认节奏**：
+  - **连续执行（默认）**：连续跑完所有任务，仅在测试失败 / 编译失败 / 规范偏离时暂停，每个分组完成时简要汇报
+  - **按分组确认**：每完成一个分组（`plans/NN-*.md`）确认一次
+  - **每任务确认**：每个任务完成后确认（最细粒度，适合高风险变更）
 
-### 步骤 3：加载规范上下文
+将执行模式与确认节奏一并记录到 sdd-state.yaml：`execution_mode: full | lightweight`、`confirm_cadence: continuous | group | task`。
 
-在开始实现之前，MUST 读取变更目录下的所有规范文件：
-1. `proposal.md`：了解需求范围和排除范围
-2. `design.md`：了解技术方案和架构决策
-3. `specs/` 下的所有 spec.md：了解行为场景
-4. `tasks.md`：了解任务清单
-5. `plan.md`（如果存在）：了解实现计划索引和子计划列表
-6. `plans/` 目录下的所有子计划文件（如果存在）：了解每个分组的实现步骤和 checkbox 微步骤
-7. `sdd-state.yaml`：了解当前进度和审查计数
+### 步骤 3：加载规范上下文（分层按需，非全量）
+
+在开始实现之前，按当前任务所需加载规范上下文，**MUST NOT 一上来全量读取所有规范文件**（大变更下极费 token）。分层规则：
+
+**必读（每次都读，轻量）**：
+1. `sdd-state.yaml`：当前进度、审查计数、任务级 checkpoint（断点恢复依据）
+2. `tasks.md`：任务清单全貌
+3. `plan.md`（如存在）：实现计划索引，用于定位当前任务所在分组
+4. 当前任务所在分组的 `plans/NN-<分组>.md`：该分组的 TDD 微步骤与 checkbox
+
+**按需读（仅当当前任务需要时）**：
+5. `specs/<capability>/spec.md`：仅读**当前任务对应 capability** 的那份 spec，MUST NOT 读 specs/ 全目录
+6. `proposal.md` / `design.md`：仅在跨阶段断点恢复、或当前任务涉及全局范围/架构决策时读取对应章节，无需通读
+
+**定位代码遵循 CLAUDE.md 的 codegraph 纪律**：理解或定位实现涉及的函数/类/调用链时，MUST 先用 `codegraph_explore`（MCP）或 `codegraph explore`（CLI），禁止 grep + read 整文件；仅查 `specs/` 下规格内容时可用 Read。详见 [CodeGraph × xt-sdd 提效指南 · apply](.claude/skills/xt-codegraph-init/references/codegraph-xt-sdd.md#applytdd-实现)。
+
+> 完整模式下，`superpowers:subagent-driven-development` 会在步骤 4a 自行加载所需的全部分组计划来调度 subagent；本步骤的按需规则主要约束主对话与轻量模式。
 
 **计划文件兼容读取**：
-- 如果 `plans/` 目录存在 → 从 `plan.md` 读取索引获取全局视图，从 `plans/NN-*.md` 按编号排序读取子计划
-- 如果 `plans/` 目录不存在 → 从单一 `plan.md` 读取所有实现步骤（兼容旧变更目录）
+- 如果 `plans/` 目录存在 → 从 `plan.md` 读取索引定位分组，仅深读当前分组对应的 `plans/NN-*.md`
+- 如果 `plans/` 目录不存在 → 从单一 `plan.md` 读取当前任务的实现步骤（兼容旧变更目录）
 
 ### 步骤 3.5：并发变更冲突检测
 
-1. 扫描 `openspec/changes/` 下其他活跃变更
+1. 扫描 `openspec/changes/` 顶层目录下其他活跃变更（排除 `openspec/changes/archive/` 归档子目录）
 2. 对于每个其他活跃变更，检查其 plan.md 或 tasks.md 中涉及修改的文件
 3. 如果与当前变更有文件重叠 → 使用 AskUserQuestion 警告用户：
    - 列出重叠的文件
@@ -155,24 +168,31 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 1. 运行完整的测试套件（不仅限于当前任务的测试）
 2. 如果 compile_command 非 null（来自 sdd-project-profile.yaml），运行编译检查
 3. 如果全部通过 → 更新 sdd-state.yaml：任务 status → completed，checkpoint → complete，记录 test_result
-4. 如果有失败 → 更新 sdd-state.yaml：任务 status → failed，记录失败原因
+4. 如果有失败 → 更新 sdd-state.yaml：任务 status → failed，记录失败原因；**暂停连续执行**，向用户报告失败任务与原因，MUST NOT 自动跳到下一任务（按步骤 6 规范偏离或失败重试流程处理）
 
-### 步骤 5：每个任务完成后的提交流程
+### 步骤 5：分组提交与状态同步
 
-无论哪种执行模式，每个 task 完成后必须执行以下流程：
+按**分组边界**提交，而非每个任务一次提交（减少大变更下的 git 操作频率）。提交节奏：每个分组（`plans/NN-<分组>.md`）的全部任务完成后 commit 一次；无 `plans/` 的单一 `plan.md` 变更，全部任务完成后 commit 一次。
 
-1. **编译检查**：运行 `compile_command`，编译必须通过（如果 compile_command 为 null 则跳过）
-2. **更新 checkbox**：根据计划文件结构更新 checkbox：
-   - 如果 `plans/` 目录存在 → 在对应的子计划文件 `plans/NN-<分组名>.md` 中更新 checkbox（`- [ ]` → `- [x]`）
-   - 如果无 `plans/` 目录 → 在 `plan.md` 中更新 checkbox
-   - 包括 Verify、Commit 等非实现步骤的 checkbox，不能遗漏
-3. **更新状态文件**：更新 sdd-state.yaml 的对应任务 status → completed，checkpoint: task-N-complete
-4. **自动 commit**：将代码改动 + 子计划文件变更（或 plan.md 变更）+ sdd-state.yaml 变更一起提交到本地仓库
-   - commit message 格式：`<类型>(<范围>): <task描述>`
-   - 一个 task 对应一个 commit
+**每个任务完成后（不 commit，仅同步状态）**：
+
+1. **编译检查**：运行 `compile_command`（如非 null），必须通过
+2. **更新 checkbox**：在对应 `plans/NN-<分组名>.md`（或 `plan.md`）中将该任务的 checkbox `- [ ]` → `- [x]`（含 Verify、Commit 等非实现步骤，不能遗漏）
+3. **更新状态文件**：sdd-state.yaml 对应任务 status → completed，checkpoint → task-N-complete
+
+**分组边界触发 commit**（当前任务是其所在分组的最后一个任务时）：
+
+4. **批量 commit**：将该分组累计的代码改动 + 子计划文件变更 + sdd-state.yaml 变更一起提交到本地仓库
+   - commit message 格式：`<类型>(<分组名>): <分组描述> — 含 N 个任务`
    - **全程不做 push 操作**
 
+**单一 plan.md 变更（无 plans/ 目录）**：所有任务全部完成后（步骤 8 之前）执行一次 commit。
+
+**异常不提交**：测试 / 编译失败时停止连续执行，**不提交未通过的改动**（见步骤 4b 测试验证与步骤 6 规范偏离）。
+
 **原子性保证**：先更新 checkbox 和状态文件再 commit，确保三者一致。
+
+> commit 边界在分组层，但**断点恢复仍由任务级 checkpoint（red/green/refactor/complete + task-N-complete）支持**——恢复粒度比 commit 粒度更细，不因批量 commit 而降级（见"断点恢复"表）。
 
 ### 步骤 6：规范偏离处理
 
@@ -193,7 +213,7 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 ### 步骤 8：所有任务完成
 
 1. 更新 sdd-state.yaml：phase_checkpoints.apply → all-tasks-complete，checkpoint → done
-2. 展示实现摘要：完成的任务数、失败的测试数（如有）
+2. 展示实现摘要：**按分组汇报**各分组完成任务数、失败的测试数（如有）
 3. 提示用户运行 `/xt-sdd:verify`
 
 ## sdd-state.yaml 更新规则
@@ -227,6 +247,6 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 
 - "AI 没读规范就实现了"：检查步骤 3 是否执行
 - "测试和实现顺序反了"：检查 TDD 循环步骤
-- "任务粒度太粗"：在 plan 阶段的 bridge 转换应已拆分；如仍过粗，可在此阶段进一步拆分
+- "任务粒度太粗"：在 plan 阶段（步骤 3c 转换约束 + 步骤 4 writing-plans）应已拆分；如仍过粗，可在此阶段进一步拆分
 - "规范偏离但用户不知道"：步骤 6 的规范偏离处理确保不会默默偏离
 - "修改超过 5 次仍不通过"：系统会提示回退 plan 重新审视任务拆分

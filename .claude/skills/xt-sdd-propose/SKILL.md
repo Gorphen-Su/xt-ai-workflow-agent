@@ -23,7 +23,12 @@ xt-sdd 规格驱动开发的第一阶段：项目分析、需求澄清、方案�
    - 可用 → 标记 `superpowers_available: true`
    - 不可用 → 提示用户："Superpowers skill 未安装，部分功能将降级为自包含模式。是否安装？`/plugin install superpowers@claude-plugins-official`"
    - 用户选择跳过 → 标记 `superpowers_available: false`
-3. 将 superpowers_available 状态写入 sdd-state.yaml（步骤 5 创建时）
+3. 检查 CodeGraph 是否可用（检查项目根是否有 `.codegraph/` 目录，或 `codegraph` CLI 是否可调用）
+   - 可用 → 后续各阶段优先用 `codegraph_explore`（MCP）/ `codegraph explore`（CLI）检索代码，替代 grep + read 整文件
+   - 不可用 → 提示用户："建议运行 `/xt-codegraph-init` 初始化代码图谱，各阶段代码检索（定位符号、调用链、改动影响面）将显著提效。是否现在初始化？"
+     - 用户选择初始化 → 调用 `xt-codegraph-init` skill，完成后继续
+     - 用户选择跳过 → 流程继续，代码检索降级为 grep + read（仍可用，但 token 消耗更高）
+4. 将 superpowers_available 状态写入 sdd-state.yaml（步骤 5 创建时）
 
 ### 步骤 1：Git 状态前置检查
 
@@ -161,14 +166,6 @@ metrics:
     end_sha: null
     end_time: null
     dirty: false
-  file_stats:
-    files_added: 0
-    files_modified: 0
-    files_deleted: 0
-    total_files_changed: 0
-  line_stats:
-    lines_added: 0
-    lines_deleted: 0
 ```
 
 **Metrics 初始化操作：**
@@ -182,6 +179,8 @@ metrics:
 4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段
 
 ### 步骤 6：探索与需求澄清
+
+> 若 CodeGraph 可用（步骤 0 检测），优先用 `codegraph explore <需求关键词>` 围绕需求收集相关符号与调用链，作为方案讨论与 proposal 的事实依据，替代 grep + read 扫码。详见 [CodeGraph × xt-sdd 提效指南 · propose](.claude/skills/xt-codegraph-init/references/codegraph-xt-sdd.md#propose需求探索)。
 
 1. 与用户讨论需求，每次只问一个关键问题
 2. 提出 2-3 个可行方案，每个方案列出优缺点，给出推荐方案及理由
@@ -249,8 +248,8 @@ tasks:
   - id: 1
     description: <任务描述>
     status: pending | in_progress | completed | failed
-    updated: <ISO 8601 时间戳>
-    test_result: <测试结果>
+    updated: <ISO 8601 时间戳，仅在状态变更时更新>
+    test_result: <pass/fail + 一句话，非长描述>
     checkpoint: null | red | green | refactor | complete
 
 # 审查计数器
@@ -273,15 +272,9 @@ metrics:
     end_sha: <archive 阶段的 commit SHA>
     end_time: <ISO 8601 时间戳>
     dirty: <true 或 false，propose 时工作区是否干净>
-  file_stats:
-    files_added: 0
-    files_modified: 0
-    files_deleted: 0
-    total_files_changed: 0
-  line_stats:
-    lines_added: 0
-    lines_deleted: 0
 ```
+
+> 文件/行数/token 统计由 `/xt-metrics` 按需计算（基于 `git log` + ccusage），不在此记录；`metrics` 段仅保留 `git_baseline` 供归档基线与时间窗口归因使用。
 
 ### 各阶段 checkpoint 定义
 
@@ -298,7 +291,6 @@ metrics:
 - `design-generated` — design.md 已生成
 - `specs-generated` — specs/ 已生成
 - `tasks-generated` — tasks.md 已生成
-- `bridge-converted` — Bridge 转换完成
 - `plan-generated` — 实现计划已生成
 - `quality-reviewed` — 质量审查完成
 - `done` — 用户确认通过
@@ -341,8 +333,8 @@ metrics:
 
 ## 并发变更路由
 
-当 `openspec/changes/` 下有多个活跃变更时：
-1. 扫描所有变更目录的 sdd-state.yaml
+当 `openspec/changes/` 下有多个活跃变更时（**仅扫顶层目录，排除 `openspec/changes/archive/` 归档子目录**）：
+1. 扫描各变更目录的 sdd-state.yaml
 2. 如果有变更的 phase 为 propose → 优先选择（继续当前阶段）
 3. 如果有多个 → 使用 AskUserQuestion 让用户选择
 4. 如果用户明确指定变更名 → 以用户意图为准

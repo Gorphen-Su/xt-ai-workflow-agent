@@ -20,7 +20,7 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
 ### 步骤 1：确定当前变更
 
 1. 读取变更目录下的 `sdd-state.yaml`，获取当前 change 名和 checkpoint
-2. 如果 sdd-state.yaml 不存在，扫描 `openspec/changes/` 目录查找进行中的变更
+2. 如果 sdd-state.yaml 不存在，扫描 `openspec/changes/` **顶层目录**（排除 `openspec/changes/archive/` 归档子目录），查找进行中的变更
 3. 如果有多个 → 使用 AskUserQuestion 让用户选择
 
 ### 步骤 2：归档前验证
@@ -34,73 +34,21 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
 
 更新 sdd-state.yaml checkpoint: entered
 
-### 步骤 2.5：Metrics Git Diff 统计
+### 步骤 2.5：归档前置提交与基线记录
 
-1. 读取 sdd-state.yaml 的 `metrics.git_baseline.start_sha`
-2. **基线缺失处理**：如果 `start_sha` 为 null：
-   - 在 `metrics.file_stats` 中设置 `baseline_missing: true`
-   - 所有统计字段（files_added、files_modified、files_deleted、total_files_changed）设为 null
-   - 在 `metrics.line_stats` 中设置 `baseline_missing: true`
-   - 所有行数字段（lines_added、lines_deleted）设为 null
-   - 跳过后续统计步骤（2.5 的 4-9 均依赖 Git 基线），直接进入步骤 2.6（Token 汇总不依赖 Git 基线，仍可执行）
-3. **Git 脏状态检查（含归档前置 commit 约束）**：执行 `git status --porcelain`
-   - 如果有未提交更改 → 提醒用户："**当前有未提交更改，必须先提交后再统计。** 归档阶段的 tasks.md checkbox 勾选、sdd-state.yaml 状态更新等均需纳入本次变更范围，否则文件计数会少算（实测案例：xt-sdd-fix-metrics-init 因此少算 1 个文件）。是否协助提交？"
-     - **强烈建议**：使用 AskUserQuestion 推荐 "立即提交"，避免脏状态影响统计准确性
-     - 用户选择提交 → 协助生成中文 commit message，`git add` 相关文件后 commit；commit 完成后**重新执行 `git status --porcelain` 验证工作区干净**，再进入第 4 步
-     - 用户选择继续（不提交）→ 标记 `metrics.git_baseline.dirty: true`，继续统计，并在 metrics-report.md 中追加 "⚠️ 工作区脏状态统计" 提示
-4. **文件变更统计**：执行 `git diff --name-status <start_sha> HEAD`（获取精确的 A/M/D 文件状态）和 `git diff --stat <start_sha> HEAD`（获取变更概览）
-   - 解析 `--name-status` 输出（格式：`<status>\t<filepath>`），按状态前缀统计：
-     - `A`（Added）→ `metrics.file_stats.files_added`
-     - `M`（Modified）→ `metrics.file_stats.files_modified`
-     - `D`（Deleted）→ `metrics.file_stats.files_deleted`
-   - 总变更文件数 → `metrics.file_stats.total_files_changed`
-5. **代码行数统计**：执行 `git diff --numstat <start_sha> HEAD`
-   - 逐行解析输出（格式：`<added>\t<deleted>\t<filepath>`）
-   - 跳过二进制文件（added 或 deleted 显示为 `-` 的行）
-   - 累加所有非二进制文件的 added 列 → `metrics.line_stats.lines_added`
-   - 累加所有非二进制文件的 deleted 列 → `metrics.line_stats.lines_deleted`
-6. **无变更处理**：如果 start_sha 与 HEAD 相同，所有 file_stats 字段设为 0，所有 line_stats 字段设为 0
-7. 使用 Edit 工具将统计结果写入 sdd-state.yaml 的 metrics 段
-8. 记录 `metrics.git_baseline.end_sha` ← `git rev-parse HEAD`（**注意**：第 3 步已保证此时工作区干净，HEAD 即为归档前最后一次 commit；如果归档后还有 commit（如归档收尾的 archive.md 提交），其文件不会被本次统计包含——这是预期行为，归档元数据本身不应计入变更统计）
-9. 记录 `metrics.git_baseline.end_time` ← 当前 ISO 8601 时间戳
+metrics 统计（文件/行数/token/成本）已委托给 `/xt-metrics`（见步骤 7 的提示），本步骤只做归档准确性所需的两件轻量事：保证工作区干净、记录归档基线 SHA/时间。
 
-### 步骤 2.7：生成 Metrics Report
+1. **Git 脏状态检查（含归档前置 commit 约束）**：执行 `git status --porcelain`
+   - 如果有未提交更改 → 提醒用户："**当前有未提交更改，必须先提交后再归档。** 归档阶段的 tasks.md checkbox 勾选、sdd-state.yaml 状态更新等均需纳入本次变更范围，否则后续 `/xt-metrics` 统计会少算。是否协助提交？"
+     - 使用 AskUserQuestion 推荐 "立即提交"
+     - 用户选择提交 → 协助生成中文 commit message，`git add` 相关文件后 commit；commit 完成后**重新执行 `git status --porcelain` 验证工作区干净**
+     - 用户选择继续（不提交）→ 标记 `metrics.git_baseline.dirty: true`，继续
+2. **记录归档基线**（供 `/xt-metrics` 时间窗口归因使用，[attributor.js](.claude/skills/xt-metrics/scripts/lib/attributor.js) 依赖）：
+   - 执行 `git rev-parse HEAD` → 写入 `metrics.git_baseline.end_sha`
+   - 写入当前 ISO 8601 时间戳 → `metrics.git_baseline.end_time`
+   - 使用 Edit 工具更新 sdd-state.yaml 对应字段
 
-使用 Write 工具在变更目录下生成 `metrics-report.md`，内容模板如下（根据实际数据填充，缺失数据标记 "数据不可用"）：
-
-```markdown
-# Metrics Report: <变更名>
-
-## 变更概览
-
-| 项目 | 值 |
-|------|-----|
-| 变更名称 | <change-name> |
-| 开始时间 | <metrics.git_baseline.start_time 或 "数据不可用"> |
-| 结束时间 | <metrics.git_baseline.end_time 或 "数据不可用"> |
-| 起始 SHA | <metrics.git_baseline.start_sha 或 "N/A"> |
-| 结束 SHA | <metrics.git_baseline.end_sha 或 "N/A"> |
-
-## 文件变更统计
-
-| 指标 | 数值 |
-|------|------|
-| 新增文件 | <metrics.file_stats.files_added 或 "N/A"> |
-| 编辑文件 | <metrics.file_stats.files_modified 或 "N/A"> |
-| 删除文件 | <metrics.file_stats.files_deleted 或 "N/A"> |
-| 总变更文件 | <metrics.file_stats.total_files_changed 或 "N/A"> |
-
-## 代码行数统计
-
-- **新增行数**：<metrics.line_stats.lines_added 或 "N/A">
-- **删除行数**：<metrics.line_stats.lines_deleted 或 "N/A">
-```
-
-**部分数据缺失处理**：
-- 如果整个 metrics 段为初始空值（所有字段为 0 或 null）→ 生成最小报告，说明 "本次变更未收集到指标数据"，列出可能原因（ccusage 未安装、Git 基线未记录等）
-- 如果仅部分数据缺失 → 缺失字段标记 "数据不可用" 或 "N/A"，**不跳过报告生成**
-
-**报告作为归档产物**：确保 metrics-report.md 与 archive.md 一同保留在变更目录中，不被清理。
+**不再手工统计**：文件变更数、代码行数、token 用量、成本归因等均不在归档阶段执行——归档完成后运行 `/xt-metrics report`，由 [xt-metrics/scripts/report.js](.claude/skills/xt-metrics/scripts/report.js) 自动基于 `git log` + ccusage 完成并落盘到 `openspec/metrics/reports/`。`metrics.file_stats`/`metrics.line_stats` 字段已从 sdd-state.yaml 移除（见 propose 阶段结构规范）。
 
 ### 步骤 3：生成 archive.md
 

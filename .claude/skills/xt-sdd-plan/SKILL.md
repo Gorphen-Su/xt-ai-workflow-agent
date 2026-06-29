@@ -1,6 +1,6 @@
 ---
 name: xt-sdd-plan
-description: xt-sdd 方案设计阶段 — 基于 proposal 生成 design/specs/tasks，内置 Bridge 转换，调用 writing-plans 生成实现计划，计划文件保存在变更目录内，强制用户确认。当用户说"制定计划"、"拆分任务"、"方案设计"、使用 /xt-sdd:plan 时触发。
+description: xt-sdd 方案设计阶段 — 基于 proposal 生成 design/specs/tasks（tasks 内联规格→TDD 转换约束），调用 writing-plans 生成实现计划，计划文件保存在变更目录内，强制用户确认。当用户说"制定计划"、"拆分任务"、"方案设计"、使用 /xt-sdd:plan 时触发。
 ---
 
 # xt-sdd 方案设计阶段
@@ -18,7 +18,7 @@ xt-sdd 规格驱动开发的第二阶段：基于 proposal 生成完整的规范
 ### 步骤 1：确定当前变更
 
 1. 读取变更目录下的 `sdd-state.yaml`，获取当前 change 名和 checkpoint
-2. 如果 sdd-state.yaml 不存在，扫描 `openspec/changes/` 目录查找包含 proposal.md 且尚未完成的变更
+2. 如果 sdd-state.yaml 不存在，扫描 `openspec/changes/` **顶层目录**（排除 `openspec/changes/archive/` 归档子目录），查找包含 proposal.md 且尚未完成的变更
 3. 如果有多个 → 使用 AskUserQuestion 让用户选择
 4. 如果没有 → 提示用户先运行 `/xt-sdd:propose`
 
@@ -79,47 +79,20 @@ xt-sdd 规格驱动开发的第二阶段：基于 proposal 生成完整的规范
 1. 获取指令：`openspec instructions tasks --change "<name>" --json`
 2. 读取 design.md 和 specs/ 作为上下文
 3. 按 template 创建 tasks.md，使用 `- [ ] X.Y 任务描述` 格式
+4. **规格→TDD 转换约束（生成 tasks 时同步执行，内联，无独立步骤）**：
+   - **场景→测试任务**：对每个 spec 的 Scenario，确保 tasks.md 有对应的测试任务（正常路径：WHEN→setup/action、THEN→assertion；错误路径：异常条件验证；边界值：数值/时间等边界）
+   - **compile_constraints 注入**：若 `sdd-project-profile.yaml` 有 compile_constraints，任务拆分遵循"编译独立性"——一个任务完成后必须能编译通过，接口层与实现层必须在同一 Task（避免 apply 阶段单独编译失败）
+   - design 决策落地与 TDD 微步骤展开交由步骤 4 的 writing-plans 负责，tasks.md 保持 openspec 粗粒度即可
 
 更新 sdd-state.yaml checkpoint: tasks-generated
 
 每生成一个产物后，运行 `openspec status --change "<name>" --json` 确认状态。
 
-### 步骤 4：Bridge 转换（内置，对用户透明）
-
-在生成 specs 和 tasks 时，自动执行以下转换：
-
-#### specs 场景 → TDD 测试用例映射
-
-对每个 spec 中的 Scenario，在 tasks.md 中确保有对应的测试任务：
-- 正常路径测试：WHEN 对应 setup/action，THEN 对应 assertion
-- 错误路径测试：异常条件下的行为验证
-- 边界值测试：涉及数值、时间等边界的场景
-
-#### design.md → 实现计划输入
-
-将 design.md 中的技术方案作为实现计划的核心上下文，确保每个 Decision 在 tasks.md 中有对应的实现任务。
-
-#### tasks → TDD 步骤拆分
-
-如果 tasks.md 中的任务粒度过粗，自动拆分为：
-1. 编写失败测试
-2. 编写最小实现
-3. 重构清理
-
-#### compile_constraints 注入
-
-如果 `sdd-project-profile.yaml` 存在且有 compile_constraints，在 Bridge 转换时注入：
-- 任务拆分时遵循"编译独立性"原则：一个任务完成后必须能编译通过
-- 接口层和实现层必须在同一 Task 中同时修改
-- 将 compile_constraints 作为额外约束传入任务拆分逻辑
-
-更新 sdd-state.yaml checkpoint: bridge-converted
-
-### 步骤 4.5：调用 writing-plans 生成实现计划（需要 Superpowers）
+### 步骤 4：调用 writing-plans 生成实现计划（需要 Superpowers）
 
 如果 sdd-state.yaml 的 `superpowers_available` 为 true，调用 Superpowers 的 writing-plans 生成实现计划。输出为 `plans/` 目录下的多文件结构 + `plan.md` 索引文件。
 
-#### 4.5.1 从 tasks.md 提取分组信息
+#### 4.1 从 tasks.md 提取分组信息
 
 1. 读取 tasks.md，提取所有 `## N. 分组名` 二级标题
 2. 生成分组列表，每项包含：
@@ -133,36 +106,35 @@ xt-sdd 规格驱动开发的第二阶段：基于 proposal 生成完整的规范
    - 英文分组名：直接 kebab-case（如 "Setup Tasks" → "setup-tasks"）
 4. 创建 `plans/` 目录（如不存在）
 
-#### 4.5.2 准备 API 验证上下文
+#### 4.2 准备 API 验证上下文
 
-1. 扫描项目中与本次变更同层的已有代码（如同模块的 Controller、Service、Handler 等）
+> 若 CodeGraph 可用，优先用 `codegraph explore` / `codegraph_node` 取实际 API 签名（import 路径、方法重载、泛型），用 `codegraph impact` / `codegraph callers` 评估改动影响面，替代逐文件扫描。详见 [CodeGraph × xt-sdd 提效指南 · plan](.claude/skills/xt-codegraph-init/references/codegraph-xt-sdd.md#plan方案设计)。
+
+1. 定位本次变更同层的已有代码（如同模块的 Controller、Service、Handler 等）
 2. 提取关键框架 API 的实际签名（import 路径、方法重载、泛型参数等）
-3. 整理为"框架 API 注意事项"列表
+3. 用 `codegraph impact` 列出受影响节点，整理为"框架 API 注意事项"+"影响范围"列表（直接喂给 design.md 与 tasks.md）
 
-#### 4.5.3 按分组调用 writing-plans
+#### 4.3 按分组调用 writing-plans
 
-对每个分组，分别调用 `superpowers:writing-plans`：
+对每个分组，分别调用 `superpowers:writing-plans`。**省 token 纪律：proposal.md / design.md / sdd-project-profile.yaml 已在步骤 2、3a、3c 加载到本次对话上下文，调用 writing-plans 时直接引用，MUST NOT 在 args 中重复粘贴这些全文**——args 只传分组特有的内容 + 短元数据。N 个分组的 args 体积因此从 O(N·全局) 降到 O(N·分组)。
 
 1. **准备分组上下文**：
-   - 全局上下文（每次都传入）：proposal.md、design.md、sdd-project-profile.yaml
-   - 分组上下文（仅传入当前分组的）：对应的 specs 文件 + 该分组在 tasks.md 中的任务
+   - 全局上下文（已在对话中，仅引用，不重传）：proposal.md、design.md、sdd-project-profile.yaml
+   - 分组上下文（本次调用独有，需传入）：该分组对应的 specs 文件 + 该分组在 tasks.md 中的任务列表
 2. **调用 `superpowers:writing-plans`**：
    - 使用 Skill 工具调用 `superpowers:writing-plans`
-   - args 传入上下文，包含：
+   - args 仅传入分组特有内容 + 短元数据：
      - 变更名
      - 当前分组编号和名称
      - 当前分组任务列表
+     - 分组 openspec artifacts：**仅该分组涉及的** specs + tasks（非全量）
      - 项目技术栈：{languages} + {frameworks}
-     - 构建工具：{build_tool}
-     - 测试框架：{test_command}
-     - 项目结构：{structure}
-     - 编译命令：{compile_command}
-     - 编译约束：{compile_constraints}
+     - 构建工具：{build_tool}、测试框架：{test_command}、项目结构：{structure}
+     - 编译命令：{compile_command}、编译约束：{compile_constraints}
      - checkbox 唯一性约束：每个 Step 的 checkbox 描述必须全局唯一
      - 框架 API 注意事项：{API 验证结果}
-     - 全局 openspec artifacts：proposal.md + design.md
-     - 分组 openspec artifacts：对应 specs + 对应 tasks
      - 计划保存路径：`openspec/changes/<变更名>/plans/<filename>`
+     - 注明："全局上下文（proposal/design/profile）参见本次对话已加载内容，无需重复提供"
    - **指定该分组的任务为权威任务分解**，writing-plans 应基于此展开
 3. **跳过执行移交**：writing-plans 完成后会 offer 执行选择，在 xt-sdd 上下文中跳过
 4. **确认子计划文件**：
@@ -170,17 +142,17 @@ xt-sdd 规格驱动开发的第二阶段：基于 proposal 生成完整的规范
    - 如果没有 checkbox，重新调用并更明确指定"按该分组中的每个 Task 展开为 TDD 微步骤"
 5. **添加绑定注释**：在子计划文件顶部添加 `<!-- sdd change: <变更名> -->`
 
-#### 4.5.4 计划质量审查
+#### 4.4 计划质量审查（高风险优先，避免逐文件全审）
 
-所有子计划文件生成完成后，逐文件审查：
+所有子计划文件生成完成后，按风险优先级审查，**不必逐条逐文件全审**（大变更下 O(N) 审查很贵）：
 
-1. 编译约束遵守：接口+实现是否在同一 Task 中（如仍拆分，手动合并）
-2. import 正确性：检查计划中 import 路径是否与项目实际结构一致
-3. 无效代码检查：计划中引用的类/方法是否存在于项目中
-4. 类型一致性：方法签名是否与实际 API 匹配
-5. 如发现问题，直接在对应子计划文件中修复
+1. **必审（高风险，每个子计划文件都查）**：
+   - 编译约束遵守：接口+实现是否在同一 Task 中（如仍拆分，手动合并）
+   - import 正确性：计划中 import 路径是否与项目实际结构一致
+2. **抽样审（低风险，抽查即可）**：无效代码检查（引用的类/方法是否存在）、类型一致性（方法签名是否与实际 API 匹配）——仅对涉及外部框架 API 的分组抽查
+3. 如发现问题，直接在对应子计划文件中修复
 
-#### 4.5.5 生成 plan.md 索引文件
+#### 4.5 生成 plan.md 索引文件
 
 1. 遍历所有生成的子计划文件
 2. 生成 `plan.md` 索引文件，内容包含：
@@ -237,8 +209,7 @@ tasks:
 | `entered` | 无 design.md | 步骤 3a（生成 design.md） |
 | `design-generated` | 有 design.md 但 specs/ 不完整 | 步骤 3b（生成 specs） |
 | `specs-generated` | specs/ 完整但无 tasks.md | 步骤 3c（生成 tasks.md） |
-| `tasks-generated` | 有 tasks.md 但未做 Bridge 转换 | 步骤 4（Bridge 转换） |
-| `bridge-converted` | Bridge 转换完成但未生成实现计划 | 步骤 4.5（调用 writing-plans） |
+| `tasks-generated` | 有 tasks.md 但未生成实现计划 | 步骤 4（调用 writing-plans） |
 | `plan-generated` | 实现计划已生成但未更新 state | 步骤 5（更新 sdd-state.yaml） |
 | `quality-reviewed` | state 已更新 | 步骤 6（阶段完成确认） |
 | `done` | 所有产物完整 | 出口到 apply 阶段 |
@@ -247,5 +218,5 @@ tasks:
 
 - "proposal 中有歧义"：回到 propose 阶段澄清
 - "specs 场景太多"：建议按优先级分批，先实现核心场景
-- "tasks 粒度不一致"：自动按 bridge 转换规则拆分或合并
+- "tasks 粒度不一致"：按步骤 3c 的规格→TDD 转换约束拆分或合并；TDD 微步骤展开由步骤 4 的 writing-plans 负责
 - "sdd-project-profile.yaml 不存在"：提示用户先运行 `/xt-sdd:propose` 生成项目 profile
