@@ -81,6 +81,37 @@ CodeGraph 做法：
 
 ## 何时更新索引
 
-- MCP server 运行时会自动 `codegraph sync` 增量更新，日常无需手动维护
-- 大改 / 切换分支 / 查询结果可疑 → `codegraph index --force` 重建全量索引
-- 怀疑索引过期 → 先 `codegraph status` 看时间戳与符号数再决定
+### 自动同步机制
+
+CodeGraph 使用**后台 daemon** 进行自动文件监听和同步：
+
+- **Daemon 进程**：`codegraph install` 后启动后台进程，持续监听项目文件变化（可通过 `codegraph daemons` 查看运行状态）
+- **OS 原生事件**：使用操作系统的文件监听 API，实时感知文件变更
+- **自动触发**：当文件被修改、添加或删除时，daemon 自动更新图谱
+- **防抖处理**：短暂安静窗口后批量处理，提高效率
+- **无需手动**：正常开发过程中无需手动同步，daemon 自动保持索引最新
+
+### 手动检测方法
+
+| 检查方法 | 用途 | 命令 |
+|---------|------|------|
+| **轻量级检查** | 查看索引时间戳和统计 | `codegraph status` |
+| **查询验证** | 验证查询结果与实际代码一致 | `codegraph query <已知符号>` |
+| **强制重建** | 完全重建索引（最后手段） | `codegraph index --force` |
+
+### 工作流集成
+
+在 xt-sdd 各阶段中：
+
+- **apply 阶段**：代码修改后，如查询结果可疑，运行 `codegraph status` 检查索引时间戳
+- **verify 阶段**：运行 `codegraph affected` 前，确保索引最新（daemon 已自动处理，无需额外操作）
+- **切换分支后**：大量文件变更，建议运行 `codegraph index --force` 重建索引
+
+### 常见场景
+
+| 场景 | 处理方法 |
+|------|---------|
+| 正常代码修改 | daemon 自动同步，无需操作 |
+| 切换 Git 分支 | 检查 `codegraph status`，必要时 `index --force` |
+| 查询结果可疑 | 先 `status` 检查，必要时 `index --force` |
+| Daemon 未运行 | 重启会话或 `codegraph install` |

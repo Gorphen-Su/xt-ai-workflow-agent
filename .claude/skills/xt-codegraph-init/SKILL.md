@@ -82,7 +82,7 @@ CodeGraph 的价值取决于「后续会话真的优先用它」。索引就绪�
 
 - **代码检索强制优先**：理解或定位代码（函数/类/方法、调用链、改动影响面）时，必须先用 `codegraph_explore`（MCP 工具，重启会话后可用）或 `codegraph explore <query>`（CLI）获取符号源码 + 调用链 + 影响半径，禁止先 `grep + read` 整个文件——一次调用即可拿到结构化结果，显著降低 token 消耗。
 - **检索例外（用 Grep / Read）**：查 `.md` 文档内容、`specs/` 下的规格 yaml、配置文件等**非代码**内容时用 Grep/Read——这类内容不在 CodeGraph 符号索引内（索引仅覆盖 JS/TS 等代码文件）。
-- **索引维护**：MCP server 运行时自动增量 `codegraph sync`；大改或切分支后查询结果可疑时，跑 `codegraph index --force` 重建。
+- **索引维护**：CodeGraph daemon 后台自动监听文件变化并同步索引。如查询结果可疑或切换分支后，运行 `codegraph status` 检查时间戳，或 `codegraph index --force` 重建。详见 skill 文档"索引维护"章节。
 <!-- xt-codegraph-init: end -->
 
 **注入逻辑（四分支）**：
@@ -109,6 +109,81 @@ CodeGraph 的价值取决于「后续会话真的优先用它」。索引就绪�
 - 增量更新索引：`codegraph sync`（MCP server 运行时会自动 sync）
 - 重建全量索引：`codegraph index --force`（大改或切换分支后）
 - 从项目移除：`codegraph uninit`（加 `--force` 跳过确认）
+
+## 索引维护
+
+### 自动同步机制
+
+CodeGraph 使用**后台 daemon** 进行自动文件监听和同步：
+
+- **Daemon 进程**：`codegraph install` 后启动后台进程（可通过 `codegraph daemons` 查看运行状态）
+- **OS 原生事件**：使用操作系统的文件监听 API（Windows、macOS、Linux），实时感知文件变更
+- **自动触发**：当文件被修改、添加或删除时，daemon 自动更新图谱
+- **防抖处理**：短暂安静窗口后批量处理，提高效率
+- **无需手动**：正常开发过程中无需手动同步，daemon 自动保持索引最新
+
+**检查 daemon 状态**：
+```bash
+codegraph daemons        # 查看运行中的 daemon 进程
+codegraph status         # 查看索引状态和时间戳
+```
+
+### 手动检测方法
+
+当怀疑索引过期时，可使用以下方法检测：
+
+1. **轻量级检查**（推荐）：
+   ```bash
+   codegraph status
+   ```
+   查看索引时间戳和统计信息，判断是否需要更新
+
+2. **查询结果验证**：
+   - 运行 `codegraph query <已知符号>` 或 `codegraph explore <概念>`
+   - 如果结果与实际代码不符 → 索引可能过期
+
+3. **强制重建**（最后手段）：
+   ```bash
+   codegraph index --force
+   ```
+   完全重建索引，耗时较长但确保最新
+
+### 常见场景处理
+
+| 场景 | 处理方法 | 说明 |
+|------|---------|------|
+| **正常代码修改** | 无需操作 | Daemon 自动同步索引 |
+| **切换 Git 分支** | 检查 `codegraph status` | 大量文件变更后可能需要 `codegraph index --force` |
+| **查询结果可疑** | 先 `status` 检查，必要时 `index --force` | 确保查询基于最新代码 |
+| **Daemon 未运行** | 重启会话或 `codegraph install` | Daemon 会随会话启动，意外停止时重装 MCP |
+| **索引损坏** | `codegraph index --force` | 重建全量索引修复损坏 |
+
+### 故障排查
+
+**问题：查询结果与实际代码不符**
+- 检查 daemon 是否运行：`codegraph daemons`
+- 检查索引时间戳：`codegraph status`
+- 必要时重建索引：`codegraph index --force`
+
+**问题：daemon 进程意外停止**
+- 重新安装 MCP：`codegraph install --target=claude`
+- 重启 Claude Code 会话
+
+**问题：索引一直显示"building"**
+- 检查是否有锁定文件：`codegraph unlock <项目路径>`
+- 删除 `.codegraph/index.lock` 手动解锁
+
+**问题：索引大小异常增长**
+- 可能是大项目或大量生成文件，正常现象
+- 如怀疑损坏，运行 `codegraph index --force` 重建
+
+### 工作流集成建议
+
+在 xt-sdd 各阶段中，代码修改后 CodeGraph 会自动同步。为确保查询准确性：
+
+- **apply 阶段**：代码修改后，如查询结果可疑，运行 `codegraph status` 检查
+- **verify 阶段**：运行 `codegraph affected` 前，确保索引最新（daemon 已自动处理）
+- **切换分支后**：运行 `codegraph index --force` 重建索引
 
 ## 注意事项
 

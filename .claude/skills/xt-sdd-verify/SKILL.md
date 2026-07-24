@@ -71,7 +71,9 @@ xt-sdd 规格驱动开发的第四阶段：文档同步 + 双重验证确保实�
 
 ### 步骤 4：代码质量验证
 
-> 若 CodeGraph 可用，精准回归用 `codegraph affected <变更文件...>` 只跑受本次改动影响的测试（替代全量套件）。apply 刚写的新代码可能尚未 sync，**先 `codegraph status` 确认索引未过期**，必要时 `codegraph sync` 再查。
+> **CodeGraph 同步检查**：运行 `codegraph affected` 前，确保 CodeGraph 索引最新。代码修改后 daemon 会自动同步，但如查询结果可疑或切换分支后，先运行 `codegraph status` 检查时间戳，必要时 `codegraph index --force` 重建。
+
+> **精准回归**：若 CodeGraph 可用，用 `codegraph affected <变更文件...>` 只跑受本次改动影响的测试（替代全量套件），显著提升验证效率。
 
 #### 4a. 调用 `superpowers:verification-before-completion`（需要 Superpowers）
 

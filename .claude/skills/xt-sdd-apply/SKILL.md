@@ -124,6 +124,8 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 
 ### 步骤 4：执行实现
 
+> **CodeGraph 同步提示**：代码修改后，CodeGraph daemon 会自动同步索引。如查询结果可疑或切换分支后，运行 `codegraph status` 检查时间戳，或 `codegraph index --force` 重建。
+
 根据步骤 2.5 选择的模式执行：
 
 #### 4a. 完整模式（`superpowers:subagent-driven-development`）
