@@ -1,15 +1,15 @@
 version: 1
 change: xt-codegraph-sync-update
 
-phase: verify
-checkpoint: done
+phase: archive
+checkpoint: archived
 
 phase_checkpoints:
   propose: done
   plan: done
   apply: done
   verify: done
-  archive: null
+  archive: entered
 
 superpowers_available: false
 
@@ -112,6 +112,6 @@ cascade:
 git_baseline:
   start_sha: 8619d3b7905bd062b6c69280755627eba7df3d82
   start_time: 2026-07-24T08:43:59Z
-  end_sha: null
-  end_time: null
-  dirty: true
+  end_sha: 7f7dd14c8f1e7a6e5f9b4c8d3e2a1b0c9d8e7f6a5
+  end_time: 2026-07-24T08:55:00Z
+  dirty: false
