@@ -2,14 +2,14 @@ version: 1
 change: xt-codegraph-sync-update
 
 phase: archive
-checkpoint: archived
+checkpoint: done
 
 phase_checkpoints:
   propose: done
   plan: done
   apply: done
   verify: done
-  archive: entered
+  archive: done
 
 superpowers_available: false
 
