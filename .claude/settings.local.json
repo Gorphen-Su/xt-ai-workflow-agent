@@ -12,7 +12,14 @@
       "Bash(xargs grep *)",
       "Bash(npx @fission-ai/openspec *)",
       "Bash(npx ccusage *)",
-      "Bash(npx vitest *)"
+      "Bash(npx vitest *)",
+      "Bash(npx ctx7@latest library \"@colbymchenry/codegraph\" \"codegraph MCP code indexing for AI coding assistants init CLI usage\")",
+      "WebSearch",
+      "Bash(ls -la \"C:\\\\Users\\\\GorphenSu\\\\.claude\\\\skills\\\\skill-creator\\\\scripts\\\\\" 2>&1; echo \"---SKILLS DIR---\"; ls -la \"C:\\\\Users\\\\GorphenSu\\\\.claude\\\\skills\\\\\" 2>&1 | head -40)",
+      "Read(//c/Users/GorphenSu/.claude/skills/skill-creator/**)",
+      "Bash(codegraph install *)",
+      "Bash(codegraph files *)",
+      "Bash(codegraph --help)"
     ]
   }
 }

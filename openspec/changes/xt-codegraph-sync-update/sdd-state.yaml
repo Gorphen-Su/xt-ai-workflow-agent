@@ -1,0 +1,117 @@
+version: 1
+change: xt-codegraph-sync-update
+
+phase: verify
+checkpoint: done
+
+phase_checkpoints:
+  propose: done
+  plan: done
+  apply: done
+  verify: done
+  archive: null
+
+superpowers_available: false
+
+tasks:
+  - id: 1.1
+    description: 在 SKILL.md 中创建"索引维护"独立章节
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 1.2
+    description: 编写"自动同步机制"小节
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 1.3
+    description: 编写"手动检测方法"小节
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 1.4
+    description: 编写"常见场景处理"小节
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 1.5
+    description: 编写"故障排查"小节
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 1.6
+    description: 更新规则区块模板的"索引维护"行
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 2.1
+    description: 在 xt-sdd-apply/SKILL.md 中添加同步检查提示
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 2.2
+    description: 在 xt-sdd-verify/SKILL.md 中添加同步检查提示
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 3.1
+    description: 扩展 codegraph-xt-sdd.md 中"何时更新索引"章节
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 3.2
+    description: 添加工作流集成说明
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 3.3
+    description: 添加 MCP daemon 运行机制说明
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 4.1
+    description: 验证所有文档引用链接正确
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 4.2
+    description: 验证 codegraph 命令示例与实际行为一致
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+  - id: 4.3
+    description: 验证文档格式和拼写
+    status: completed
+    updated: 2026-07-24T08:50:00Z
+    test_result: pass
+    checkpoint: complete
+
+review_counters:
+  global_review_rounds: 0
+  task_retries: {}
+
+cascade:
+  last_affected_phase: null
+  invalidated_from: null
+  reason: null
+  preserved_tasks: []
+
+git_baseline:
+  start_sha: 8619d3b7905bd062b6c69280755627eba7df3d82
+  start_time: 2026-07-24T08:43:59Z
+  end_sha: null
+  end_time: null
+  dirty: true
