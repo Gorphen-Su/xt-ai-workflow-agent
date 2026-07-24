@@ -63,7 +63,7 @@ quick 强依赖 codegraph 自动界定范围，必须先确认可用：
 1. 命名：`quick-<简述>`（如 `quick-input-placeholder`）
 2. 运行 `openspec new change "quick-<简述>"` 创建变更目录
 3. 初始化 `sdd-state.yaml`（结构见下文，`phase: apply`）
-4. **记录 git baseline**：`git rev-parse HEAD` → `metrics.git_baseline.start_sha`，当前时间 → `start_time`，`git status --porcelain` → `dirty`
+4. **记录 git baseline**：`git rev-parse HEAD` → `git_baseline.start_sha`，当前时间 → `start_time`，`git status --porcelain` → `dirty`
 
 ### 步骤 3：轻量规格（proposal + tasks，跳过 design/specs）
 
@@ -143,7 +143,6 @@ quick 的 verify 用**聚焦验证**，非全量回归，且范围由 codegraph 
 2. 同步 specs（`openspec sync --change`，如有主规范更新）
 3. 归档变更目录（`openspec archive --change`）
 4. **Git 提交**：提示用户提交，commit message：`feat(<范围>): <功能描述> — 归档完成`
-5. 归档完成后提示："建议运行 `/xt-metrics report` 更新项目统计数据"
 
 ### 步骤 7：自动升级机制
 
@@ -191,16 +190,13 @@ cascade:
   reason: null
   preserved_tasks: []
 
-metrics:
-  git_baseline:
-    start_sha: null
-    start_time: null
-    end_sha: null
-    end_time: null
-    dirty: false
+git_baseline:
+  start_sha: null
+  start_time: null
+  end_sha: null
+  end_time: null
+  dirty: false
 ```
-
-> 文件/行数/token 统计由 `/xt-metrics` 按需计算，不在此记录；`metrics` 段仅保留 `git_baseline` 供归档基线与时间窗口归因。
 
 ## 断点恢复
 

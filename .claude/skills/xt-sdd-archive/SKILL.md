@@ -36,19 +36,17 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
 
 ### 步骤 2.5：归档前置提交与基线记录
 
-metrics 统计（文件/行数/token/成本）已委托给 `/xt-metrics`（见步骤 7 的提示），本步骤只做归档准确性所需的两件轻量事：保证工作区干净、记录归档基线 SHA/时间。
+本步骤只做归档准确性所需的两件轻量事：保证工作区干净、记录归档基线 SHA/时间。
 
 1. **Git 脏状态检查（含归档前置 commit 约束）**：执行 `git status --porcelain`
-   - 如果有未提交更改 → 提醒用户："**当前有未提交更改，必须先提交后再归档。** 归档阶段的 tasks.md checkbox 勾选、sdd-state.yaml 状态更新等均需纳入本次变更范围，否则后续 `/xt-metrics` 统计会少算。是否协助提交？"
+   - 如果有未提交更改 → 提醒用户："**当前有未提交更改，必须先提交后再归档。** 归档阶段的 tasks.md checkbox 勾选、sdd-state.yaml 状态更新等均需纳入本次变更范围。是否协助提交？"
      - 使用 AskUserQuestion 推荐 "立即提交"
      - 用户选择提交 → 协助生成中文 commit message，`git add` 相关文件后 commit；commit 完成后**重新执行 `git status --porcelain` 验证工作区干净**
-     - 用户选择继续（不提交）→ 标记 `metrics.git_baseline.dirty: true`，继续
-2. **记录归档基线**（供 `/xt-metrics` 时间窗口归因使用，[attributor.js](.claude/skills/xt-metrics/scripts/lib/attributor.js) 依赖）：
-   - 执行 `git rev-parse HEAD` → 写入 `metrics.git_baseline.end_sha`
-   - 写入当前 ISO 8601 时间戳 → `metrics.git_baseline.end_time`
+     - 用户选择继续（不提交）→ 标记 `git_baseline.dirty: true`，继续
+2. **记录归档基线**：
+   - 执行 `git rev-parse HEAD` → 写入 `git_baseline.end_sha`
+   - 写入当前 ISO 8601 时间戳 → `git_baseline.end_time`
    - 使用 Edit 工具更新 sdd-state.yaml 对应字段
-
-**不再手工统计**：文件变更数、代码行数、token 用量、成本归因等均不在归档阶段执行——归档完成后运行 `/xt-metrics report`，由 [xt-metrics/scripts/report.js](.claude/skills/xt-metrics/scripts/report.js) 自动基于 `git log` + ccusage 完成并落盘到 `openspec/metrics/reports/`。`metrics.file_stats`/`metrics.line_stats` 字段已从 sdd-state.yaml 移除（见 propose 阶段结构规范）。
 
 ### 步骤 3：生成 archive.md
 
@@ -127,7 +125,7 @@ metrics 统计（文件/行数/token/成本）已委托给 `/xt-metrics`（见�
 ### 步骤 7：阶段完成确认
 
 使用 AskUserQuestion 展示归档摘要，提供三个选项：
-- **A. 确认归档完成**：更新 sdd-state.yaml（phase_checkpoints.archive: done, phase: archive, checkpoint: done），展示变更摘要，并在输出中包含提示信息：建议运行 `/xt-metrics report` 更新项目统计数据
+- **A. 确认归档完成**：更新 sdd-state.yaml（phase_checkpoints.archive: done, phase: archive, checkpoint: done），展示变更摘要
 - **B. 取消归档**：不修改状态，退出
 - **C. 暂停**：保存当前进度，退出
 

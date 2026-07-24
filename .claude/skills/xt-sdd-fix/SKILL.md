@@ -56,7 +56,7 @@ Bug 修复专用入口，内置分诊逻辑，根据信息清晰度自动路由�
 
 1. 使用 `fix-<简述>` 格式命名（如 `fix-null-pointer-login`）
 2. 运行 `openspec new change "fix-<简述>"` 创建变更目录
-3. 初始化 sdd-state.yaml，包含 metrics 段结构（仅 git_baseline，文件/行数/token 统计由 `/xt-metrics` 按需计算），phase 设为路由目标阶段：
+3. 初始化 sdd-state.yaml，phase 设为路由目标阶段：
 
 ```yaml
 version: 1
@@ -86,23 +86,22 @@ cascade:
   reason: null
   preserved_tasks: []
 
-metrics:
-  git_baseline:
-    start_sha: null
-    start_time: null
-    end_sha: null
-    end_time: null
-    dirty: false
+git_baseline:
+  start_sha: null
+  start_time: null
+  end_sha: null
+  end_time: null
+  dirty: false
 ```
 
-**Metrics 初始化操作：**
+**git_baseline 初始化操作：**
 
 1. 执行 `git rev-parse HEAD` 获取当前 commit SHA
 2. 执行 `git status --porcelain` 检查工作区是否干净
-3. 将获取的数据填入 sdd-state.yaml 的 metrics 段：
-   - `metrics.git_baseline.start_sha` ← `git rev-parse HEAD` 的输出
-   - `metrics.git_baseline.start_time` ← 当前 ISO 8601 时间戳
-   - `metrics.git_baseline.dirty` ← 工作区干净则为 `false`，有未提交更改则为 `true`
+3. 将获取的数据填入 sdd-state.yaml 的 git_baseline 段：
+   - `git_baseline.start_sha` ← `git rev-parse HEAD` 的输出
+   - `git_baseline.start_time` ← 当前 ISO 8601 时间戳
+   - `git_baseline.dirty` ← 工作区干净则为 `false`，有未提交更改则为 `true`
 4. 使用 Edit 工具更新 sdd-state.yaml 文件中对应字段
 
 ### 步骤 3：按路由执行
@@ -198,8 +197,6 @@ fix 流程的 verify 使用**聚焦验证**，非全量回归：
 ### 步骤 6：简化归档
 
 fix 流程使用简化归档：
-
-**建议运行 /xt-metrics**：归档完成后，提示用户"建议运行 `/xt-metrics report` 更新项目统计数据"。
 
 ```markdown
 # 归档记录 - fix-<简述>
