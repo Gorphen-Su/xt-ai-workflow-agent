@@ -48,46 +48,45 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
    - 写入当前 ISO 8601 时间戳 → `git_baseline.end_time`
    - 使用 Edit 工具更新 sdd-state.yaml 对应字段
 
-### 步骤 3：生成 archive.md
+### 步骤 3：生成 archive.md（状态优先，避免读全文）
 
-在变更目录下生成 archive.md，合并双源信息：
+**优化策略**：archive.md 大部分内容从 sdd-state.yaml 已有字段直接生成，**无需读取源文件全文**。
 
-1. 读取 sdd-state.yaml 获取所有任务的最终状态和审查计数
-2. 生成 archive.md：
+#### 3a. 状态优先生成（80% 内容）
 
-```markdown
-# 归档记录 - <change-name>
+读取 sdd-state.yaml（一次），从已有字段填充模板：
 
-## 需求概要
-（来自 proposal.md 的 Why 和 What Changes 部分）
+| archive.md 章节 | 来源字段 |
+|---------------|---------|
+| 实现详情 | `tasks`（status/test_result 列表） |
+| 级联回退记录 | `cascade` |
+| 任务执行统计 | `tasks` + `review_counters` + `git_baseline`（时间范围） |
+| 技术方案 | `context_summary.key_decisions` |
+| 需求概要 | `context_summary.current_objective` + `key_decisions` |
+| 测试覆盖 | `verify_status.test_result_summary`（如已增强） |
+| 文档同步记录 | `verify_status.doc_sync_completed`（如已增强） |
+| 规格变更 | `artifacts_status`（ADDED/MODIFIED） |
 
-## 技术方案
-（来自 design.md 的 Decisions 部分）
+#### 3b. 摘要式补读（缺失字段，只读关键章节）
 
-## 实现详情
-（来自 sdd-state.yaml 的任务执行记录：哪些任务走了 TDD，有哪些重构，审查次数）
+对 sdd-state.yaml 未覆盖的字段，**只读源文件的关键章节**（禁止全文读取）：
 
-## 规格变更
-（来自 specs/：哪些场景是 ADDED 的，哪些是 MODIFIED 的）
-
-## 测试覆盖
-（来自验证报告：测试结果摘要）
-
-## 文档同步记录
-（来自 verify 阶段的文档同步检查结果）
-
-## 级联回退记录
-（来自 sdd-state.yaml 的 cascade 字段：如果有回退事件，记录回退原因、影响范围、保留的任务）
-
-## 任务执行统计
-- 总任务数：<N>
-- 已完成：<M>
-- 已失败：<F>
-- 审查轮次：<R>
-- 执行时间范围：<开始时间> - <结束时间>
+```bash
+# 用 grep 提取章节（替代全文 Read）
+grep -A 20 "## Why" openspec/changes/<name>/proposal.md
+grep -A 30 "## Decisions" openspec/changes/<name>/design.md
+grep -A 5 "ADDED\|MODIFIED" openspec/changes/<name>/specs/**/*.md
 ```
 
+#### 3c. 填充模板生成
+
+→ 完整模板见 [references/archive-template.md](references/archive-template.md)
+
 更新 sdd-state.yaml checkpoint: consistency-verified
+
+**上下文归档**：archive.md 已从状态文件生成，可忽略源文件读取过程。
+
+→ 优化策略详见 [references/optimization.md](references/optimization.md)
 
 ### 步骤 4：同步 specs
 
@@ -144,6 +143,16 @@ xt-sdd 规格驱动开发的第五阶段：归档变更、合并信息、同步�
 **异常状态检测**：
 - 活跃变更目录已删除但 archive 目录不存在 → 归档过程中断，提示用户检查
 - sdd-state.yaml 存在但活跃变更目录不存在且未归档 → 可能是手动删除，提示用户确认状态
+
+## 参考文档
+
+**阶段专属**：
+- [archive-template.md](references/archive-template.md) — archive.md 完整模板 + 字段映射 + 生成策略
+- [optimization.md](references/optimization.md) — archive 阶段优化说明（状态优先生成、摘要式补读）
+
+**共享优化规则**：
+- [xt-sdd-shared/references/context-management.md](../xt-sdd-shared/references/context-management.md) — 通用上下文管理（输出精简）
+- [xt-sdd-shared/references/cli-optimization.md](../xt-sdd-shared/references/cli-optimization.md) — CLI 调用优化
 
 ## 常见问题
 

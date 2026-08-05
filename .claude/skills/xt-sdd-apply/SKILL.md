@@ -15,6 +15,18 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 4. **单任务修改 MUST NOT 超过 5 次，全局审查 MUST NOT 超过 5 轮**
 5. **此阶段 MUST NOT 修改规格文档**（proposal.md、design.md、specs/、tasks.md 的内容）
 
+## 上下文管理（apply 最耗 token，必须控制）
+
+apply 是最耗 token 的阶段，每个 TDD 任务都会累积上下文。必须遵循：
+
+- **每个任务测试通过后，强制触发上下文归档**（见步骤 4b "任务级上下文清理"）
+- **下一个任务仅加载最小上下文**（当前分组 plan + 当前 capability spec）
+- **禁止保留前一个任务的实现代码在上下文**
+- **完整模式 subagent 摘要式接收**（只保留状态+摘要，丢弃完整实现）
+
+→ 阶段专属规则：[references/tdd-context-management.md](references/tdd-context-management.md)
+→ 通用规则：[xt-sdd-shared/references/context-management.md](../xt-sdd-shared/references/context-management.md)、[xt-sdd-shared/references/small-window-adaptation.md](../xt-sdd-shared/references/small-window-adaptation.md)
+
 ## 执行步骤
 
 ### 步骤 1：确定当前变更 + Superpowers 前置检查
@@ -137,14 +149,24 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
    - 更新对应子计划文件中的 checkbox：`- [ ]` → `- [x]`（如有 `plans/` 目录）；否则更新 `plan.md` 中的 checkbox
    - 更新 sdd-state.yaml：对应任务 status → completed，checkpoint → complete
    - 运行测试验证
+   - **摘要式接收**（上下文优化）：只保留任务状态、测试结果摘要、修改的文件列表、关键决策；**丢弃**子代理的完整实现代码（已在文件中）、调试过程、中间失败尝试
+   - **触发任务级上下文清理**（见轻量模式"任务级上下文清理"）
 4. 如果子代理实现与规范偏离 → 暂停，执行步骤 6（规范偏离处理）
 5. 全部任务完成后 → 进入步骤 7
 
 **降级**：如果 subagent-driven-development 调用失败，回退到轻量模式执行。
 
+> **小窗口模型提示**：检测到小窗口模型时，完整模式的子代理上下文累积更严重，建议降级为轻量模式 + 任务级分段执行（每个任务后强制清空）。
+
 #### 4b. 轻量模式（内联 TDD 循环）
 
-对每个未完成的任务，执行以下 TDD 循环：
+对每个未完成的任务，执行以下 TDD 循环。
+
+**Subagent 隔离执行（推荐，防挤爆）**：任务数 > 3 时，每个 TDD 任务用 **Agent 工具启动独立 subagent** 执行，subagent 有独立上下文，主对话只接收摘要（状态+测试结果+修改文件），主对话上下文几乎不增长。任务数 ≤ 3 可内联执行。
+
+→ 隔离策略详见 [xt-sdd-shared/references/context-isolation-strategy.md](../xt-sdd-shared/references/context-isolation-strategy.md)
+
+**批次 /clear 提示**：任务数 > 6 时，每完成 5 个任务（小窗口模型每 3 个），提示用户 `/clear` 后重新运行 `/xt-sdd:apply`，从 sdd-state.yaml 断点恢复。
 
 ##### RED — 编写失败测试
 
@@ -171,6 +193,26 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 2. 如果 compile_command 非 null（来自 sdd-project-profile.yaml），运行编译检查
 3. 如果全部通过 → 更新 sdd-state.yaml：任务 status → completed，checkpoint → complete，记录 test_result
 4. 如果有失败 → 更新 sdd-state.yaml：任务 status → failed，记录失败原因；**暂停连续执行**，向用户报告失败任务与原因，MUST NOT 自动跳到下一任务（按步骤 6 规范偏离或失败重试流程处理）
+
+##### 任务级上下文清理（apply 核心优化）
+
+**每个任务测试通过后，强制触发上下文归档**（apply 是最耗 token 的阶段，必须控制累积）：
+
+```
+[上下文归档 - 任务 N 完成]
+
+已保存进度到 sdd-state.yaml：
+- 任务 N: completed, checkpoint=complete
+- test_result: <pass/fail 摘要>
+- files_modified: <修改的文件列表>
+
+下一个任务（N+1）将从 sdd-state.yaml 恢复，仅加载该任务所需上下文。
+可忽略任务 N 的详细实现过程。
+```
+
+**下一个任务开始时**：仅加载最小上下文（当前分组 plans/NN-*.md + 当前 capability specs/），**禁止保留前一个任务的实现代码在上下文**。
+
+→ 详见 [references/tdd-context-management.md](references/tdd-context-management.md)
 
 ### 步骤 5：分组提交与状态同步
 
@@ -218,6 +260,17 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 2. 展示实现摘要：**按分组汇报**各分组完成任务数、失败的测试数（如有）
 3. 提示用户运行 `/xt-sdd:verify`
 
+**阶段切换 /clear 提示**（上下文隔离）：
+```
+✓ apply 阶段完成
+
+所有进度已保存到 sdd-state.yaml（phase: apply, checkpoint: done）。
+
+【建议】运行 /clear 清除上下文，然后运行 /xt-sdd:verify 进入验证阶段。
+（断点恢复机制确保从正确位置继续）
+```
+→ 详见 [xt-sdd-shared/references/context-isolation-strategy.md](../xt-sdd-shared/references/context-isolation-strategy.md#策略-2阶段切换时建议-clear)
+
 ## sdd-state.yaml 更新规则
 
 每次状态变更时，更新 sdd-state.yaml 中的对应字段：
@@ -244,6 +297,15 @@ xt-sdd 规格驱动开发的第三阶段：基于规范产物执行实现，支�
 | `task-N-complete` | green（任务 N） | 从任务 N 的 REFACTOR 继续 |
 
 **一致性验证**：如果 checkpoint 声称某个任务已完成但实际代码中未体现，回退到上一个确认一致的状态。
+
+## 参考文档
+
+**阶段专属**：
+- [tdd-context-management.md](references/tdd-context-management.md) — TDD 循环上下文管理（任务级清理、subagent 摘要式接收）
+
+**共享优化规则**：
+- [xt-sdd-shared/references/context-management.md](../xt-sdd-shared/references/context-management.md) — 通用上下文管理
+- [xt-sdd-shared/references/small-window-adaptation.md](../xt-sdd-shared/references/small-window-adaptation.md) — 小窗口模型适配（apply 任务级分段执行）
 
 ## 常见问题
 

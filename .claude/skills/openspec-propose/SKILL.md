@@ -39,13 +39,15 @@ When ready to implement, run /opsx:apply
    ```
    This creates a scaffolded change at `openspec/changes/<name>/` with `.openspec.yaml`.
 
-3. **Get the artifact build order**
+3. **Get the artifact build order (once, cache for later)**
    ```bash
    openspec status --change "<name>" --json
    ```
    Parse the JSON to get:
    - `applyRequires`: array of artifact IDs needed before implementation (e.g., `["tasks"]`)
    - `artifacts`: list of all artifacts with their status and dependencies
+
+   **Optimization**: Save this JSON for final status display to avoid redundant CLI call.
 
 4. **Create artifacts in sequence until apply-ready**
 
@@ -71,18 +73,20 @@ When ready to implement, run /opsx:apply
       - Show brief progress: "Created <artifact-id>"
 
    b. **Continue until all `applyRequires` artifacts are complete**
-      - After creating each artifact, re-run `openspec status --change "<name>" --json`
-      - Check if every artifact ID in `applyRequires` has `status: "done"` in the artifacts array
-      - Stop when all `applyRequires` artifacts are done
+      - **Optimization**: After creating each artifact, verify by checking if the file exists:
+        ```bash
+        # Check file exists instead of calling status
+        [ -f "openspec/changes/<name>/<artifact-file>" ] && echo "✓ <artifact-id> created"
+        ```
+      - Stop when all `applyRequires` artifacts have been created (file check passes)
 
    c. **If an artifact requires user input** (unclear context):
       - Use **AskUserQuestion tool** to clarify
       - Then continue with creation
 
-5. **Show final status**
-   ```bash
-   openspec status --change "<name>"
-   ```
+5. **Show final status (reuse cached status from step 3)**
+   - **Optimization**: Use the saved JSON from step 3 for display
+   - Format and show: change name, location, artifacts created
 
 **Output**
 
@@ -108,3 +112,9 @@ After completing all artifacts, summarize:
 - If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
 - If a change with that name already exists, ask if user wants to continue it or create a new one
 - Verify each artifact file exists after writing before proceeding to next
+
+**Performance Optimizations**
+- Step 3: Cache status JSON to avoid redundant calls
+- Step 4b: Use file existence checks instead of status calls
+- Step 5: Reuse cached status instead of calling CLI again
+- Result: ~2-3 fewer CLI calls per change execution

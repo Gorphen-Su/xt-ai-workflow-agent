@@ -53,13 +53,30 @@ xt-sdd 规格驱动开发的第二阶段：基于 proposal 生成完整的规范
 2. 提取 Capabilities 列表，确认需要创建哪些 spec 文件
 3. 读取 `openspec/sdd-project-profile.yaml`（如果存在），获取 compile_constraints 和技术栈信息
 
-### 步骤 3：生成规范产物
+### 步骤 3：生成规范产物（缓存优先 + 文件检查）
+
+**缓存优化**：复用 propose 阶段的 instructions 缓存（同一 change），避免重复调用 `openspec instructions`。propose 和 plan 操作同一变更目录，instructions 完全可复用。
+
+#### 3.0：获取 instructions（缓存优先）
+
+```bash
+# 检查 propose 阶段的缓存是否有效
+if bash .claude/skills/xt-sdd-propose/scripts/instructions-cache.sh check; then
+  echo "✓ 复用 propose 阶段的 instructions 缓存"
+else
+  echo "→ 缓存无效，重新获取..."
+  bash .claude/skills/xt-sdd-propose/scripts/instructions-cache.sh fetch "<name>"
+fi
+```
 
 按依赖顺序依次生成：
 
 #### 3a. 生成 design.md
 
-1. 获取指令：`openspec instructions design --change "<name>" --json`
+1. 获取指令（从缓存读取，替代 `openspec instructions`）：
+   ```bash
+   bash .claude/skills/xt-sdd-propose/scripts/instructions-cache.sh get design
+   ```
 2. 读取 proposal.md 作为上下文
 3. 按 template 结构创建 design.md，包含：Context、Goals/Non-Goals、Decisions、Risks/Trade-offs
 
@@ -67,7 +84,10 @@ xt-sdd 规格驱动开发的第二阶段：基于 proposal 生成完整的规范
 
 #### 3b. 生成 specs/
 
-1. 获取指令：`openspec instructions specs --change "<name>" --json`
+1. 获取指令（从缓存读取）：
+   ```bash
+   bash .claude/skills/xt-sdd-propose/scripts/instructions-cache.sh get specs
+   ```
 2. 为 proposal 中的每个 Capability 创建 `specs/<capability>/spec.md`
 3. 每个 spec 包含 ADDED Requirements，每个 Requirement 有至少一个 Scenario
 4. Scenario 使用 WHEN/THEN 格式（必须使用 `####` 四级标题）
@@ -76,7 +96,10 @@ xt-sdd 规格驱动开发的第二阶段：基于 proposal 生成完整的规范
 
 #### 3c. 生成 tasks.md
 
-1. 获取指令：`openspec instructions tasks --change "<name>" --json`
+1. 获取指令（从缓存读取）：
+   ```bash
+   bash .claude/skills/xt-sdd-propose/scripts/instructions-cache.sh get tasks
+   ```
 2. 读取 design.md 和 specs/ 作为上下文
 3. 按 template 创建 tasks.md，使用 `- [ ] X.Y 任务描述` 格式
 4. **规格→TDD 转换约束（生成 tasks 时同步执行，内联，无独立步骤）**：
@@ -86,7 +109,13 @@ xt-sdd 规格驱动开发的第二阶段：基于 proposal 生成完整的规范
 
 更新 sdd-state.yaml checkpoint: tasks-generated
 
-每生成一个产物后，运行 `openspec status --change "<name>" --json` 确认状态。
+**状态验证优化**：用文件检查替代 `openspec status` 调用（每生成一个产物后无需重新查询状态）：
+```bash
+# 文件存在性检查（替代 openspec status --json）
+[ -f "openspec/changes/<name>/design.md" ] && echo "✓ design.md"
+[ -d "openspec/changes/<name>/specs" ] && echo "✓ specs/"
+[ -f "openspec/changes/<name>/tasks.md" ] && echo "✓ tasks.md"
+```
 
 ### 步骤 4：调用 writing-plans 生成实现计划（需要 Superpowers）
 
@@ -117,6 +146,10 @@ xt-sdd 规格驱动开发的第二阶段：基于 proposal 生成完整的规范
 #### 4.3 按分组调用 writing-plans
 
 对每个分组，分别调用 `superpowers:writing-plans`。**省 token 纪律：proposal.md / design.md / sdd-project-profile.yaml 已在步骤 2、3a、3c 加载到本次对话上下文，调用 writing-plans 时直接引用，MUST NOT 在 args 中重复粘贴这些全文**——args 只传分组特有的内容 + 短元数据。N 个分组的 args 体积因此从 O(N·全局) 降到 O(N·分组)。
+
+**Subagent 隔离执行（推荐，防挤爆）**：分组数 > 2 时，每个分组的 writing-plans 调用用 **Agent 工具启动独立 subagent** 执行，subagent 有独立上下文，主对话只接收子计划文件生成结果。分组多时主对话上下文几乎不增长。
+
+→ 隔离策略详见 [xt-sdd-shared/references/context-isolation-strategy.md](../xt-sdd-shared/references/context-isolation-strategy.md)
 
 1. **准备分组上下文**：
    - 全局上下文（已在对话中，仅引用，不重传）：proposal.md、design.md、sdd-project-profile.yaml
@@ -197,8 +230,27 @@ tasks:
 
 使用 AskUserQuestion 展示所有 plan 产物摘要，提供三个选项：
 - **A. 通过，进入下一阶段**：更新 sdd-state.yaml（phase_checkpoints.plan: done, phase: plan, checkpoint: done），提示运行 `/xt-sdd:apply`
+
+  **阶段切换 /clear 提示**（上下文隔离）：
+  ```
+  ✓ plan 阶段完成
+
+  所有进度已保存到 sdd-state.yaml（phase: plan, checkpoint: done）。
+
+  【建议】运行 /clear 清除上下文，然后运行 /xt-sdd:apply 进入实现阶段。
+  （断点恢复机制确保从正确位置继续）
+  ```
+  → 详见 [xt-sdd-shared/references/context-isolation-strategy.md](../xt-sdd-shared/references/context-isolation-strategy.md#策略-2阶段切换时建议-clear)
+
 - **B. 不通过，需要修改**：回到步骤 3 修改对应产物
 - **C. 暂停，稍后继续**：保存进度到 sdd-state.yaml，退出
+
+## 参考文档
+
+- [optimization.md](references/optimization.md) — plan 阶段优化说明（instructions 缓存复用 + 状态检查合并）
+- [xt-sdd-shared/references/context-management.md](../xt-sdd-shared/references/context-management.md) — 通用上下文管理规则
+- [xt-sdd-shared/references/small-window-adaptation.md](../xt-sdd-shared/references/small-window-adaptation.md) — 小窗口模型适配
+- [xt-sdd-shared/references/cli-optimization.md](../xt-sdd-shared/references/cli-optimization.md) — CLI 调用优化
 
 ## 断点恢复
 

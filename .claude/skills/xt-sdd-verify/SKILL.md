@@ -15,6 +15,18 @@ xt-sdd 规格驱动开发的第四阶段：文档同步 + 双重验证确保实�
 4. **全局审查 MUST NOT 超过 5 轮**
 5. **阶段完成 MUST 要求用户确认，MUST NOT 自动跳过**
 
+## 上下文管理（审查循环易累积，必须控制）
+
+verify 的审查循环（步骤 6）和修复后重走（步骤 3-6）容易累积上下文。必须遵循：
+
+- **每轮审查完成后，只保留问题列表，清理审查详细输出**
+- **修复后重走步骤 3-6 时，仅加载修复涉及的范围**（git diff 圈定）
+- **验证报告从累积清单生成**，不重新遍历
+- **步骤 3b 单次遍历产出双清单**（文档同步 + 覆盖），后续复用，禁止重复遍历
+
+→ 阶段专属规则：[references/review-context-management.md](references/review-context-management.md)
+→ 通用规则：[xt-sdd-shared/references/context-management.md](../xt-sdd-shared/references/context-management.md)、[xt-sdd-shared/references/small-window-adaptation.md](../xt-sdd-shared/references/small-window-adaptation.md)
+
 ## 执行步骤
 
 ### 步骤 1：确定当前变更
@@ -127,7 +139,11 @@ xt-sdd 规格驱动开发的第四阶段：文档同步 + 双重验证确保实�
 
 如果 sdd-state.yaml 的 `superpowers_available` 为 true，调用 Superpowers 的代码审查 skill：
 
-1. 使用 Skill 工具调用 `superpowers:requesting-code-review`
+**Subagent 隔离执行（推荐，防挤爆）**：每轮代码审查用 **Agent 工具启动独立 subagent** 执行，subagent 有独立上下文，主对话只接收问题清单（CRITICAL/WARNING/SUGGESTION）。多轮审查时主对话上下文几乎不增长。
+
+→ 隔离策略详见 [xt-sdd-shared/references/context-isolation-strategy.md](../xt-sdd-shared/references/context-isolation-strategy.md)
+
+1. 使用 Skill 工具调用 `superpowers:requesting-code-review`（或在 subagent 内调用）
 2. 审查结果按严重程度分类：
    - **Critical**：必须修复
    - **Important**：建议修复
@@ -138,9 +154,24 @@ xt-sdd 规格驱动开发的第四阶段：文档同步 + 双重验证确保实�
 4. 审查循环不超过 5 轮（与 review_counters.global_review_rounds 一致）
 5. 超过 5 轮仍有 Critical → 建议回退到 xt-sdd-plan
 
+**轮次间上下文清理**（审查循环优化）：
+- 每轮审查完成后，**只保留问题列表**（CRITICAL/WARNING/SUGGESTION），清理审查详细输出
+- 问题列表记录到 sdd-state.yaml 的 `verify_status.current_round_findings`（或内存清单）
+- 下一轮审查从问题列表恢复，可忽略上轮详细输出
+- **修复后重走步骤 3-6 时，仅加载修复涉及的范围**（git diff 圈定），禁止全量重走
+
+```markdown
+[上下文归档 - 审查第 N 轮完成]
+- 问题列表: <CRITICAL x 个, WARNING y 个, SUGGESTION z 个>
+- 已修复: <修复的问题摘要>
+下一轮审查将从问题列表恢复，可忽略本轮详细输出。
+```
+
 更新 sdd-state.yaml checkpoint: code-reviewed
 
 **降级路径**：如果 Superpowers 不可用，跳过代码审查步骤，直接进入步骤 7。
+
+→ 审查循环优化详见 [references/review-context-management.md](references/review-context-management.md)
 
 ### 步骤 7：问题分类
 
@@ -186,16 +217,42 @@ xt-sdd 规格驱动开发的第四阶段：文档同步 + 双重验证确保实�
 1. ...
 ```
 
+**从清单生成**（上下文优化）：报告数据从各步骤累积的清单汇总，**无需重新遍历**：
+- 测试结果：步骤 4 的运行摘要（已记录）
+- 规范合规：步骤 5 的问题清单（已记录）
+- 文档同步：步骤 3 的同步记录（已记录）
+- 代码审查：步骤 6 的审查清单（已记录）
+
 ### 步骤 9：阶段完成确认
 
 使用 AskUserQuestion 展示验证报告摘要，提供三个选项：
 - **A. 通过，进入下一阶段**：更新 sdd-state.yaml（phase_checkpoints.verify: done），提示运行 `/xt-sdd:archive`
+
+  **阶段切换 /clear 提示**（上下文隔离）：
+  ```
+  ✓ verify 阶段完成
+
+  所有进度已保存到 sdd-state.yaml（phase: verify, checkpoint: done）。
+
+  【建议】运行 /clear 清除上下文，然后运行 /xt-sdd:archive 进入归档阶段。
+  （断点恢复机制确保从正确位置继续）
+  ```
+
 - **B. 回到 apply 修复**：
   1. 检查 review_counters.global_review_rounds
   2. 如果 rounds < 5 → 递增计数器，根据问题类型建议回到 xt-sdd:apply（代码问题）或 xt-sdd:plan（规范问题）
   3. 如果选择回到 xt-sdd:plan → 在 sdd-state.yaml 的 cascade 字段写入回退意图
   4. 如果 rounds >= 5 → 提示"审查已循环 5 次仍有 CRITICAL 问题"，选项：继续（额外 5 轮）/ 回到 plan
 - **C. 暂停，稍后继续**：保存验证报告到变更目录，退出
+
+## 参考文档
+
+**阶段专属**：
+- [review-context-management.md](references/review-context-management.md) — 审查循环上下文管理（轮次间清理、修复循环、从清单生成报告）
+
+**共享优化规则**：
+- [xt-sdd-shared/references/context-management.md](../xt-sdd-shared/references/context-management.md) — 通用上下文管理
+- [xt-sdd-shared/references/small-window-adaptation.md](../xt-sdd-shared/references/small-window-adaptation.md) — 小窗口模型适配（分段审查 + 批量修复）
 
 ## 断点恢复
 
