@@ -21,3 +21,6 @@ coverage/
 
 # CodeGraph 本地索引产物
 .codegraph/
+
+# npm token 配置（安全敏感，不应提交）
+.claude/.npm-token-config
