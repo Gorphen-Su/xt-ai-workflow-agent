@@ -118,7 +118,41 @@ quick 的 verify 用**聚焦验证**，非全量回归，且范围由 codegraph 
 4. **编译检查**：运行 `compile_command`（如非 null）
 5. **代码审查**：Superpowers 可用时调用，不可用则跳过（quick 场景通常可跳过深度审查）
 
-### 步骤 6：简化归档
+### 步骤 6：简化归档（需用户确认）
+
+在执行归档前，必须先向用户展示归档摘要并确认，避免自动归档后发现需要补充修改。
+
+#### 6.1 归档前确认
+
+向用户展示归档摘要，使用 AskUserQuestion 提供选项：
+
+**展示内容**：
+```markdown
+## quick 变更归档摘要
+
+变更名称：quick-<简述>
+功能描述：<简要>
+改动范围：<来自 codegraph impact>
+
+验证结果：
+- 聚焦测试（codegraph affected）：<通过数>/<总数>
+- 影响范围验证：通过/未通过
+- 编译检查：通过/未通过
+
+文档同步：
+- 影响级别：无/specs/design
+- 更新的文档：<文件列表或无>
+```
+
+**用户选项**：
+- **A. 确认归档**：执行完整归档流程（步骤 6.2）
+- **B. 需要补充**：暂停归档，允许用户继续修改或补充
+  - 提示："您可以继续修改代码、补充测试或调整文档。完成后重新运行 /xt-sdd:quick，将从断点恢复"
+- **C. 取消变更**：放弃此次变更，清理变更目录
+
+#### 6.2 执行归档（用户选择 A 后）
+
+用户确认后，执行以下归档步骤：
 
 1. 生成简化 archive.md：
 
@@ -138,11 +172,31 @@ quick 的 verify 用**聚焦验证**，非全量回归，且范围由 codegraph 
 ## 验证结果
 - 聚焦测试（codegraph affected）：<通过数>/<总数>
 - 影响范围验证：通过/未通过
+- 用户确认：是
 ```
 
 2. 同步 specs（`openspec sync --change`，如有主规范更新）
 3. 归档变更目录（`openspec archive --change`）
-4. **Git 提交**：提示用户提交，commit message：`feat(<范围>): <功能描述> — 归档完成`
+4. 更新 sdd-state.yaml（phase: archive, checkpoint: done）
+5. **Git 提交**：提示用户提交，commit message：`feat(<范围>): <功能描述> — quick 归档完成`
+
+#### 6.3 用户选择 B 的处理
+
+如果用户选择"需要补充"：
+
+1. 保持当前变更目录不变
+2. 更新 sdd-state.yaml：
+   - 添加 `pending_fixes: true` 标记
+   - 在 `context_summary.user_feedback` 记录"用户归档前确认需要补充"
+3. 提示用户：
+   ```
+   ✓ 已暂停归档，您可以：
+   - 继续修改代码
+   - 补充测试用例
+   - 调整文档内容
+   
+   完成后重新运行 /xt-sdd:quick，将从断点恢复并重新进入归档确认。
+   ```
 
 ### 步骤 7：自动升级机制
 
@@ -201,6 +255,28 @@ git_baseline:
 ## 断点恢复
 
 quick 流程的断点恢复由 sdd-state.yaml 的 phase + checkpoint 驱动，与对应阶段的恢复逻辑一致（apply → verify → archive）。
+
+### 归档前补充恢复
+
+当 sdd-state.yaml 包含 `pending_fixes: true` 时，说明用户在归档前确认时选择了"需要补充"：
+
+1. 读取 `context_summary.user_feedback` 中的用户反馈
+2. 向用户展示："您之前选择了需要补充，是否已完成修改并准备重新归档？"
+3. 使用 AskUserQuestion 提供选项：
+   - **A. 已完成，重新归档**：直接进入步骤 6.1 重新归档确认
+   - **B. 继续修改**：保持当前状态，退出
+   - **C. 放弃变更**：清理变更目录，退出
+
+### 断点恢复映射表
+
+| phase | checkpoint | 恢复动作 |
+|-------|-----------|---------|
+| apply | `entered`/`task-N-complete` | 从对应任务继续执行 |
+| verify | `null` | 进入步骤 5 聚焦验证 |
+| verify | `doc-sync-done` | 从步骤 5.2 继续验证 |
+| archive | `null` | 进入步骤 6.1 归档确认 |
+| archive | `pending-fixes` | 进入归档前补充恢复逻辑 |
+| archive | `done` | 变更已完成，提示新建变更 |
 
 ## 与完整流程的关系
 
