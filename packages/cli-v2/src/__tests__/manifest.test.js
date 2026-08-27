@@ -10,12 +10,12 @@ describe('manifest', () => {
 
   it('MANIFEST.skills contains the canonical 7 names', () => {
     expect(MANIFEST.skills).toEqual([
-      'xt-sdd2-interview',
-      'xt-sdd2-draft',
-      'xt-sdd2-execute',
-      'xt-sdd2-audit',
-      'xt-sdd2-land',
-      'xt-sdd2-sow',
+      'xt-sdd2-explore',
+      'xt-sdd2-propose',
+      'xt-sdd2-apply',
+      'xt-sdd2-verify',
+      'xt-sdd2-archive',
+      'xt-sdd2-init',
       'xt-sdd2-shared',
     ]);
   });
@@ -38,12 +38,12 @@ describe('manifest', () => {
 
   it('commands 位于 xt-sdd2/ 子目录（斜杠相对路径表达）', () => {
     expect(MANIFEST.commands).toEqual([
-      'xt-sdd2/interview',
-      'xt-sdd2/draft',
-      'xt-sdd2/execute',
+      'xt-sdd2/explore',
+      'xt-sdd2/propose',
+      'xt-sdd2/apply',
       'xt-sdd2/audit',
       'xt-sdd2/land',
-      'xt-sdd2/sow',
+      'xt-sdd2/init',
     ]);
     for (const c of MANIFEST.commands) {
       expect(c.startsWith('xt-sdd2/')).toBe(true);

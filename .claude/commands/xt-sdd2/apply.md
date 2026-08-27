@@ -5,4 +5,4 @@ category: Workflow
 tags: [xt-sdd2, workflow, tdd]
 ---
 
-调用 Skill 工具执行 `xt-sdd2-execute`，本命令参数原样作为其输入。严格按该技能的铁律与步骤执行，不跳门禁。
+调用 Skill 工具执行 `xt-sdd2-apply`，本命令参数原样作为其输入。严格按该技能的铁律与步骤执行，不跳门禁。

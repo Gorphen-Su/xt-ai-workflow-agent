@@ -5,4 +5,4 @@ category: Workflow
 tags: [xt-sdd2, workflow, bootstrap]
 ---
 
-调用 Skill 工具执行 `xt-sdd2-sow`，本命令参数原样作为其输入。严格按该技能的步骤执行。
+调用 Skill 工具执行 `xt-sdd2-init`，本命令参数原样作为其输入。严格按该技能的步骤执行。

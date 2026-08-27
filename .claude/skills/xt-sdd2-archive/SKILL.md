@@ -1,9 +1,9 @@
 ---
-name: xt-sdd2-land
-description: Use when 用户说"合入主库"、"归档"、"收尾这个变更"、"交付规格"，或 audit 通过后的最后阶段，或使用 /xt-sdd2:land 时触发。delta 合入主规格库与卷宗归档的唯一出口。
+name: xt-sdd2-archive
+description: Use when 用户说"合入主库"、"归档"、"收尾这个变更"、"交付规格"，或 verify 通过后的最后阶段，或使用 /xt-sdd2:archive 时触发。delta 合入主规格库与卷宗归档的唯一出口。
 ---
 
-# xt-sdd2 · land — 合入归档阶段
+# xt-sdd2 · archive — 合入归档阶段
 
 **属主工具：** openspec CLI（archive）。**共享约定：** [.claude/skills/xt-sdd2-shared/SKILL.md](../xt-sdd2-shared/SKILL.md)。
 
@@ -41,7 +41,7 @@ openspec validate --strict
 `openspec archive <卷宗ID>`（或铁律 5 的降级路径）。
 
 ### 4. 收尾提交与 PR
-- team 模式：主库变更 + 卷宗迁移一并走 land PR，正文附 delta 摘要与 audit 结论链接
+- team 模式：主库变更 + 卷宗迁移一并走 archive PR，正文附 delta 摘要与审计结论链接
 - solo 模式：AskUserQuestion 展示将合入的行为变化清单确认后本地提交
 
 ### 5. 提示

@@ -1,15 +1,15 @@
 ---
-name: xt-sdd2-draft
-description: Use when 用户说"起草规格"、"生成 proposal"、"立一个变更"、"进入 draft"，或 interview 完成后的下一阶段触发。契约 delta 的起草与请求评审入口。
+name: xt-sdd2-propose
+description: Use when 用户说"起草规格"、"生成 proposal"、"立一个变更"、"进入 propose"，或 explore 完成后的下一阶段触发。契约 delta 的起草与请求评审入口。
 ---
 
-# xt-sdd2 · draft — 契约起草阶段
+# xt-sdd2 · propose — 契约起草阶段
 
 **属主工具：** openspec CLI。**共享约定：** 读取 [.claude/skills/xt-sdd2-shared/SKILL.md](../xt-sdd2-shared/SKILL.md)。
 
 ## 铁律
 
-1. 输入只有 grill.md。本阶段 MUST NOT 发起新的需求澄清轮——发现 grill 未覆盖的新问题 → 回 interview 补录后再来
+1. 输入只有 grill.md。本阶段 MUST NOT 发起新的需求澄清轮——发现 grill 未覆盖的新问题 → 回 explore 补录后再来
 2. 任何行为变化 MUST 有对应 Requirement delta——"改动太小"不构成豁免
 3. `openspec validate --strict --changes` MUST 通过才能提请评审
 4. 软锁扫描 MUST 执行并把结果明示给用户
@@ -38,13 +38,13 @@ openspec validate --strict --changes
 软锁扫描：收集所有其他活动卷宗 `specs/` 的 capability 集合，与本卷宗求交集；有交集 → 向用户报告重叠对象与建议（错峰或先合对方）。软锁是预警不是阻断，用户知情后可选择继续。
 
 ### 4. 固化与提交
-一次性提交卷宗全部工件：`[<卷宗ID>] docs: draft 契约起草`
+一次性提交卷宗全部工件：`[<卷宗ID>] docs: propose 契约起草`
 
 ### 5. freeze 门禁
 - team 模式：推送分支开 PR，正文附 delta 全文摘要 → 明确告知："合并该 PR 即契约冻结"
 - solo 模式：展示 delta 全文，AskUserQuestion 显式确认冻结
-- **拒签的处理**：拒绝或拖延 = 无 freeze = 不进入 execute。卷宗与 grill.md 照常留档，用户可用现状版本先行交付，散会补签再续——概括性授权（"你看着办"）不构成签署，签署对象是眼前这份 delta 全文
-- 冻结成功后提示 `/xt-sdd2:execute`
+- **拒签的处理**：拒绝或拖延 = 无 freeze = 不进入 apply。卷宗与 grill.md 照常留档，用户可用现状版本先行交付，散会补签再续——概括性授权（"你看着办"）不构成签署，签署对象是眼前这份 delta 全文
+- 冻结成功后提示 `/xt-sdd2:apply`
 
 ## 理性化防御表
 

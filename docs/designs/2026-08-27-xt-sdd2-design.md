@@ -26,9 +26,9 @@ openspec/changes/YYYY-MM-DD-<作者缩写>-<slug>/   # 卷宗 ID 即目录名，
 ├── design.md     # ④技术权衡（引用 codegraph 探查结论）
 ├── tasks.md      # ⑤薄索引：分组清单简表（兼容 openspec CLI 工件识别）
 ├── tasks/        #    NN-<分组名>.md 微步骤 checkbox 详情
-└── audit.md      # ⑦审计报告（audit 阶段产物）
+└── audit.md      # ⑦审计报告（verify 阶段产物）
 
-land 后：delta 合入 openspec/specs/<capability>/spec.md，
+archive 后：delta 合入 openspec/specs/<capability>/spec.md，
         卷宗 mv 至 changes/archive/YYYY-MM-DD-<原ID>/（OpenSpec 官方归档自带日期戳）
 ```
 
@@ -41,7 +41,7 @@ land 后：delta 合入 openspec/specs/<capability>/spec.md，
 ## 三、五命令管线（每张审计凭证对应一条命令）
 
 ```
-①interview ──▶ ②draft ──[PR 评审=freeze]──▶ ③execute ──▶ ④audit ──[PR]──▶ ⑤land
+①explore ──▶ ②propose ──[PR 评审=freeze]──▶ ③apply ──▶ ④verify ──[PR]──▶ ⑤archive
    │             │                              │             │
  grilling       OpenSpec                     superpowers    code-review
  出证据         delta 起草                    TDD 循环       三方闭环校验
@@ -53,23 +53,23 @@ land 后：delta 合入 openspec/specs/<capability>/spec.md，
 
 | 命令 | 属主工具 | 关键行为 |
 |------|------|------|
-| `interview` | **grilling**（禁用 openspec-explore / brainstorming 于需求侧） | 开场分诊 feature/bug/chore；bug 型收敛为复现步骤+根因假设+修复边界三必答题；产出 grill.md；开放问题清零或显式降级为假设 |
-| `draft` | **OpenSpec CLI**（剥离其自带澄清轮次，输入取 grill.md） | 建 change 目录、生成 proposal+deltas+design+tasks 索引；`validate --strict`；**并发软锁预警**：扫描活动 change 能力域重叠并输出警告；结束即开 PR 请求契约评审 |
+| `explore` | **grilling**（禁用 openspec-explore / brainstorming 于需求侧） | 开场分诊 feature/bug/chore；bug 型收敛为复现步骤+根因假设+修复边界三必答题；产出 grill.md；开放问题清零或显式降级为假设 |
+| `propose` | **OpenSpec CLI**（剥离其自带澄清轮次，输入取 grill.md） | 建 change 目录、生成 proposal+deltas+design+tasks 索引；`validate --strict`；**并发软锁预警**：扫描活动 change 能力域重叠并输出警告；结束即开 PR 请求契约评审 |
 | （freeze 门禁） | 人 | PR 合并 = 契约基线冻结，此后 spec 变更必须开新卷宗 |
-| `execute` | **superpowers:test-driven-development**（tasks.md 仅作驱动清单） | 按分组连续执行微步骤，分组批量提交，commit 前缀 `[<change-id>]`，每任务标注覆盖 R-ID |
-| `audit` | **verification-before-completion + requesting-code-review** | 测试运行证据；机器校验三方闭环（R-ID ↔ task ↔ commit），缺口即 fail；产出 audit.md（面向人）：校验结果+测试证据摘录+review 结论+遗留风险 |
-| `land` | **openspec archive** | delta 合入主库（合并冲突=语义对撞仲裁点）、归档卷宗、开 land PR |
+| `apply` | **superpowers:test-driven-development**（tasks.md 仅作驱动清单） | 按分组连续执行微步骤，分组批量提交，commit 前缀 `[<change-id>]`，每任务标注覆盖 R-ID |
+| `verify` | **verification-before-completion + requesting-code-review** | 测试运行证据；机器校验三方闭环（R-ID ↔ task ↔ commit），缺口即 fail；产出 audit.md（面向人）：校验结果+测试证据摘录+review 结论+遗留风险 |
+| `archive` | **openspec archive** | delta 合入主库（合并冲突=语义对撞仲裁点）、归档卷宗、开 archive PR |
 
 ### 附属命令
 
-`/xt-sdd2:sow`（一次性冷启动）：扫码库反推初版 `specs/` 主库骨架，每条 requirement 打 `[SOURCE:反推][DRAFT]` 低信任旗标。
+`/xt-sdd2:init`（一次性冷启动）：扫码库反推初版 `specs/` 主库骨架，每条 requirement 打 `[SOURCE:反推][DRAFT]` 低信任旗标。
 
 ## 四、强制约束（铁律）
 
 1. 所有功能/修复/改造出码前必须有已冻结的契约 delta——**main 直推一律禁止**
 2. 单人仓库可在安装后显式声明降级模式：PR 以本地确认对话代替，门禁产物一样不少
 3. 每个 Requirement 编号 `R-<CAP>-NNN`（capability 域内序号，无中央注册表）；两人并行同 capability 的合并冲突即语义对撞仲裁点
-4. 无 audit 报告不得 land；未通过闭环校验的缺口必须整改或显式登记为已知风险
+4. 无 audit 报告不得 archive；未通过闭环校验的缺口必须整改或显式登记为已知风险
 5. 不设 fix/quick 独立快道——快存在分诊后的自动快速通过里，不存在门禁豁免里
 6. 不设 CHANGELOG 台账——变更史 = `git log openspec/specs/` + PR 链接，一切可再生信息不做手工维护
 
@@ -80,18 +80,18 @@ land 后：delta 合入 openspec/specs/<capability>/spec.md，
 
 ## 六、落地路线图（建议次序）
 
-1. ✅ 在本仓库编写五个 skill 文件 + sow + 卷宗工件模板（2026-08-27 完成，commit a9af702）
-2. ✅ 本仓库挂牌试点吃自己的狗粮跑一个真实变更验证管线（2026-08-27 完成：list --json 变更走完 sow→interview→draft→freeze→execute→audit→land 全链，证据链 b967b75→5b1ee8d 六提交；82 测试全绿；主库 strict 9/9）
+1. ✅ 在本仓库编写五个 skill 文件 + init + 卷宗工件模板（2026-08-27 完成，commit a9af702）
+2. ✅ 本仓库挂牌试点吃自己的狗粮跑一个真实变更验证管线（2026-08-27 完成：list --json 变更走完 init→explore→propose→freeze→apply→audit→archive 全链，证据链 b967b75→5b1ee8d 六提交；82 测试全绿；主库 strict 9/9）
 3. 打包独立 npm 包发布（xt-sdd2-skills），附 README 使用说明与安装示例
 
 ## 七、试点结论与打磨 Backlog（2026-08-27）
 
 试点捕获的缺陷已当场回写技能文本（①~④）：
 
-1. ~~假冷启动~~ → sow 增加非空检测与增量模式分支【已回写】
-2. ~~Requirement 缺场景 strict 必炸且欠账拖到 land 才暴露~~ → spec-delta 模板/draft/sow 三处把 Scenario 定为必填结构并注明实测依据【已回写】
-3. ~~land 新鲜度 HEAD 字面等值结构性不可行~~ → shared·审计判定节改为「生产代码路径 diff 为空」口径【已回写】
-4. ~~CLI archive 双日期命名 + 会重复应用已合入 delta~~ → land 铁律 5 改为手动 mv 标准路径、CLI 带参备选【已回写】
+1. ~~假冷启动~~ → init 增加非空检测与增量模式分支【已回写】
+2. ~~Requirement 缺场景 strict 必炸且欠账拖到 archive 才暴露~~ → spec-delta 模板/propose/init 三处把 Scenario 定为必填结构并注明实测依据【已回写】
+3. ~~archive 新鲜度 HEAD 字面等值结构性不可行~~ → shared·审计判定节改为「生产代码路径 diff 为空」口径【已回写】
+4. ~~CLI archive 双日期命名 + 会重复应用已合入 delta~~ → archive 铁律 5 改为手动 mv 标准路径、CLI 带参备选【已回写】
 5. **双代契约重叠仲裁**（未决）：旧流程 skill-installer / skill-backup / skill-fetcher / codegraph-sync-guide / xt-sdd-skills-cli 五个合法域与本代 cli-* 域同库共存。处置候选项：(a) 重命名隔离进 legacy 命名空间；(b) 由新契约逐条吸收合并后删除旧域；(c) 保持现状仅加 README 导航说明。待专门变更处理。
 6. 测试资产观察：xt-metrics 脚本至今零测试覆盖（其 2 条 Requirement 保持 DRAFT 的根因），建议随包打磨期补最小用例。
 

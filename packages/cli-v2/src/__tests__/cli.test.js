@@ -53,8 +53,8 @@ describe('CLI 入口', () => {
     const r = await runCli(['list']);
     expect(r.code).toBe(0);
     expect(r.stdout).toContain('Available');
-    expect(r.stdout).toContain('xt-sdd2-interview');
-    expect(r.stdout).toContain('xt-sdd2-land');
+    expect(r.stdout).toContain('xt-sdd2-explore');
+    expect(r.stdout).toContain('xt-sdd2-archive');
     expect(r.stdout).toContain('Gorphen-Su/xt-ai-workflow-agent');
   });
 

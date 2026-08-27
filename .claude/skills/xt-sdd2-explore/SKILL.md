@@ -1,9 +1,9 @@
 ---
-name: xt-sdd2-interview
-description: Use when 用户提出任何功能/修复/改造诉求并准备启动一次变更，或说"探索需求"、"梳理需求"、"开始一个需求"，或使用 /xt-sdd2:interview 时触发。模糊业务与存量系统隐性约束的挖掘入口。
+name: xt-sdd2-explore
+description: Use when 用户提出任何功能/修复/改造诉求并准备启动一次变更，或说"探索需求"、"梳理需求"、"开始一个需求"，或使用 /xt-sdd2:explore 时触发。模糊业务与存量系统隐性约束的挖掘入口。
 ---
 
-# xt-sdd2 · interview — 需求挖掘阶段
+# xt-sdd2 · explore — 需求挖掘阶段
 
 **REQUIRED SUB-SKILL:** 使用 grilling 引擎执行追问循环（本技能只规定纪律与产物格式，发问方式全权交给 grilling）。
 **共享约定：** 读取 [.claude/skills/xt-sdd2-shared/SKILL.md](../xt-sdd2-shared/SKILL.md) 与卷宗结构。
@@ -19,7 +19,7 @@ description: Use when 用户提出任何功能/修复/改造诉求并准备启�
 ## 步骤
 
 ### 0. 前置检查
-- `openspec/project.md` 存在？无 → 引导先跑 `/xt-sdd2:sow`
+- `openspec/project.md` 存在？无 → 引导先跑 `/xt-sdd2:init`
 - Git 工作区脏 → 先询问是否提交/搁置（污染卷宗归属）
 
 ### 1. 分诊
@@ -29,12 +29,12 @@ description: Use when 用户提出任何功能/修复/改造诉求并准备启�
 
 ### 2. 挖掘（grilling 引擎主持）
 - 允许中途做 codegraph_explore 侦察存量代码，把关键发现（符号、调用链、隐性约束）记入"关键问答摘录"
-- 每问一闭环：问题 → 结论 → 当场入册；影响到的 R-ID 此刻未知则留空（draft 回填）
+- 每问一闭环：问题 → 结论 → 当场入册；影响到的 R-ID 此刻未知则留空（propose 回填）
 
 ### 3. 闭幕
 - 开放问题清单全部处置完毕
 - 生成卷宗目录 `openspec/changes/YYYY-MM-DD-<缩写>-<slug>/`（创建前扫描重名），从模板复制 [grill.md](../xt-sdd2-shared/references/templates/grill.md) 填充
-- 展示登记册摘要 + 假设清单 → **AskUserQuestion 确认后**提示进入 `/xt-sdd2:draft`
+- 展示登记册摘要 + 假设清单 → **AskUserQuestion 确认后**提示进入 `/xt-sdd2:propose`
 
 ## 理性化防御表
 

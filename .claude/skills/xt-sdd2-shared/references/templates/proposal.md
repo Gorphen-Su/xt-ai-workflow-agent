@@ -23,7 +23,7 @@
 | <cap-2> | MODIFIED | 修改 R-<cap-2>-00X 等 M 条 |
 | <cap-3> | REMOVED | 删除 X 条 |
 
-> 本表是 draft 软锁预警的输入：同名 Capability 若出现在其他活动卷宗中即告警。
+> 本表是 propose 软锁预警的输入：同名 Capability 若出现在其他活动卷宗中即告警。
 
 ## Non-goals — 非目标
 

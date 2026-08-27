@@ -11,18 +11,18 @@ npx xt-sdd2-skills install
 随后在项目内依序使用：
 
 ```
-/xt-sdd2:sow        # 一次性：反推主规格库骨架 + 初始化 project.md
-/xt-sdd2:interview  # 需求挖掘：grilling 追问 + 决策登记册
-/xt-sdd2:draft      # 契约起草：delta/proposal/design/tasks + 软锁预警
+/xt-sdd2:init         # 一次性：反推主规格库骨架 + 初始化 project.md
+/xt-sdd2:explore      # 需求挖掘：grilling 追问 + 决策登记册
+/xt-sdd2:propose      # 契约起草：delta/proposal/design/tasks + 软锁预警
                     #   ── freeze 门禁（PR 或 solo 确认）──
-/xt-sdd2:execute    # TDD 实现（红-绿循环，勘误协议保护冻结契约）
-/xt-sdd2:audit      # 三方闭环校验（R-ID ↔ task ↔ commit），判定仅 PASS|FAIL
-/xt-sdd2:land       # 放行三件套核验 → delta 合入主库 → 卷宗归档
+/xt-sdd2:apply        # TDD 实现（红-绿循环，勘误协议保护冻结契约）
+/xt-sdd2:verify       # 三方闭环校验（R-ID ↔ task ↔ commit），判定仅 PASS|FAIL
+/xt-sdd2:archive      # 放行三件套核验 → delta 合入主库 → 卷宗归档
 ```
 
 ## 分发内容
 
-- `.claude/skills/xt-sdd2-{interview,draft,execute,audit,land,sow}` — 流程技能
+- `.claude/skills/xt-sdd2-{explore,propose,apply,verify,archive,init}` — 流程技能
 - `.claude/skills/xt-sdd2-shared` — 共享约定与七件卷宗工件模板
 - `.claude/commands/xt-sdd2/*` — 六个 slash command 入口
 - `openspec/openspec.yaml`、`openspec/project.md` — 配置模板（已存在则跳过）

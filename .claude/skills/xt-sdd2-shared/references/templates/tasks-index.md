@@ -21,7 +21,7 @@ tasks.md 是薄索引：兼容 openspec CLI 的工件识别 + 人类速览。
 - [ ] R-login-api-001 ↔ 组 01
 - [ ] R-login-api-002 ↔ 组 01
 
-> 矩阵若有空行或缺号，draft 的 validate 步骤即失败，不得进入 freeze。
+> 矩阵若有空行或缺号，propose 的 validate 步骤即失败，不得进入 freeze。
 
 ## 执行顺序与依赖
 
