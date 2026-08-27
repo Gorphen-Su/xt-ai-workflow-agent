@@ -6,6 +6,20 @@ export async function list(options) {
   const source = options.source || DEFAULT_SOURCE;
   const tag = options.tag || DEFAULT_REF;
 
+  // --json 双模分支（R-cli-installer-008）：机器可读契约
+  // 必须旁路 kleur 着色层——裸写 stdout 保证无 ANSI、可被 jq/CI 直接消费
+  if (options.json) {
+    const payload = {
+      source,
+      ref: tag,
+      skills: [...MANIFEST.skills],
+      templates: MANIFEST.templates.map((t) => ({ ...t })),
+      commands: [...MANIFEST.commands],
+    };
+    process.stdout.write(JSON.stringify(payload, null, 2) + '\n');
+    return;
+  }
+
   logger.section('Available xt-sdd-skills manifest');
   logger.detail(`Source: ${source}`);
   logger.detail(`Default ref: ${tag}`);

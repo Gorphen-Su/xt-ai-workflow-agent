@@ -13,8 +13,8 @@
 
 每个 R-ID 至少出现在一行中；audit 阶段以此双向核对：
 
-- [ ] R-cli-installer-008 ↔ 组 01（步骤 1-5）
-- [ ] R-cli-installer-006 ↔ 组 01（步骤 6 零漂移回归）
+- [x] R-cli-installer-008 ↔ 组 01（步骤 1-5）
+- [x] R-cli-installer-006 ↔ 组 01（步骤 6 零漂移回归）
 
 > 矩阵若有空行或缺号，draft 的 validate 步骤即失败，不得进入 freeze。
 

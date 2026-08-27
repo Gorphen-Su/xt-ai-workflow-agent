@@ -1,11 +1,12 @@
 // 参数解析（手写，不依赖 commander/yargs）
 //
 // 支持：
-//   xt-sdd-skills <command> [--tag <v>] [--source <o/r>] [--dry-run] [--no-backup]
+//   xt-sdd-skills <command> [--tag <v>] [--source <o/r>] [--dry-run] [--no-backup] [--json]
 //   --tag <v>      / -t <v>
 //   --source <o/r> / -s <o/r>
 //   --dry-run
 //   --no-backup
+//   --json
 //   --help / -h
 //   --version / -v
 
@@ -21,6 +22,7 @@ export function parseArgv(argv) {
     source: DEFAULT_SOURCE,
     dryRun: false,
     noBackup: false,
+    json: false,
     help: false,
     version: false,
     unknownCommand: null,
@@ -75,6 +77,9 @@ export function parseArgv(argv) {
         break;
       case '--no-backup':
         result.noBackup = true;
+        break;
+      case '--json':
+        result.json = true;
         break;
       case '--help':
       case '-h':
