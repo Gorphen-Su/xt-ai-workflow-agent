@@ -80,9 +80,20 @@ land 后：delta 合入 openspec/specs/<capability>/spec.md，
 
 ## 六、落地路线图（建议次序）
 
-1. 在本仓库编写五个 skill 文件 + sow + 卷宗工件模板（grill/proposal/delta/design/tasks/audit）
-2. 本仓库挂牌试点吃自己的狗粮，跑一个真实变更验证管线
-3. 打包独立 npm 包发布，附 README 使用说明与挂牌示例
+1. ✅ 在本仓库编写五个 skill 文件 + sow + 卷宗工件模板（2026-08-27 完成，commit a9af702）
+2. ✅ 本仓库挂牌试点吃自己的狗粮跑一个真实变更验证管线（2026-08-27 完成：list --json 变更走完 sow→interview→draft→freeze→execute→audit→land 全链，证据链 b967b75→5b1ee8d 六提交；82 测试全绿；主库 strict 9/9）
+3. 打包独立 npm 包发布（xt-sdd2-skills），附 README 使用说明与安装示例
+
+## 七、试点结论与打磨 Backlog（2026-08-27）
+
+试点捕获的缺陷已当场回写技能文本（①~④）：
+
+1. ~~假冷启动~~ → sow 增加非空检测与增量模式分支【已回写】
+2. ~~Requirement 缺场景 strict 必炸且欠账拖到 land 才暴露~~ → spec-delta 模板/draft/sow 三处把 Scenario 定为必填结构并注明实测依据【已回写】
+3. ~~land 新鲜度 HEAD 字面等值结构性不可行~~ → shared·审计判定节改为「生产代码路径 diff 为空」口径【已回写】
+4. ~~CLI archive 双日期命名 + 会重复应用已合入 delta~~ → land 铁律 5 改为手动 mv 标准路径、CLI 带参备选【已回写】
+5. **双代契约重叠仲裁**（未决）：旧流程 skill-installer / skill-backup / skill-fetcher / codegraph-sync-guide / xt-sdd-skills-cli 五个合法域与本代 cli-* 域同库共存。处置候选项：(a) 重命名隔离进 legacy 命名空间；(b) 由新契约逐条吸收合并后删除旧域；(c) 保持现状仅加 README 导航说明。待专门变更处理。
+6. 测试资产观察：xt-metrics 脚本至今零测试覆盖（其 2 条 Requirement 保持 DRAFT 的根因），建议随包打磨期补最小用例。
 
 ## 附：关键取舍备忘（为什么这样定）
 

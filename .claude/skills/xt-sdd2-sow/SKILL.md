@@ -13,7 +13,7 @@ description: Use when 目标仓库尚无 openspec/specs/ 主规格库而要启�
 
 ### 0. 依赖检查
 - `openspec` CLI 可用性；不可用则提示 `npx @fission-ai/openspec init` 并等安装完成后继续
-- 建 `openspec/specs/` 目录（不存在时）
+- **主库非空检测（2026-08-27 试点缺陷修复）**：`openspec/specs/` 已有内容时严禁按空库冷启动——转入**增量模式**：扫描现有域清单并向用户展示，本次只允许新增域或经用户仲裁后修改既有域；`project.md` 已存在则只补缺失的 frontmatter 键，不覆盖正文
 
 ### 1. 初始化 project.md
 若 `openspec/project.md` 不存在，按 [shared·配置 schema](../xt-sdd2-shared/SKILL.md#openspecprojectmd-配置-schema) 创建 frontmatter，交互式收集：
@@ -26,6 +26,7 @@ description: Use when 目标仓库尚无 openspec/specs/ 主规格库而要启�
 
 ### 3. 逐域反推初稿
 每个 capability 一份 `specs/<cap>/spec.md`：Requirement 从代码现状归纳（输入/行为/边界/异常），每条标注 `- ID: R-<cap>-NNN` 与旗标 `[SOURCE: 反推][DRAFT]`。
+**每条 Requirement MUST 至少携带一个 `#### Scenario:`（WHEN/THEN）**——strict 校验强制此结构（2026-08-27 实测：缺场景在 land 复验即炸），归纳时一并写全，禁止"先立条目后补场景"。
 单域超过 ~10 条 Requirement 时主动建议拆域，防止大杂烩能力域诞生。
 
 ### 4. 校准循环

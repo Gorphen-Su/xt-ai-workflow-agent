@@ -11,12 +11,12 @@ description: Use when 用户说"合入主库"、"归档"、"收尾这个变更"�
 
 1. 放行三件套缺一不可，MUST 逐项机器核验后才动手：
    - `audit.md` 存在且判定字段为字面 `PASS`
-   - 报告记录的 HEAD == 当前 HEAD（期间出现过新提交 → 报告作废，回 audit）
+   - 新鲜度核验：「生产代码路径相对审计记录 HEAD 的 git diff 为空」（审计后仅有卷宗文档类提交属预期；packages/** 等出现 diff → 报告作废，回 audit）
    - 覆盖矩阵与 delta 的 R-ID 双向满格未被改动破坏
 2. 合入算法中 MODIFIED/REMOVED 按 Requirement 标题逐字匹配主库；匹配不到 → 立即停手报告差异，禁止模糊匹配、猜测或跳过
 3. 主库合并冲突 = 语义对撞仲裁点，自动解决一律禁止
 4. 时间压力、下游催促、"明天补审计"均不构成豁免路径——本阶段不存在先合后补模式
-5. 归档动作：优先 `openspec archive <change>`；CLI 不可用时手动 `mv` 至 `changes/archive/YYYY-MM-DD-<原目录名>/`（目标存在则报错终止）
+5. 归档动作：delta 合入由本技能算法完成后执行 `mv` 迁移——`mv openspec/changes/<ID> openspec/changes/archive/YYYY-MM-DD-<ID>/`（目标存在则报错终止）。**标准路径即手动 mv**：CLI `openspec archive <ID> --yes --skip-specs` 为备选，但其产物名带双日期前缀且不带 `--skip-specs` 时会重复应用已合入的 delta（报 already-exists 属合入完成的旁证而非故障）。归档目录命名保持单日期，与存量 archive 惯例一致
 6. 不创建任何 CHANGELOG 台账文件——变更史即 `git log openspec/specs/`
 
 ## 步骤

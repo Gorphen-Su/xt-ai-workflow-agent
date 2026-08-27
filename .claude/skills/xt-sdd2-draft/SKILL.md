@@ -25,7 +25,7 @@ description: Use when 用户说"起草规格"、"生成 proposal"、"立一个�
 
 ### 2. 起草四件套 + 任务拆解
 按序生成（全部有模板）：
-1. `specs/<cap>/spec.md` delta —— 从 [spec-delta.md](../xt-sdd2-shared/references/templates/spec-delta.md)；R-ID 按「主库现有最大号+1」分配；MODIFIED/REMOVED 标题 MUST 与主库现有标题逐字一致
+1. `specs/<cap>/spec.md` delta —— 从 [spec-delta.md](../xt-sdd2-shared/references/templates/spec-delta.md)；R-ID 按「主库现有最大号+1」分配；MODIFIED/REMOVED 标题 MUST 与主库现有标题逐字一致；**每条 Requirement MUST ≥1 个 `#### Scenario:`**——strict 校验硬性结构要求，缺失即本步第 3 款 validate 必炸（2026-08-27 实测），起草时一次写全
 2. [proposal.md](../xt-sdd2-shared/references/templates/proposal.md) —— Why/What/Impact 影响面表/非目标，论断不许超出登记册
 3. [design.md](../xt-sdd2-shared/references/templates/design.md) —— 权衡表必含被否选项死因；codegraph 探查结论必填
 4. `tasks.md` 索引 + `tasks/NN-<分组>.md` —— 覆盖矩阵 MUST 双向满格（见 [tasks-index.md](../xt-sdd2-shared/references/templates/tasks-index.md)）

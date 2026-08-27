@@ -3,6 +3,10 @@
 一个卷宗可含多个 capability 文件：specs/<capability>/spec.md 每个 capability 一个文件。
 动作段落只允许三种：ADDED / MODIFIED / REMOVED Requirements。
 MODIFIED/REMOVED 的 Requirement 标题 MUST 与主库现有标题逐字一致，否则 openspec validate 失败。
+
+⚠️ 硬性结构（2026-08-27 实测）：每一条 Requirement MUST 至少有一个 #### Scenario，
+否则 `openspec validate --specs --strict` 直接 ERROR："Requirement must have at least one scenario"。
+没有可写场景的需求说明它还不是一个行为契约——回 grill 把行为问清楚再起草。
 -->
 
 ## ADDED Requirements
