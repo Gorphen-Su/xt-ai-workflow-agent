@@ -1,0 +1,52 @@
+{
+  "name": "xt-sdd2-skills",
+  "version": "0.1.0",
+  "description": "Install and update xt-sdd2 workflow skills (interview/draft/execute/audit/land + sow) from xt-ai-workflow-agent repo via npx",
+  "type": "module",
+  "bin": {
+    "xt-sdd2-skills": "bin/xt-sdd2-skills.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "templates",
+    "README.md",
+    "!src/__tests__"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "xt-sdd2",
+    "openspec",
+    "claude-code",
+    "skills",
+    "spec-driven-development",
+    "installer"
+  ],
+  "author": "Gorphen Su",
+  "license": "MIT",
+  "homepage": "https://github.com/Gorphen-Su/xt-ai-workflow-agent#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gorphen-Su/xt-ai-workflow-agent.git",
+    "directory": "packages/cli-v2"
+  },
+  "bugs": {
+    "url": "https://github.com/Gorphen-Su/xt-ai-workflow-agent/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "tar": "^7.0.0",
+    "kleur": "^4.1.5"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0"
+  }
+}

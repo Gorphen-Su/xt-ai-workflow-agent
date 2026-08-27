@@ -6,7 +6,9 @@
   "scripts": {
     "test:cli": "cd packages/cli && npm test",
     "build:cli": "cd packages/cli && npm run build --if-present",
-    "pack:cli": "cd packages/cli && npm pack"
+    "pack:cli": "cd packages/cli && npm pack",
+    "test:v2": "cd packages/cli-v2 && npm test",
+    "pack:v2": "cd packages/cli-v2 && npm pack"
   },
   "engines": {
     "node": ">=18"
