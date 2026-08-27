@@ -45,6 +45,17 @@ describe('parseArgv', () => {
     expect(parseArgv(['update', '--no-backup']).noBackup).toBe(true);
   });
 
+  it('--json 标志（R-cli-installer-008 接线钉住）', () => {
+    expect(parseArgv(['list', '--json']).json).toBe(true);
+    expect(parseArgv(['list']).json).toBe(false); // 默认关闭
+  });
+
+  it('--json 与其它 flag 组合放行', () => {
+    const r = parseArgv(['list', '--tag', 'v1.2.3', '--json']);
+    expect(r.json).toBe(true);
+    expect(r.tag).toBe('v1.2.3');
+  });
+
   it('--help / -h', () => {
     expect(parseArgv(['--help']).help).toBe(true);
     expect(parseArgv(['-h']).help).toBe(true);

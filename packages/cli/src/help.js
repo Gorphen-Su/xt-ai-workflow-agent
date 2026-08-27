@@ -11,6 +11,7 @@ Global options:
   --source <owner/repo>   GitHub source (default: Gorphen-Su/xt-ai-workflow-agent)
   --dry-run               Preview operations without writing any files
   --no-backup             update only — skip the backup step (irreversible)
+  --json                  list only — print manifest as machine-readable JSON
 
 Examples:
   npx xt-sdd-skills install

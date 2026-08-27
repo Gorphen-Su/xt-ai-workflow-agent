@@ -19,3 +19,15 @@
 ## 备注
 
 用例 C 由驱动型调整为钉住型（出生即绿）：其契约对象是"现状零漂移"而非新行为，无法也不应制造红色失败；已在测试注释中声明定位。
+
+### 审计整改段（2026-08-27 代码审查裁决 With fixes 后当场处置）
+
+- [x] Important#1 argv 接线真空 → argv.test.js 补 `--json` 单独/组合放行钉住（出生即绿型接线保护）
+- [x] Important#1 端到端真空 → cli.test.js 新增 `list --json` 子进程用例（exit0+stderr 空+五键+ref 尊重 --tag）与 FORCE_COLOR=1 真彩色进程 ANSI 纯净性证明
+- [x] Important#2 帮助文本遗漏 → help.js Global options 增补 `--json  list only — …` 行，cli.test 钉住发现路径
+- [x] Minor#3 序列化格式显式断言（换行结尾 + 二级缩进键行）
+- [x] Minor#4 用例 C 章节顺序 indexOf 递增断言
+- [x] Minor#5 ANSI 纯净性改为真彩色子进程内证明
+- [x] Minor#6/#8 options.json 真值风格注释、浅拷贝前瞻性注释落码
+- [x] Minor#7 ref 生效值传播锁定（并入端到端用例断言）
+- 整改后全量：10 文件 82 测试全部通过

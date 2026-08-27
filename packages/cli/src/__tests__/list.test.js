@@ -30,6 +30,10 @@ describe('list --json（R-cli-installer-008）', () => {
     // 契约：机器管道纯净性—— kleur 彩色码绝不许混入结构化输出
     expect(out).not.toContain('\x1b[');
 
+    // 契约：两空格缩进多行 + 换行结尾（R-008 序列化格式条款显式钉住）
+    expect(out.endsWith('\n')).toBe(true);
+    expect(out.split('\n')[1]).toMatch(/^ {2}"(commands|ref|skills|source|templates)": /);
+
     const parsed = JSON.parse(out); // 尾部换行属合法空白，允许直接解析
     expect(Object.keys(parsed).sort()).toEqual([
       'commands',
@@ -57,7 +61,7 @@ describe('list --json（R-cli-installer-008）', () => {
 describe('list 默认文本模式（R-cli-installer-006 零漂移）', () => {
   // 钉住测试（pinning test）：出生即绿是其本职——锁定冻结契约的现状行为，
   // 防止 json 双模改造或后续变更漂移文本模式的章节顺序与内容类型
-  it('C: 章节关键词、命令映射前缀与使用提示保持原样', async () => {
+  it('C: 章节关键词、章节顺序、命令映射前缀与使用提示保持原样', async () => {
     const out = await captureStdout(() => list({}));
 
     expect(out).toContain('Skills:');
@@ -66,5 +70,11 @@ describe('list 默认文本模式（R-cli-installer-006 零漂移）', () => {
     expect(out).toContain('.claude/commands/');
     expect(out).toContain("--tag <ref>' to pin"); // 使用提示原文片段
     expect(out).toContain('--source <owner/repo>'); // fork 提示
+
+    // R-006 场景条款：章节顺序与变更前一致
+    const order = ['Skills:', 'Commands:', 'Templates'].map((s) => out.indexOf(s));
+    expect(order).toEqual([...order].sort((a, b) => a - b));
+    expect(order.every((i) => i >= 0)).toBe(true);
+    expect(out.indexOf("--tag <ref>'")).toBeGreaterThan(Math.max(...order));
   });
 });
